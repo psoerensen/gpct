@@ -1,6 +1,6 @@
 # Benchmark orchestration only. Private numerical implementations stay installed externally.
 execution_started <- proc.time()[['elapsed']]
-source('scripts/paths.R'); source('scripts/evaluate.R'); source('scripts/fit_greml.R');source('scripts/fit_gbayes.R')
+source('scripts/paths.R'); source('scripts/evaluate.R'); source('scripts/fit_greml.R');source('scripts/fit_gbayes.R');source('scripts/fit_glma.R')
 selected<-Sys.getenv('GPCT_METHODS')
 if(nzchar(selected)) {
   selected<-strsplit(selected,',',fixed=TRUE)[[1]]
@@ -16,6 +16,7 @@ write_status <- function(status,message='') write.csv(data.frame(status,message,
   timestamp_utc=format(Sys.time(),tz='UTC')),file.path(destination,'run_status.csv'),row.names=FALSE)
 write_status('running'); saveRDS(config,file.path(destination,'settings.rds'))
 packages <- c('gsuite','gbayes','gbase','digest','jsonlite','reticulate')
+if(any(grepl('^glma_',config$methods))) packages <- c(packages,'glma')
 write.csv(data.frame(package=packages,version=vapply(packages,function(p)
   as.character(utils::packageVersion(p)),character(1))),file.path(destination,'package_versions.csv'),row.names=FALSE)
 results <- predictions <- list()
@@ -39,13 +40,21 @@ run <- function() {
   folds <- saved_folds(ids,file.path(data_dir(),'folds',paste0(config$case,'-gpbench-10fold-seed42.csv')))
   saveRDS(folds,file.path(destination,'folds.rds'))
   saveRDS(list(source=input$metadata,input_md5=unname(tools::md5sum(input_path)),
+    source_pins=read.csv('environment/sources.csv',stringsAsFactors=FALSE),
     scripts_md5=tools::md5sum(c('scripts/run_prediction.R','scripts/evaluate.R','scripts/prepare.R',
-      'scripts/gpbench_folds.py','scripts/fit_greml.R','scripts/fit_gbayes.R',paste0('benchmarks/',config$case,'_prediction/config.R'))),
+      'scripts/gpbench_folds.py','scripts/fit_greml.R','scripts/fit_gbayes.R','scripts/fit_glma.R',paste0('benchmarks/',config$case,'_prediction/config.R'))),
     response_imputed_n=sum(response$imputed),config=config),file.path(destination,'provenance.rds'))
   rm(input); gc()
   # Data-only raw dosage kernel; no marker filtering, allele recoding or SD scaling.
   # Kernel normalization changes only parameter units: vg = markers * marker Vu.
   shared_kernel_seconds <<- 0
+  glma_cache_seconds <- 0
+  if(any(grepl('^glma_',config$methods))) {
+    bed <- file.path(destination,'anonymous-dosages.bed')
+    started <- proc.time()[['elapsed']]
+    glma::glma_prediction_cache(X,bed)
+    glma_cache_seconds <- proc.time()[['elapsed']]-started
+  }
   if('gblup_reml'%in%config$methods) {
     cat('Building full raw-dosage kernel for greml/gsolve\n')
     started <- proc.time()[['elapsed']]; kernel <- tcrossprod(X)/ncol(X)
@@ -90,6 +99,27 @@ run <- function() {
           stage <- 'prediction'; started <- proc.time()[['elapsed']]
           predicted <- as.numeric(fit$fixed_effects)+
             as.numeric(fit$parameters[['genetic']]*Ktarget %*% fit$Py)
+        } else if(method%in%c('glma_infinitesimal','glma_prior_selected')) {
+          Xtarget<-X[test,,drop=FALSE]
+          row$preparation_seconds<-proc.time()[['elapsed']]-started+
+            if(fold==1L) glma_cache_seconds else 0
+          started<-proc.time()[['elapsed']]
+          result<-fit_glma(ytr,bed,nrow(X),ncol(X),train,method,
+            threads=as.integer(Sys.getenv('OMP_NUM_THREADS','4')))
+          row$fit_seconds<-proc.time()[['elapsed']]-started
+          if(!isTRUE(result$converged)) stop('GLMA full-marker refit was not accepted')
+          stopifnot(all(result$inner_validation_rows_0based %in% (seq_along(train)-1L)))
+          diagnostics<-result[setdiff(names(result),c('effects','centers','scales'))]
+          diagnostics$outer_training_source_rows<-train
+          row$markers<-result$markers_used
+          row$convergence<-'accepted native joint workflow'
+          row$genetic_variance<-result$genetic_variance
+          row$residual_variance<-result$residual_variance
+          row$native_backend<-'glma joint full-marker prediction; gsolve MKL decoded products'
+          row$native_reported_requested_threads<-as.integer(Sys.getenv('OMP_NUM_THREADS','4'))
+          row$native_reported_resolved_threads<-result$coordinate_threads
+          stage<-'prediction';started<-proc.time()[['elapsed']]
+          predicted<-as.numeric(result$intercept+Xtarget %*% result$effects)
         } else if(method%in%c('gbayes_gaussian','gbayes_mixture')) {
           Xtr<-X[train,,drop=FALSE];Xtarget<-X[test,,drop=FALSE]
           row$preparation_seconds<-proc.time()[['elapsed']]-started
@@ -108,7 +138,7 @@ run <- function() {
         row$prediction_seconds <- proc.time()[['elapsed']]-started
         stopifnot(length(predicted)==length(test),all(is.finite(predicted)))
         score <- metrics(y[test],predicted); row[names(score)] <- as.list(score)
-        row$status <- if(row$convergence=='converged') 'completed' else 'provisional'
+        row$status <- if(row$convergence%in%c('converged','accepted native joint workflow')) 'completed' else 'provisional'
         saveRDS(diagnostics,file.path(destination,paste0(key,'-diagnostics.rds')))
         predictions[[key]] <<- data.frame(id=ids[test],fold,method,observed=y[test],predicted,
           phenotype_was_imputed=response$imputed[test],training_mean=mean(ytr))
@@ -120,7 +150,8 @@ run <- function() {
       row$message <- paste(c(row$message[nzchar(row$message)],warnings),collapse='; ')
       results[[key]] <<- row; save_tables(); cat(key,row$status,row$convergence,row$fit_seconds,row$message,'\n')
       if(exists('result'))rm(result)
-      if(exists('Xtr'))rm(Xtr,Xtarget)
+      if(exists('Xtr'))rm(Xtr)
+      if(exists('Xtarget'))rm(Xtarget)
       gc()
     }
 
