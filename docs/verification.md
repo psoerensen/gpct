@@ -56,3 +56,16 @@ in a browser. The website source is prepared for later standard branch publishin
    and mark a recipe runnable only after a successful actual run.
 6. Confirm original citations, units, IDs and genotype annotations before broader
    benchmarks; publish only reviewed aggregate results and then enable Pages.
+
+## Website presentation update
+
+The public gact Pages HTML and stylesheet were inspected on 2026-11-21.
+gpct now selects the same standard `jekyll-theme-primer` theme and includes an
+editable SVG explaining the prediction benchmark workflow. Its caption and
+status text explicitly distinguish the planned process from measured results.
+
+The SVG was rendered and visually inspected. A local HTML preview using the
+public Primer stylesheet was checked in the browser. SVG XML and local links
+were checked. Ruby/Jekyll is not available in the checked environment, so a
+full Jekyll build and deployed Pages appearance remain unverified. This update
+does not change or execute the statistical recipes.
