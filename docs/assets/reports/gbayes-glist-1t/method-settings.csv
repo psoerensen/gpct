@@ -1,0 +1,7 @@
+"method_id","label","method","algorithm","settings"
+"marker_gaussian","Gaussian PCG","marker_gaussian","pcg","Fixed equal marker variances and residual variance; working h2=0.5; tolerance 1e-8; 1000 iteration cap; no REML"
+"elastic_net","Elastic net","elastic_net","coordinate_descent","Fixed candidate: alpha=0.5; lambda=0.01*training phenotype SD; native tolerance; 1000 sweep cap; no tuning"
+"laplace_gaussian","Laplace–Gaussian VB","laplace_gaussian","vbayes","Fixed average marker and residual variances; working h2=0.5; Laplace probability=0.1; Gaussian variance fraction=0.3; 1000 sweep cap"
+"bayesC_vb","BayesC VB","bayesC","vbayes","Fixed active probability=0.1, slab and residual variances; working h2=0.5; native tolerance; 1000 sweep cap"
+"bayesC_mcmc","BayesC MCMC","bayesC","mcmc","Two sequential chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2"
+"bayesR_mcmc","BayesR MCMC","bayesR","mcmc","Two sequential chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2"

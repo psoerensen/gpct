@@ -4,61 +4,25 @@ title: Benchmark recipes
 ---
 # Benchmark recipes
 
-> The GLMA Gaussian fast path has a [real-data numerical audit warning](glma-gaussian-audit.html). Rebuilding with MKL does not resolve the variance fallback or loose Gaussian refit. Treat its current results as diagnostic.
+The current collection evaluates existing gbayes prediction methods from
+QC-selected Glist with one worker. Each method completes cattle and maize
+before its aggregate results are added to the website.
 
-Cattle/mkg and maize/DTT use the published GPBench regression scheme with all
-source markers and ten folds. [Results](results.html) and detailed
-[cattle](reports/cattle.html)/[maize](reports/maize.html) reports use the same
-scientific structure while retaining distinct trait units and source limitations.
+| Dataset | Trait | Individuals | Available markers | QC-retained markers | Report |
+| --- | --- | ---: | ---: | ---: | --- |
+| GPBench cattle | mkg | 5,024 | 42,551 | 42,373 | [Cattle](reports/cattle.html) |
+| GPBench maize | DTT | 1,458 | 75,304 | 75,304 | [Maize](reports/maize.html) |
 
-| Case | Rows evaluated | Markers | Missing target handling |
-| --- | --- | --- | --- |
-| Cattle / mkg | 5,024 | 42,551 | None missing |
-| Maize / DTT | 1,458 | 75,304 | Two mean-imputed DTT targets flagged; observed-only sensitivity score |
-
-These recipes benchmark genomic BLUP implemented in greml/gsolve, estimating
-variance components by REML, and gbayes Gaussian/normal-mixture VB with fixed
-training-only priors, plus GLMA Gaussian and prior-selected full-marker prediction.
-All five use the same outer folds and supplied markers; GLMA applies its native
-training-only SD scaling, constant-marker exclusion and RHE/MC variance and inner
-selection procedure. These are prediction fits underlying its LOCO interfaces,
-without chromosome exclusions or association scans. The gsolve fixed-variance
-check is a separate numerical comparison, not another complete model fit.
-
-## Reproduce locally
-
-Build and activate the [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment).
-The private integration requires authorized access; implementation source and
-binaries are not distributed with gpct. R uses OpenBLAS and the private native
-integration uses its existing Intel MKL backend.
+All methods use the same saved ten-fold partitions, seed 42. The two imputed
+maize DTT outcomes remain flagged. See [dataset provenance](datasets.html),
+[Glist preparation](genotype-preparation.html), [settings](methods.html) and
+[evaluation protocol](protocol.html).
 
 ```powershell
-./environment/activate.ps1
-$env:GPCT_DATA_DIR = 'C:/data/gpct'
-$env:GPCT_OUTPUT_DIR = 'C:/results/gpct'
-$env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
-Rscript --vanilla environment/preflight.R
-Rscript --vanilla tests/check_protocol.R
-Rscript --vanilla tests/check_interfaces.R
-Rscript --vanilla tests/check_gbayes.R
-Rscript --vanilla tests/check_glma_prediction.R
-Rscript --vanilla tests/check_reporting.R
-Rscript --vanilla scripts/prepare.R cattle
-Rscript --vanilla benchmarks/cattle_prediction/run.R
-Rscript --vanilla scripts/prepare.R maize
-Rscript --vanilla benchmarks/maize_prediction/run.R
-Rscript --vanilla scripts/check_solvers.R RUN_DIRECTORY
-Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY
+./environment/run-method.ps1 -Method marker_gaussian
+Rscript --vanilla scripts/publish_gbayes.R
 ```
 
-Preparation downloads and verifies the pinned archive unless GPCT_ARCHIVE points
-to an existing copy. Full matrices require several GB RAM and external disk space.
-No individual outputs are written inside the repository. Source-position IDs
-acknowledge the unverified upstream row-order convention; equal array sizes do
-not prove biological alignment.
-
-The runner records folds, OOF predictions, imputed-target flags, metrics,
-fit/prediction/kernel timing, settings, versions, recipe/input checksums,
-diagnostics and explicit status. Inspect every fold before publication.
-Random within-cohort CV does not establish transfer across families, herds,
-environments or time. See the [protocol](protocol.html).
+The runner calls gbayes fitting and native held-out prediction directly with
+Glist. Individual data, fits and diagnostics stay in external directories.
+Only reviewed summaries and static SVG plots enter the site.

@@ -48,7 +48,7 @@ Follow the commands in the root README. `scripts/prepare.R cattle` (or `maize`)
 verifies the archive checksum and exact member paths, refuses object/pickle
 arrays, checks dimensions and dosage coding, and retains every source marker. It saves `prepared/<case>-gpbench.rds`
 under `GPCT_DATA_DIR`, containing X, phenotypes, surrogate IDs, source columns,
-source checksum and preparation metadata. Genotype dosages are passed through without scaling or filtering, matching the published GPBench regression script. The runner mean-imputes missing phenotypes before splitting to match that script; the two imputed maize DTT targets are flagged and a separate observed-target-only sensitivity score is published.
+source checksum and preparation metadata. This source-preparation artifact preserves original dosages. Fitting uses the separate PLINK/QC/Glist resource below and preserves each native gbayes method’s training-specific coding. The runner mean-imputes missing phenotypes before splitting to match that script; the two imputed maize DTT targets are flagged and a separate observed-target-only sensitivity score is published.
 
 Set `GPCT_ACCEPT_POSITIONAL_IDS=yes` after accepting the upstream convention
 that the two arrays have matching row order. Equal row counts cannot prove
@@ -80,9 +80,8 @@ On 21 November 2026, cattle retained 42,373/42,551 markers (178 MAF exclusions),
 and maize retained 75,304/75,304. Neither panel had missing genotypes or
 missingness exclusions. The existing selector excludes MAF at or below 1%;
 neither panel contains a marker exactly on that boundary. No sample was removed,
-so the saved seed-42 folds and row identities remain applicable. The new panels
-are separate inputs: historical unfiltered scores must not be relabelled as
-QC-filtered results. See the [QC preparation record](../docs/genotype-preparation.md).
+so the saved seed-42 folds and row identities remain applicable. The earlier unfiltered experimental scores are retired; the active results
+use these QC-selected Glist panels. See the [QC preparation record](../docs/genotype-preparation.md).
 
 The default data directory is `~/gpct-data`; outputs default to `~/gpct-results`.
 Both are configurable and scripts refuse paths inside the checkout. Preparation reads NPZ files through `reticulate` and NumPy. The separate saved-split recipe calls the pinned scikit-learn KFold implementation. Configure Python

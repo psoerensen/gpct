@@ -7,7 +7,7 @@ param(
   [string]$Python = '',
   [string]$EnvRoot = "$env:USERPROFILE/gpct-environments/windows-r443-openblas",
   [string]$DownloadCache = '',
-  [ValidateRange(1,64)][int]$BlasThreads = 4,
+  [ValidateRange(1,64)][int]$BlasThreads = 1,
   [ValidateSet('gbase','gbayes','gcorr','glma','gmap','gscore','gsea')]
   [string[]]$Packages = @('gbase','gbayes')
 )

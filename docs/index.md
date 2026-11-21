@@ -24,20 +24,21 @@ used, which samples were held out, how each method was fitted, and how its
 predictions performed. Start with cattle and maize, then extend the same
 documented approach to further animal, plant and human datasets.
 
-## Two matched full-marker benchmarks
+## Glist-based gbayes benchmarks
 
-The current GLMA Gaussian fast-path results are **diagnostic** following a
-[model and variance audit](glma-gaussian-audit.html). Native acceptance does not
-establish accurate variance estimation or Gaussian numerical convergence.
+The current collection uses existing gbayes C++ methods through Glist with
+**one worker**, starting with cattle mkg and maize DTT. The route is
+BED/BIM/FAM → MAF/missingness QC → Glist → identical training folds → native
+gbayes fitting → held-out prediction. HWE is reported without filtering.
 
-| Case | Dataset | Target | Status |
-| --- | --- | --- | --- |
-| Cattle prediction | GPBench Cattle | supplied mkg | Completed; [results](results.html) |
-| Maize prediction | GPBench Maize | supplied DTT | Completed; [results](results.html) |
+Cattle retains 42,373 of 42,551 available markers; maize retains all 75,304.
+Every method uses the same saved ten-fold splits, seed 42. Native method-specific
+coding and fitting are preserved. Results are added after a method completes
+both datasets. The previous experimental results have been retired.
 
-Both benchmarks use all supplied markers and the same saved GPBench ten-fold splits (seed 42). Compare genomic BLUP through greml/gsolve, Gaussian and sparse normal-mixture VB through gbayes, and GLMA Gaussian/prior-selected full-marker prediction. REML estimates variance components; gbayes uses declared training-only priors; GLMA uses training-marker SD scaling, approximate RHE/MC variance refinement and internal training-fold selection. GLMA prediction runs without chromosome exclusions. Accuracy, calibration and preparation/fitting/prediction times are reported together. Mean-imputed maize targets are explicitly flagged.
-
-Read the [dataset catalogue](datasets.html), [reproduction commands](benchmarks.html), [interfaces](methods.html), [protocol](protocol.html) and [results and timings](results.html).
+Read the [dataset catalogue](datasets.html), [Glist/QC record](genotype-preparation.html),
+[recipes](benchmarks.html), [methods](methods.html), [protocol](protocol.html)
+and [results and timings](results.html).
 
 ## Contribute
 

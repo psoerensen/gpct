@@ -5,25 +5,19 @@ expected <- stats::setNames(pin$value, pin$key)
 stopifnot(as.character(getRversion()) == expected[["r_version"]])
 stopifnot(tolower(normalizePath(R.home(), winslash = "/")) ==
           tolower(normalizePath(file.path(root, "R"), winslash = "/")))
-for (p in c("gbase", "gsuite", "gbayes", "digest", "jsonlite", "reticulate")) {
+for (p in c("gbase", "gbayes", "digest", "jsonlite", "reticulate")) {
   if (!requireNamespace(p, quietly = TRUE)) stop("Missing required package: ", p)
   path <- tolower(normalizePath(find.package(p), winslash = "/"))
   if (!startsWith(path, paste0(tolower(normalizePath(root, winslash = "/")), "/")))
     stop("Package is outside the isolated environment: ", p)
   cat(p, as.character(utils::packageVersion(p)), "\n")
 }
-stopifnot(all(c("gs_lmm_fit", "gs_lmm_blup", "gs_lmm_control", "gs_relationship_matrix",
-                "gs_lmm_model", "gs_lmm_records", "gs_lmm_channel", "gs_lmm_component",
-                "gsuite_solve", "gsuite_versions") %in% getNamespaceExports("gsuite")))
-stopifnot(as.character(utils::packageVersion('gbase'))==expected[['gbase_version']],
-          as.character(utils::packageVersion('gsuite'))==expected[['gsuite_version']])
-native_versions <- gsuite::gsuite_versions()
+stopifnot(as.character(utils::packageVersion('gbase'))==expected[['gbase_version']])
 stopifnot(as.character(utils::packageVersion('gbayes'))==expected[['gbayes_version']],
-          all(c('bayes','diagnostics')%in%getNamespaceExports('gbayes')))
-stopifnot(all(c('covariance_diagonal','covariance_log_determinant','positive_definite_certified') %in%
-              names(formals(gsuite::gs_relationship_matrix))))
-stopifnot(native_versions$gsolve$version == '0.28.0', native_versions$greml$version == '0.92.0')
-print(native_versions[c('gsolve','greml')])
+          all(c('bayes','diagnostics','extract','gbayes_native_info')%in%getNamespaceExports('gbayes')))
+stopifnot('Glist'%in%names(formals(gbayes::bayes)),all(Sys.getenv(c('OMP_NUM_THREADS',
+  'OPENBLAS_NUM_THREADS','MKL_NUM_THREADS'))=='1'))
+print(gbayes::gbayes_native_info())
 if (!"blas_probe" %in% names(getLoadedDLLs())) dyn.load(file.path(root, "probe", "blas_probe.dll"))
 gpct_blas <- .Call("gpct_blas_info")
 checksums <- read.csv(file.path(root, "runtime-checksums.csv"), stringsAsFactors = FALSE)

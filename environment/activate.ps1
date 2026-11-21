@@ -1,6 +1,6 @@
 param(
   [string]$EnvRoot = "$env:USERPROFILE/gpct-environments/windows-r443-openblas",
-  [ValidateRange(1,64)][int]$BlasThreads = 4
+  [ValidateRange(1,64)][int]$BlasThreads = 1
 )
 $ErrorActionPreference='Stop'
 $EnvRoot=(Resolve-Path -LiteralPath $EnvRoot).Path

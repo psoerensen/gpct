@@ -1,2 +1,0 @@
-"dataset","species","trait","phenotype_definition","individuals_available","individuals_evaluated","observed_targets","imputed_targets","available_markers","markers_used","source"
-"gpbench_maize","Zea mays","DTT","Upstream processing undocumented; all inspected genotypes finite; phenotype finite counts DTT=1456 PH=1457 EW=1454; units unverified",1458,1458,1456,2,75304,75304,"https://huggingface.co/datasets/xw97/GPBench"

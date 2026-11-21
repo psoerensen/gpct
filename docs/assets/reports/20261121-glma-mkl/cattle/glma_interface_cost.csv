@@ -1,3 +1,0 @@
-"dataset","method","fold","scope","r_fit_call_seconds","native_call_seconds","native_inner_fit_seconds","outside_native_call_seconds","native_preparation_and_conversion_seconds"
-"gpbench_cattle","glma_infinitesimal",1,"Separate repeat; Rcpp boundary tracing; excluded from benchmark totals",18.07,18.07,14.0418616,0,4.0281384
-"gpbench_cattle","glma_prior_selected",1,"Separate repeat; Rcpp boundary tracing; excluded from benchmark totals",25.17,25.17,21.12835,0,4.04165

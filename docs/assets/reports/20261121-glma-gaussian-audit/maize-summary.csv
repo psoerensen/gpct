@@ -1,5 +1,0 @@
-"Fit","Folds","Mean_correlation"
-"Raw-dosage Gaussian REML (retained baseline)",10,0.651618394177409
-"Standardized Gaussian REML (controlled reference)",10,0.641743329658403
-"Standardized Gaussian, GLMA variances, exact solve",10,0.617937151905701
-"Published native GLMA Gaussian fast path",10,0.6088426424309

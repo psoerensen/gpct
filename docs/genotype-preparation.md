@@ -7,8 +7,8 @@ title: Genotype preparation and QC
 The replacement cattle and maize workflow starts with PLINK BED/BIM/FAM,
 then uses the existing `gbase::gprep` and `gbase::gfilter` interfaces to create
 a shared QC-selected `Glist`. Conversion and QC completed on 21 November 2026.
-The replacement model fits are still being qualified; these counts do not
-represent a new accuracy or timing result.
+Existing gbayes methods now consume these selected resources directly.
+See [results](results.html) for completed methods and timings.
 
 | Dataset | Individuals | Available markers | QC-retained markers | MAF exclusions | Missingness exclusions |
 | --- | ---: | ---: | ---: | ---: | ---: |
@@ -56,5 +56,4 @@ Rscript --vanilla scripts/prepare_glist.R
 The recipe preserves the source triplet, writes a separate QC-selected triplet,
 validates both `Glist` objects, and saves the conversion manifest and QC audit
 outside the repository. Existing outputs are checked rather than silently
-replaced. The new resources are not retroactively assigned to the
-[historical unfiltered results](results.html).
+replaced. The earlier unfiltered experimental results have been retired from the site.
