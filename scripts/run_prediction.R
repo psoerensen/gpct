@@ -1,4 +1,5 @@
 # Thin case recipe: package fits, shared folds, metrics and provenance only.
+execution_started <- proc.time()[["elapsed"]]
 source("scripts/paths.R")
 source("scripts/evaluate.R")
 run_id <- Sys.getenv("GPCT_RUN_ID", paste0(format(Sys.time(), "%Y%m%dT%H%M%S", tz = "UTC"), "-", Sys.getpid()))
@@ -67,11 +68,15 @@ run <- function() {
       seed <- config$method_seed + fold - 1L
       set.seed(seed)
       warnings <- character(); fit_seconds <- prediction_seconds <- NA_real_
+      method_started <- proc.time()[["elapsed"]]
       stage <- "package_check"
       row <- data.frame(method = method, fold = fold, seed = seed,
         n_train = length(train), n_test = length(test), markers = ncol(prep$training),
         status = "failed", convergence = "unavailable", message = "",
         fit_seconds = NA_real_, prediction_seconds = NA_real_,
+        method_elapsed_seconds = NA_real_, requested_threads = if (method == "rrblup") NA_integer_ else 1L,
+        actual_threads = NA_integer_, peak_ram_mb = NA_real_, ram_status = "not measured",
+        warning_count = 0L,
         predictive_ability = NA_real_, rmse = NA_real_, predictive_r_squared = NA_real_,
         calibration_intercept = NA_real_, calibration_slope = NA_real_)
       tryCatch(withCallingHandlers({
@@ -87,6 +92,7 @@ run <- function() {
         } else if (method == "gbayes_gaussian") {
           fit <- gbayes::bayes(data = training, X = prep$training, trait = "response",
             method = "marker_gaussian", algorithm = "pcg", nit = config$nit,
+            ncores = 1L,
             ve = 1 - config$gaussian_h2,
             prior = list(markerVariance = stats::setNames(
               rep(config$gaussian_h2 / ncol(prep$training), ncol(prep$training)), colnames(prep$training))),
@@ -94,6 +100,7 @@ run <- function() {
         } else if (method == "gbayes_elastic_net") {
           fit <- gbayes::bayes(data = training, X = prep$training, trait = "response",
             method = "elastic_net", algorithm = "coordinate_descent", nit = config$nit,
+            ncores = 1L,
             control = list(lambda = config$lambda, alpha = config$alpha,
               tolerance = config$tolerance, memoryLimit = config$memory_limit))
         } else stop("Unknown configured method: ", method)
@@ -128,6 +135,8 @@ run <- function() {
         row$message <<- conditionMessage(e); any_failure <<- TRUE
       })
       row$fit_seconds <- fit_seconds; row$prediction_seconds <- prediction_seconds
+      row$method_elapsed_seconds <- proc.time()[["elapsed"]] - method_started
+      row$warning_count <- length(warnings)
       row$message <- paste(c(row$message[nzchar(row$message)], warnings), collapse = "; ")
       results[[key]] <<- row
       save_tables()
@@ -142,6 +151,13 @@ ok <- tryCatch({run(); TRUE}, error = function(e) {
   message(conditionMessage(e)); FALSE
 })
 capture.output(sessionInfo(), file = file.path(destination, "sessionInfo.txt"))
+write.csv(data.frame(case_elapsed_seconds = proc.time()[["elapsed"]] - execution_started,
+  gbayes_requested_package_threads = 1L, actual_threads = NA_integer_,
+  OMP_NUM_THREADS = Sys.getenv("OMP_NUM_THREADS", unset = "unset"),
+  OPENBLAS_NUM_THREADS = Sys.getenv("OPENBLAS_NUM_THREADS", unset = "unset"),
+  MKL_NUM_THREADS = Sys.getenv("MKL_NUM_THREADS", unset = "unset"),
+  peak_ram_mb = NA_real_, ram_status = "not measured"),
+  file.path(destination, "execution.csv"), row.names = FALSE)
 if (ok) write_status("completed", "Review per-method convergence; completion does not certify scientific validity.")
 cat("Run artifacts:", destination, "\n")
 if (!ok) quit(status = 1L)

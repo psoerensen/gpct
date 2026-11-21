@@ -2,6 +2,16 @@
 
 No benchmark performance results are available. Both initial cases are planned.
 
+The [website results source](../docs/results.md) now contains standard dataset,
+method and result tables, four empty plot templates, and links to separate
+cattle/maize report pages. Generated blank CSV/SVG bundles live under
+`docs/assets/reports/templates/`; all measurement columns are unavailable.
+
+After a real run, `Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY`
+generates pooled and per-fold aggregate CSVs, four static SVGs and `report.md`
+under a new local report directory. This does not publish any output. Review
+the bundle using `docs/reporting.md`, then copy selected aggregate files only.
+
 Complete run artifacts belong under the external `GPCT_OUTPUT_DIR`, including
 predictions, fold membership, settings, diagnostics, timings and sessionInfo.
 These can contain individual information. Do not copy whole run directories here.

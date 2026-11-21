@@ -72,6 +72,19 @@ held-out outcomes enter evaluation only. Predictions are on the supplied trait
 scale, including the training intercept. Details and metric definitions are in
 [the protocol](docs/protocol.md).
 
+## Report a run
+
+```text
+Rscript --vanilla tests/check_reporting.R
+Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY
+```
+
+The reporting script generates three standard tables, separate pooled/fold
+summaries, four static SVG plot types and a detailed report. Missing resources
+and failed fits remain explicit. Individual predictions stay local. The
+[results page](docs/results.md) and [reporting guide](docs/reporting.md) contain
+blank templates and the review/publication procedure; no measured results exist.
+
 ## Contribute and publish
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) to add animal, plant or human datasets.

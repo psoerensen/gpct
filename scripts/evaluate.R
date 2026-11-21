@@ -1,7 +1,7 @@
 metrics <- function(observed, predicted, training_mean) {
   stopifnot(length(observed) == length(predicted), length(observed) >= 2L,
             all(is.finite(observed)), all(is.finite(predicted)),
-            length(training_mean) == 1L, is.finite(training_mean))
+            length(training_mean) %in% c(1L, length(observed)), all(is.finite(training_mean)))
   error <- observed - predicted
   denominator <- sum((observed - training_mean)^2)
   variable <- stats::sd(predicted) > 0

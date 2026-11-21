@@ -9,6 +9,7 @@ Invoke all scripts with `Rscript --vanilla` from the repository root.
 | `paths.R` | Enforce external artifact directories |
 | `evaluate.R` | Saved five-fold partitions, training-only preparation and metrics |
 | `run_prediction.R` | Shared thin recipe sourced by each case's `run.R` |
+| `report_prediction.R RUN_DIRECTORY` | Recompute pooled/fold summaries and generate aggregate CSVs, four static SVGs and a detailed report beside a local run |
 
 No statistical optimizer is implemented here. Fitting uses `rrBLUP::mixed.solve`
 and `gbayes::bayes`. Folds and seeds are saved, with `RNGkind` fixed. Each run has
@@ -28,3 +29,14 @@ never reached has an unavailable time.
 
 All local outputs may contain sensitive individual information. They are not
 automatically copied to `results/` or the website.
+
+Reporting uses base R and validates OOF sample/fold alignment before summarizing.
+Run `Rscript --vanilla tests/check_reporting.R` for synthetic checks of pooled
+versus fold-average metrics, failed fits and missing resources. Use
+`Rscript --vanilla scripts/report_prediction.R --templates NEW_DIRECTORY` for
+blank collection/case templates. See `docs/reporting.md` for schemas, timing and
+thread-count scope, and the manual aggregate-publication procedure.
+
+New prediction runs additionally record per-method elapsed time, warning counts,
+worker requests and unavailable peak-RAM/actual-thread fields, plus case-wide
+`execution.csv`. The managed-memory setting is not a peak-RAM measurement.

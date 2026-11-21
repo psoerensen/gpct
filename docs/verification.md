@@ -35,8 +35,9 @@ standard R installation locations, including a read-only host check. Therefore
 installed R package availability could not be established. No packages were
 installed or rebuilt, and no sibling package checkout was modified.
 
-The R scripts and `tests/check_protocol.R` have **not been executed**. No model
-was fitted. Package/native compatibility, R/reticulate conversion, convergence,
+At the initial scaffold delivery the R scripts and protocol checks had not been
+executed. The later reporting checks below supersede that test-status statement.
+No model was fitted. Package/native compatibility, R/reticulate conversion, convergence,
 end-to-end outputs and runtime/memory costs remain unverified. In particular,
 the inspected gbayes source labels its dense prepared-design adapters as pending
 runtime qualification; this scaffold does not certify them.
@@ -69,3 +70,26 @@ public Primer stylesheet was checked in the browser. SVG XML and local links
 were checked. Ruby/Jekyll is not available in the checked environment, so a
 full Jekyll build and deployed Pages appearance remain unverified. This update
 does not change or execute the statistical recipes.
+
+## Reporting templates and checks
+
+On 2026-11-21, `tests/check_protocol.R` and `tests/check_reporting.R` passed under
+base R 4.6.0 using an isolated WebR 0.6.1 runtime in ignored local output files.
+The Windows path handling of that disposable runtime's JavaScript loader was
+adapted locally; no shared R installation or sibling package checkout changed.
+Changed R sources were parsed in that runtime.
+
+Checks cover pooled predictive R² with each test individual's training-fold
+mean, separation from fold-average metrics, paired baseline changes, constant
+predictions, failed/missing fits, duplicate IDs, fold mismatches, inconsistent
+outcomes, unavailable resources and exclusion of individual artifacts from
+generated reports. Synthetic output was removed, not published as results.
+An intentionally failing synthetic runner case also verified per-fold failure
+rows, method elapsed times, case elapsed time and explicit unmeasured RAM.
+
+Blank CSVs, detailed report templates and four static SVG plot types were
+generated from `scripts/report_prediction.R` using base R graphics. New runner
+fields record method/case elapsed time, warning counts, requested worker count
+and explicit unavailable actual-thread/peak-RAM measurements. Native benchmark
+packages and fits remain unexecuted; timing instrumentation has not been
+exercised around a real package fit.

@@ -18,6 +18,8 @@
 .overview-figure img { display: block; width: 100%; max-width: 100%; height: auto; }
 .workflow-figure figcaption,
 .overview-figure figcaption { margin-top: .75rem; color: #586069; font-size: .95rem; }
+.markdown-body .report-figure { margin: 1.25rem 0; overflow-x: auto; }
+.report-figure img { display: block; max-width: 100%; height: auto; }
 .site-footer { border-top: 1px solid #eaecef; margin-top: 2.5rem; padding-top: 1rem; color: #586069; font-size: .9rem; }
 .skip-link { position: absolute; left: -10000px; }
 .skip-link:focus { left: 1rem; top: 1rem; background: white; padding: .5rem; z-index: 1; }
@@ -27,4 +29,5 @@ a:focus-visible { outline: 3px solid #0366d6; outline-offset: 3px; }
   .site-nav { gap: .5rem 1rem; }
   .workflow-figure { overflow-x: auto; }
   .workflow-figure img { min-width: 960px; }
+  .report-figure img { min-width: 760px; }
 }

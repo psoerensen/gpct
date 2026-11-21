@@ -12,6 +12,12 @@ pending. Neither has been validated by a successful package run.
 | Cattle/mkg | Predict supplied mkg within cohort | 5,024 finite outcomes | 512-marker pilot |
 | Maize/DTT | Predict supplied DTT within panel | 1,456 finite outcomes; two excluded | 512-marker pilot |
 
+Detailed report templates: [cattle/mkg](reports/cattle.html) and
+[maize/DTT](reports/maize.html). Both follow the same sequence: scientific
+question, methods/validation, results table, performance/cost plots,
+calibration/diagnostics, and reproduction details. See the
+[standard comparison tables and plots](results.html).
+
 These targets use supplied numeric units. Biological definitions, preprocessing
 and units need original-source confirmation. Random splits do not evaluate
 family, herd, environment or temporal transfer.
