@@ -12,9 +12,12 @@
   font-size: 1rem;
 }
 .markdown-body h1.page-heading { font-size: 1.5em; border-bottom: 0; }
-.markdown-body .workflow-figure { margin: 1.75rem 0 2rem; }
-.workflow-figure img { display: block; width: 100%; height: auto; }
-.workflow-figure figcaption { margin-top: .75rem; color: #586069; font-size: .95rem; }
+.markdown-body .workflow-figure,
+.markdown-body .overview-figure { margin: 1.75rem 0 2rem; }
+.workflow-figure img,
+.overview-figure img { display: block; width: 100%; max-width: 100%; height: auto; }
+.workflow-figure figcaption,
+.overview-figure figcaption { margin-top: .75rem; color: #586069; font-size: .95rem; }
 .site-footer { border-top: 1px solid #eaecef; margin-top: 2.5rem; padding-top: 1rem; color: #586069; font-size: .9rem; }
 .skip-link { position: absolute; left: -10000px; }
 .skip-link:focus { left: 1rem; top: 1rem; background: white; padding: .5rem; z-index: 1; }

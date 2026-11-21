@@ -4,6 +4,15 @@ title: Validation and evaluation
 ---
 # Validation and evaluation
 
+<figure class="workflow-figure" tabindex="0" aria-label="Benchmark workflow; scroll horizontally on smaller screens">
+  <a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" aria-label="Open the full-size gpct workflow figure">
+    <img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="GPBench cattle and maize genotypes and traits enter shared five-fold validation with seed 4401. Existing R packages fit each training fold, then predict held-out samples. Evaluation records predictive ability, error, calibration, timings and failures. Individual records stay local; only reviewed aggregate summaries go to the public site. Both initial cases are planned; no prediction results are available yet.">
+  </a>
+  <figcaption>From source datasets to reproducible comparisons: every method uses the same held-out samples. Individual data stay local; reviewed aggregate results can be shared. The figure describes the workflow, not measured performance.</figcaption>
+</figure>
+
+[Open the full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}).
+
 ## Prediction target and partitions
 
 Predict the supplied selected phenotype in source numeric units. This is

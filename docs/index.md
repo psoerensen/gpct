@@ -8,12 +8,14 @@ title: Reproducible genomic prediction
 and reviewed results for genomic prediction and related statistical genetics.
 Existing packages perform the computation. gpct is a benchmark collection.
 
-<figure class="workflow-figure" tabindex="0" aria-label="Benchmark workflow; scroll horizontally on smaller screens">
-  <a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" aria-label="Open the full-size gpct workflow figure">
-    <img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="GPBench cattle and maize genotypes and traits enter shared five-fold validation with seed 4401. Existing R packages fit each training fold, then predict held-out samples. Evaluation records predictive ability, error, calibration, timings and failures. Individual records stay local; only reviewed aggregate summaries go to the public site. Both initial cases are planned; no prediction results are available yet.">
+<figure class="overview-figure">
+  <a href="{{ '/assets/images/gpct-overview.svg' | relative_url }}" aria-label="Open the full-size gpct overview SVG">
+    <img src="{{ '/assets/images/gpct-overview.svg' | relative_url }}" width="1152" height="576" alt="Overview of the gpct benchmark collection: documented cattle and maize genotypes and traits feed shared validation and existing R methods. Schematic miniature plots illustrate predictive ability, error, calibration, computational cost and across-fold variation. Reproducible comparisons retain recipes, settings, versions and diagnostics, with reviewed summaries on GitHub Pages. Human datasets, simulations, glma association and gcorr genetic-correlation benchmarks are shown as planned extensions.">
   </a>
-  <figcaption>From source datasets to reproducible comparisons: every method uses the same held-out samples. Individual data stay local; reviewed aggregate results can be shared. The figure describes the workflow, not measured performance.</figcaption>
+  <figcaption>The gpct benchmark collection connects documented datasets, shared validation, existing statistical methods, and reproducible comparisons. Miniature plots are schematic; future extensions are marked separately.</figcaption>
 </figure>
+
+[Open the full-size overview SVG]({{ '/assets/images/gpct-overview.svg' | relative_url }}).
 
 ## What gpct is for
 
