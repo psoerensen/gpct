@@ -1,5 +1,7 @@
 # gpct
 
+> **GLMA Gaussian qualification warning:** Real-data checks found variance-grid fallback and inaccurate fixed-variance Gaussian refits in the current fast path. Its results remain diagnostic. See the [controlled audit](docs/glma-gaussian-audit.md).
+
 Reproducible benchmarks for methods and models implemented in the gsuite ecosystem.
 
 The cattle/mkg and maize/DTT benchmarks match the published GPBench regression
@@ -20,6 +22,11 @@ new scientific study. Original IDs, upstream preprocessing and units remain
 unverified; source-position IDs are explicit surrogates.
 
 ## Reproduce
+
+The replacement [PLINK/QC/Glist preparation](docs/genotype-preparation.md) is
+ready. It retains 42,373 cattle and 75,304 maize markers with MAF/missingness
+filtering and HWE reporting only. The commands and scores below describe the
+historical unfiltered model run; corrected Glist-based fits are not yet published.
 
 Build and activate the [pinned environment](environment/README.md). R uses
 OpenBLAS; the private gsolve/greml integration uses its existing MKL backend.

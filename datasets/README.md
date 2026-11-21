@@ -55,7 +55,34 @@ that the two arrays have matching row order. Equal row counts cannot prove
 biological alignment. Surrogates such as `gpbench_cattle:row:000001` preserve
 source position, including imputed-target flags; they are never represented
 as original animal/line identifiers. Markers likewise identify source columns,
-not mapped SNPs. Do not invent BIM alleles or genomic positions.
+not mapped SNPs.
+
+### QC-selected PLINK and Glist resources
+
+The replacement workflow uses `scripts/prepare_glist.R` after extracting the
+pinned source arrays. It converts dosages to SNP-major BED, independently checks
+every serialized dosage against its source, and writes BIM/FAM records with
+explicitly synthetic bookkeeping annotations. Sample IDs encode source rows,
+marker IDs and positions encode source columns, chromosome is a single synthetic
+contig `1`, alleles are synthetic A/C, and pedigree/sex are unknown. These fields
+are not original biological identities, alleles or genomic coordinates. They
+permit full-marker prediction and genotype-count QC; they cannot support
+biological LOCO, distance-based LD or allele harmonization.
+
+Existing `gbase::gprep`, `gbase::gfilter` and `gprep(task="subset")` create the
+QC-selected `Glist` and its BED/BIM/FAM. Filters use MAF 1% and marker missingness
+5%; HWE statistics are reported without HWE filtering. Allele/map-dependent
+ambiguity, indel and MHC filters are disabled because annotations are synthetic.
+QC uses all supplied genotypes without phenotypes. Fold-specific genotype means
+and model transformations must still be estimated from training samples.
+
+On 21 November 2026, cattle retained 42,373/42,551 markers (178 MAF exclusions),
+and maize retained 75,304/75,304. Neither panel had missing genotypes or
+missingness exclusions. The existing selector excludes MAF at or below 1%;
+neither panel contains a marker exactly on that boundary. No sample was removed,
+so the saved seed-42 folds and row identities remain applicable. The new panels
+are separate inputs: historical unfiltered scores must not be relabelled as
+QC-filtered results. See the [QC preparation record](../docs/genotype-preparation.md).
 
 The default data directory is `~/gpct-data`; outputs default to `~/gpct-results`.
 Both are configurable and scripts refuse paths inside the checkout. Preparation reads NPZ files through `reticulate` and NumPy. The separate saved-split recipe calls the pinned scikit-learn KFold implementation. Configure Python

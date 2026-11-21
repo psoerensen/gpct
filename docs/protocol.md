@@ -4,6 +4,11 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
+The results below document the historical unfiltered benchmark. The replacement
+[PLINK → QC → Glist workflow](genotype-preparation.html) is prepared, with model
+integration and numerical qualification in progress. Scores from these two input
+panels will be reported separately.
+
 <figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="All cattle and maize markers enter the same GPBench ten-fold splits with seed 42. Our greml/gsolve and gbayes models fit training data, predict held-out targets, and report aggregate performance and costs. Imputed phenotype targets are flagged and private numerical implementations remain external."></a><figcaption>Matched full-marker validation, REML and fixed-prior VB workflows, and separate fixed-variance solver checks. GPBench phenotype imputation is explicitly flagged.</figcaption></figure>
 
 [Open the full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}).

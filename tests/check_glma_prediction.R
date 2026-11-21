@@ -12,6 +12,7 @@ fits <- lapply(c('infinitesimal','prior_selected'), function(method) {
   fit <- glma::glma_full_marker_prediction(path, nrow(X), ncol(X), train,
     y[train], method, threads=4L, block_size=32L)
   stopifnot(isTRUE(fit$converged), fit$markers_used==95L,
+    is.logical(fit$grid_used_initial), length(fit$grid_equations)==3L,
     fit$effects[96L]==0, all(is.finite(fit$effects)),
     all(fit$inner_validation_rows_0based %in% 0:127))
   fit

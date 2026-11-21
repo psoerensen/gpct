@@ -26,6 +26,10 @@ documented approach to further animal, plant and human datasets.
 
 ## Two matched full-marker benchmarks
 
+The current GLMA Gaussian fast-path results are **diagnostic** following a
+[model and variance audit](glma-gaussian-audit.html). Native acceptance does not
+establish accurate variance estimation or Gaussian numerical convergence.
+
 | Case | Dataset | Target | Status |
 | --- | --- | --- | --- |
 | Cattle prediction | GPBench Cattle | supplied mkg | Completed; [results](results.html) |

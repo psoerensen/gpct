@@ -80,6 +80,13 @@ marker annotations or execute association/LOCO scans on GPBench arrays.
 Set GPCT_DATA_DIR and GPCT_OUTPUT_DIR explicitly when running recipes: R's `~`
 can resolve to a redirected Windows Documents directory.
 
+The pinned diagnostic bridge now exposes initial variances, grid equations and
+the no-bracket fallback flag. A separate [real-data audit](../docs/glma-gaussian-audit.md)
+found that the default GLMA Gaussian fast path is not numerically qualified.
+The small build-time fixed-V check is not sufficient evidence for full-data
+accuracy. Rebuilding does not change the estimator; future recipe runs label a
+no-bracket variance estimate provisional.
+
 R retains its supplied LAPACK library while BLAS uses OpenBLAS, following
 [R's fast-BLAS mechanism](https://cran.r-project.org/bin/windows/base/rw-FAQ.html#Can-I-use-a-fast-BLAS_003f).
 A runtime thread setting does not measure observed CPU utilization. The benchmark

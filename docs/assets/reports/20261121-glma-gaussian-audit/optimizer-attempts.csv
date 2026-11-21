@@ -1,0 +1,3 @@
+"dataset","fold","attempt","status"
+"gpbench_maize",6,"GLMA variance initial values","failed likelihood-step acceptance"
+"gpbench_maize",6,"Balanced training-variance initial values","converged at score tolerance 1e-4"

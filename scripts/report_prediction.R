@@ -236,6 +236,8 @@ write_prediction_report <- function(tables,directory) {
     position<-match('## Reproduce',page)-1L
     page<-append(page,note,after=position)
   }
+  if(any(grepl('^glma_',tables$benchmark_results$method))) page<-append(page,c(
+    '> **Numerical audit warning:** The published GLMA Gaussian fast path failed real-data fixed-variance and variance-grid checks. Native acceptance is not numerical qualification. Prior-selected shares the variance-grid path and has not been independently qualified. [Model and variance audit](https://psoerensen.github.io/gpct/glma-gaussian-audit.html).',''),after=6L)
   if(!is.null(attr(tables,'fit_session')))
     page<-c(page,'','[R packages loaded during fitting](fit-sessionInfo.txt)')
   if('glma_fit_diagnostics'%in%names(tables)) page<-c(page,'',

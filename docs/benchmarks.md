@@ -4,6 +4,8 @@ title: Benchmark recipes
 ---
 # Benchmark recipes
 
+> The GLMA Gaussian fast path has a [real-data numerical audit warning](glma-gaussian-audit.html). Rebuilding with MKL does not resolve the variance fallback or loose Gaussian refit. Treat its current results as diagnostic.
+
 Cattle/mkg and maize/DTT use the published GPBench regression scheme with all
 source markers and ten folds. [Results](results.html) and detailed
 [cattle](reports/cattle.html)/[maize](reports/maize.html) reports use the same

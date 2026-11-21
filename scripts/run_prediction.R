@@ -74,7 +74,7 @@ run <- function() {
       row <- data.frame(method,fold,n_train=length(train),n_test=length(test),markers=ncol(X),
         status='failed',convergence='unavailable',message='',preparation_seconds=0,fit_seconds=NA_real_,prediction_seconds=NA_real_,
         method_elapsed_seconds=NA_real_,peak_ram_mb=NA_real_,ram_status='not measured',warning_count=0L,
-        genetic_variance=NA_real_,residual_variance=NA_real_,
+        genetic_variance=NA_real_,residual_variance=NA_real_,variance_estimation_status='not applicable',
         native_backend='not applicable',native_reported_requested_threads=NA_real_,
         native_reported_resolved_threads=NA_real_,native_reported_support_threads=NA_real_,
         predictive_ability=NA_real_,rmse=NA_real_,mae=NA_real_,mse=NA_real_,predictive_r_squared=NA_real_,
@@ -112,7 +112,9 @@ run <- function() {
           diagnostics<-result[setdiff(names(result),c('effects','centers','scales'))]
           diagnostics$outer_training_source_rows<-train
           row$markers<-result$markers_used
-          row$convergence<-'accepted native joint workflow'
+          row$variance_estimation_status<-result$variance_estimation_status
+          row$convergence<-if(isTRUE(result$grid_used_initial))
+            'native workflow accepted; variance fallback (unqualified)'else'accepted native joint workflow'
           row$genetic_variance<-result$genetic_variance
           row$residual_variance<-result$residual_variance
           row$native_backend<-'glma joint full-marker prediction; gsolve MKL decoded products'

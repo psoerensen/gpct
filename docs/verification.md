@@ -4,6 +4,8 @@ title: Verification record
 ---
 # Verification record
 
+> **Qualification correction, 21 November 2026:** Real-data checks found that the GLMA Gaussian fast path returns an unbracketed starting variance and does not accurately solve the fixed-variance Gaussian system. Native acceptance and the earlier small fixture checks do not qualify these full-data fits. The published GLMA scores remain diagnostic. [Model and variance audit](glma-gaussian-audit.html).
+
 Verified 2026-11-21. The current reports benchmark genomic BLUP, Gaussian VB,
 sparse normal-mixture VB, and GLMA Gaussian/prior-selected full-marker prediction
 implemented in our gsuite ecosystem, using all supplied cattle and maize markers and the pinned

@@ -4,6 +4,8 @@ title: Results and timings
 ---
 # Results and timings
 
+> **Gaussian numerical audit warning:** GLMA’s fast path kept its starting variance because the search found no solution and failed real-data fixed-variance accuracy checks. Its scores are diagnostic, not a qualified equivalent Gaussian fit. Prior-selected shares the variance path and remains unqualified. [Audit and controlled comparisons](glma-gaussian-audit.html).
+
 Cattle/mkg and maize/DTT compare five gsuite ecosystem models on the same saved ten-fold GPBench partitions (shuffle enabled, seed 42). The new GLMA fits use verified native MKL. Earlier greml/gsolve and gbayes measurements are retained, with their execution identities and backend differences explicit.
 
 ## What was compared?

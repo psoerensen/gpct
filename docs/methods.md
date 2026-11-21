@@ -4,6 +4,8 @@ title: Methods and gsuite interfaces
 ---
 # Methods and gsuite interfaces
 
+> **GLMA Gaussian audit warning:** The current fast joint path failed real-data variance-grid and fixed-variance accuracy checks. Its figures are diagnostic; prior-selected shares the variance-grid machinery and remains unqualified. [Controlled audit](glma-gaussian-audit.html).
+
 gpct benchmarks **methods and models implemented in the gsuite ecosystem**.
 Model names describe the statistical task; package and engine names identify
 our implementation. GPBench supplies data and a validation scheme.

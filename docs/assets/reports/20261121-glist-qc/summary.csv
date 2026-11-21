@@ -1,0 +1,3 @@
+"dataset","individuals","available_markers","qc_retained_markers","maf_excluded","missingness_excluded","hwe_filter_applied","hwe_p_below_1e12","mean_missing_rate","synthetic_annotations","dosage_roundtrip_equal"
+"gpbench_cattle",5024,42551,42373,178,0,FALSE,101,0,TRUE,TRUE
+"gpbench_maize",1458,75304,75304,0,0,FALSE,75304,0,TRUE,TRUE

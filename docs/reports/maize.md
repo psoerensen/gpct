@@ -4,6 +4,8 @@ title: "Maize: gsuite prediction models"
 ---
 # Maize: gsuite prediction models
 
+> **Gaussian numerical audit warning:** GLMA’s fast path kept its starting variance because the search found no solution and failed real-data fixed-variance accuracy checks. Its scores are diagnostic, not a qualified equivalent Gaussian fit. Prior-selected shares the variance path and remains unqualified. [Audit and controlled comparisons](../glma-gaussian-audit.html).
+
 ## Scientific question and dataset
 
 Predict supplied phenotypes using all source markers and the published GPBench ten-fold split algorithm. Original IDs, upstream processing and phenotype units remain unverified.
