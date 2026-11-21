@@ -9,7 +9,9 @@ plot_prediction_report <- function(tables, directory) {
     grDevices::svg(file.path(directory, paste0(kind, ".svg")), width = 11,
                    height = max(5, 4.5 * length(groups)), pointsize = 13, family = "sans")
     tryCatch({
-      graphics::par(mfrow = c(length(groups), 1), mar = c(4.5, 10, 3.2, 2), oma = c(2, 0, 3, 0))
+      graphics::par(mfrow = c(length(groups), 1),
+        mar = if(kind%in%c('runtime','calibration'))c(4.5,5.2,3.2,11)else c(4.5,10,3.2,2),
+        oma = c(2, 0, 3, 0))
       for (group in groups) {
         a <- s[paste(s$dataset, s$trait, sep = " / ") == group, ]
         folds <- f[paste(f$dataset, f$trait, sep = " / ") == group, ]
@@ -20,7 +22,7 @@ plot_prediction_report <- function(tables, directory) {
           small <- if (kind == "performance") folds$predictive_ability else folds$relative_rmse_reduction
           small[!folds$method %in% a$method[valid]] <- NA_real_
           measured <- c(values, small); measured <- measured[is.finite(measured)]
-          bounds <- if (length(measured)) range(c(0, measured)) else
+          bounds <- if (length(measured)) range(if(kind=='performance')measured else c(0,measured)) else
             if (kind == "performance") c(-1, 1) else c(-.1, .1)
           if (length(measured)) {
             padding <- max(.01, diff(bounds) * .08)
@@ -53,7 +55,9 @@ plot_prediction_report <- function(tables, directory) {
                                          col = report_colors[a$method[use]])
           else graphics::text(.5, 0, if (planned) "Template: no measured benchmark results" else
             "Complete performance/timing pairs unavailable", col = "#586069")
-          graphics::legend("bottomright", legend = labels, col = report_colors[a$method], pch = 19, bty = "n", cex = .8)
+          limits<-graphics::par('usr')
+          graphics::legend(limits[2]+.04*diff(limits[1:2]),limits[4],
+            xjust=0,yjust=1,xpd=NA,legend=labels,col=report_colors[a$method],pch=19,bty='n',cex=.8)
         } else {
           bins <- tables$calibration_bins
           bins <- bins[paste(bins$dataset, bins$trait, sep = " / ") == group, ]
@@ -69,7 +73,9 @@ plot_prediction_report <- function(tables, directory) {
           }
           if (!nrow(bins)) graphics::text(.5, .75, if (planned) "Template: awaiting aggregate calibration bins" else
             "No aggregate calibration bins available", col = "#586069")
-          graphics::legend("bottomright", legend = labels, col = report_colors[a$method], pch = 19, bty = "n", cex = .8)
+          bounds<-graphics::par('usr')
+          graphics::legend(bounds[2]+.04*diff(bounds[1:2]),bounds[4],
+            xjust=0,yjust=1,xpd=NA,legend=labels,col=report_colors[a$method],pch=19,bty='n',cex=.8)
         }
       }
       graphics::mtext(titles[kind], outer = TRUE, side = 3, line = 1, font = 2, cex = 1.2)
