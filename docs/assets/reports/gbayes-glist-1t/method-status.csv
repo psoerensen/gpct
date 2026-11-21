@@ -1,0 +1,13 @@
+"dataset","method","status","message"
+"cattle","marker_gaussian","completed",NA
+"maize","marker_gaussian","completed",NA
+"cattle","elastic_net","not_started",""
+"maize","elastic_net","failed","Elastic-net failed to converge within maximum_sweeps"
+"cattle","laplace_gaussian","not_started",""
+"maize","laplace_gaussian","running",NA
+"cattle","bayesC_vb","not_started",""
+"maize","bayesC_vb","not_started",""
+"cattle","bayesC_mcmc","not_started",""
+"maize","bayesC_mcmc","not_started",""
+"cattle","bayesR_mcmc","not_started",""
+"maize","bayesR_mcmc","not_started",""

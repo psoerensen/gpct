@@ -2,6 +2,7 @@
 source('scripts/paths.R');source('scripts/evaluate.R');source('benchmarks/methods.R')
 batch<-Sys.getenv('GPCT_RUN_ID','20261121-gbayes-glist-1t')
 root<-file.path(output_dir(),batch)
+asset_version<-format(Sys.time(),'%Y%m%dT%H%M%S',tz='UTC')
 asset<-'docs/assets/reports/gbayes-glist-1t';dir.create(asset,recursive=TRUE,showWarnings=FALSE)
 labels<-setNames(benchmark_methods$label,benchmark_methods$id)
 colors<-setNames(c('#168575','#3267b1','#9863b5','#c7761b','#b84365','#52606d'),benchmark_methods$id)
@@ -109,6 +110,7 @@ for(case in c('cattle','maize')) {
   '## Diagnostics and reproduction','',paste('Warnings across published fits:',sum(s$warning_count),'. Convergence status is retained per fold in the downloadable metrics. Native diagnostics and saved fits remain local.'),'',
   '```powershell','./environment/activate.ps1 -BlasThreads 1',paste('Rscript --vanilla scripts/run_gbayes.R marker_gaussian',case),'```','',
   'Replace the method ID with another listed in the [method settings](../methods.html). Individual data and outputs must use the external directories described in the repository. [Back to all results](../results.html).')
+ page<-gsub('.svg',paste0('.svg?v=',asset_version),page,fixed=TRUE)
  writeLines(gsub('CASE',case,page,fixed=TRUE),file.path('docs/reports',paste0(case,'.md')))
  all_summary[[case]]<-s;all_folds[[case]]<-f;all_calibration[[case]]<-b
 }
@@ -116,11 +118,23 @@ s<-do.call(rbind,all_summary)
 write.csv(s,file.path(asset,'benchmark-results.csv'),row.names=FALSE)
 write.csv(do.call(rbind,all_folds),file.path(asset,'fold-results.csv'),row.names=FALSE)
 write.csv(do.call(rbind,all_calibration),file.path(asset,'calibration-summary.csv'),row.names=FALSE)
+method_status<-do.call(rbind,lapply(benchmark_methods$id,function(method)do.call(rbind,lapply(c('cattle','maize'),function(case){
+ path<-file.path(root,method,case,'status.csv');state<-if(file.exists(path))read.csv(path,stringsAsFactors=FALSE)else data.frame(status='not_started',message='')
+ data.frame(dataset=case,method,status=state$status,message=state$message)
+}))))
+write.csv(method_status,file.path(asset,'method-status.csv'),row.names=FALSE)
 states<-data.frame(Method=benchmark_methods$label,Algorithm=benchmark_methods$algorithm,
- Status=ifelse(completed,'Completed: cattle and maize, ten folds each','Queued'),check.names=FALSE)
+ Status=vapply(benchmark_methods$id,function(method){
+  if(completed[[method]])return('Completed: cattle and maize, ten folds each')
+  z<-method_status[method_status$method==method,]
+  if(any(z$status=='failed'))return(paste0('Checkpoint failed: ',paste(z$dataset[z$status=='failed'],collapse=', '),'; other runs not launched'))
+  if(any(z$status=='running'))return(paste('Running:',paste(z$dataset[z$status=='running'],collapse=', ')))
+  if(any(z$status=='partial'))return('First-fold checkpoint passed; full run pending')
+  'Queued'
+ },character(1)),check.names=FALSE)
 writeLines(c('---','layout: default','title: Results and timings','---','# Results and timings','',
  'Existing gbayes methods fitted directly from QC-selected Glist, with **one worker**. Results are added after a method finishes both datasets. The earlier experimental benchmark collection has been retired.','',
  markdown_table(states),'','[Cattle / mkg results](reports/cattle.html) · [Maize / DTT results](reports/maize.html)','',
- '[Combined summary CSV](assets/reports/gbayes-glist-1t/benchmark-results.csv) · [Fold metrics](assets/reports/gbayes-glist-1t/fold-results.csv) · [Method settings](assets/reports/gbayes-glist-1t/method-settings.csv)','',
+ '[Combined summary CSV](assets/reports/gbayes-glist-1t/benchmark-results.csv) · [Fold metrics](assets/reports/gbayes-glist-1t/fold-results.csv) · [Method settings](assets/reports/gbayes-glist-1t/method-settings.csv) · [Run status and failure messages](assets/reports/gbayes-glist-1t/method-status.csv)','',
  'Compare methods within each dataset and trait. Native model scaling, fixed versus learned variances, iteration settings and diagnostics are documented in the [methods](methods.html) and [protocol](protocol.html). Individual out-of-fold predictions stay local.'),'docs/results.md')
 cat('Generated aggregate pages for',sum(completed),'completed methods.\n')

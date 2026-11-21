@@ -12,6 +12,8 @@ dir.create(destination,recursive=TRUE,showWarnings=FALSE)
 write_status<-function(status,message='')write.csv(data.frame(status,message,timestamp_utc=format(Sys.time(),tz='UTC')),
  file.path(destination,'status.csv'),row.names=FALSE)
 write_status('running')
+checkpoint<-new.env(parent=emptyenv());checkpoint$fold<-NA_integer_
+checkpoint$stage<-'input preparation';checkpoint$started<-proc.time()[['elapsed']]
 run<-function() {
  panel_path<-file.path(data_dir(),'glist/20261121-maf001-miss005',case,'qc-Glist.rds')
  panel<-readRDS(panel_path);gbase::validate_Glist(panel)
@@ -38,6 +40,7 @@ run<-function() {
  max_folds<-as.integer(Sys.getenv('GPCT_MAX_FOLDS','10'))
  for(fold in seq_len(max_folds)) {
   if(!is.null(performance)&&fold%in%performance$fold[performance$status=='completed'])next
+  checkpoint$fold<-fold;checkpoint$stage<-'Glist preparation';checkpoint$started<-proc.time()[['elapsed']]
   train<-which(folds$fold!=fold);test<-which(folds$fold==fold)
   cache<-file.path(root,'glist-cache',case);dir.create(cache,recursive=TRUE,showWarnings=FALSE)
   cache_path<-file.path(cache,paste0('fold',fold,'.rds'));started<-proc.time()[['elapsed']]
@@ -59,16 +62,25 @@ run<-function() {
   saveRDS(args[setdiff(names(args),c('Glist','data'))],file.path(destination,paste0('fold',fold,'-settings.rds')))
   warnings<-character();cat('FIT',case,method_id,'fold',fold,'one worker\n');flush.console()
   started<-proc.time()[['elapsed']]
+  checkpoint$stage<-'native fitting';checkpoint$started<-started
   fit<-withCallingHandlers(do.call(gbayes::bayes,args),warning=function(w){warnings<<-c(warnings,conditionMessage(w));invokeRestart('muffleWarning')})
   fit_seconds<-proc.time()[['elapsed']]-started;diagnostic<-gbayes::diagnostics(fit)
   saveRDS(diagnostic,file.path(destination,paste0('fold',fold,'-diagnostics.rds')))
   saveRDS(fit,file.path(destination,paste0('fold',fold,'-fit.rds')))
-  stopifnot(fit$input$method==spec$method,fit$input$algorithm==spec$algorithm,
-   identical(fit$data$samples,input$ids[train]),diagnostic$execution$actualWorkers==1L)
+  workers<-diagnostic$execution$actualWorkers
+  if(is.null(workers)&&spec$algorithm=='mcmc') {
+   # Scalar MCMC does not return the team counter through the R result.
+   # Its native control is a positive upper bound on concurrent chains.
+   stopifnot(fit$input$nativeControl$threads==1L,fit$input$execution$ncores==1L)
+   workers<-1L
+  }
+  stopifnot(length(workers)==1L,workers==1L,fit$input$method==spec$method,
+   fit$input$algorithm==spec$algorithm,identical(fit$data$samples,input$ids[train]))
   convergence<-diagnostic$convergence$status
   if(length(convergence)!=1L)convergence<-'not reported'
   if(!spec$algorithm%in%'mcmc' && convergence!='converged')stop('Native fit did not converge: ',convergence)
   started<-proc.time()[['elapsed']]
+  checkpoint$stage<-'held-out prediction';checkpoint$started<-started
   predicted<-predict(fit,newdata=list(Glist=panel,ids=input$ids[test]),type='phenotype')
   prediction_seconds<-proc.time()[['elapsed']]-started
   stopifnot(identical(rownames(predicted),input$ids[test]),ncol(predicted)==1L)
@@ -76,7 +88,7 @@ run<-function() {
   row<-data.frame(dataset=paste0('gpbench_',case),trait,method=method_id,fold,
    n_train=length(train),n_test=length(test),available_markers=if(case=='cattle')42551L else 75304L,
    markers_used=length(fit$data$markers),status='completed',convergence,
-   actual_workers=diagnostic$execution$actualWorkers,preparation_seconds,shared_preparation_seconds,
+   actual_workers=workers,preparation_seconds,shared_preparation_seconds,
    fit_seconds,prediction_seconds,elapsed_seconds=preparation_seconds+fit_seconds+prediction_seconds,
    warning_count=length(warnings),warnings=paste(warnings,collapse=' | '),as.list(measured))
   performance<-rbind(performance,row)
@@ -90,4 +102,9 @@ run<-function() {
  }
  if(nrow(performance)==10L && !anyDuplicated(performance$fold))write_status('completed')else write_status('partial','First-fold check; ten-fold run pending.')
 }
-tryCatch(run(),error=function(e){write_status('failed',conditionMessage(e));stop(e)})
+tryCatch(run(),error=function(e){
+ write.csv(data.frame(dataset=case,method=method_id,fold=checkpoint$fold,stage=checkpoint$stage,
+  elapsed_seconds=proc.time()[['elapsed']]-checkpoint$started,message=conditionMessage(e)),
+  file.path(destination,'failed-attempt.csv'),row.names=FALSE)
+ write_status('failed',conditionMessage(e));stop(e)
+})

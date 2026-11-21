@@ -9,14 +9,14 @@ Existing gbayes methods fitted directly from QC-selected Glist, with **one worke
 | Method | Algorithm | Status |
 | --- | --- | --- |
 | Gaussian PCG | pcg | Completed: cattle and maize, ten folds each |
-| Elastic net | coordinate_descent | Queued |
-| Laplace–Gaussian VB | vbayes | Queued |
+| Elastic net | coordinate_descent | Checkpoint failed: maize; other runs not launched |
+| Laplace–Gaussian VB | vbayes | Running: maize |
 | BayesC VB | vbayes | Queued |
 | BayesC MCMC | mcmc | Queued |
 | BayesR MCMC | mcmc | Queued |
 
 [Cattle / mkg results](reports/cattle.html) · [Maize / DTT results](reports/maize.html)
 
-[Combined summary CSV](assets/reports/gbayes-glist-1t/benchmark-results.csv) · [Fold metrics](assets/reports/gbayes-glist-1t/fold-results.csv) · [Method settings](assets/reports/gbayes-glist-1t/method-settings.csv)
+[Combined summary CSV](assets/reports/gbayes-glist-1t/benchmark-results.csv) · [Fold metrics](assets/reports/gbayes-glist-1t/fold-results.csv) · [Method settings](assets/reports/gbayes-glist-1t/method-settings.csv) · [Run status and failure messages](assets/reports/gbayes-glist-1t/method-status.csv)
 
 Compare methods within each dataset and trait. Native model scaling, fixed versus learned variances, iteration settings and diagnostics are documented in the [methods](methods.html) and [protocol](protocol.html). Individual out-of-fold predictions stay local.
