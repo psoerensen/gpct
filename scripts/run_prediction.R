@@ -1,6 +1,12 @@
 # Benchmark orchestration only. Private numerical implementations stay installed externally.
 execution_started <- proc.time()[['elapsed']]
-source('scripts/paths.R'); source('scripts/evaluate.R'); source('scripts/fit_greml.R')
+source('scripts/paths.R'); source('scripts/evaluate.R'); source('scripts/fit_greml.R');source('scripts/fit_gbayes.R')
+selected<-Sys.getenv('GPCT_METHODS')
+if(nzchar(selected)) {
+  selected<-strsplit(selected,',',fixed=TRUE)[[1]]
+  stopifnot(length(selected)>0,!anyDuplicated(selected),all(selected%in%config$methods))
+  config$methods<-selected
+}
 run_id <- Sys.getenv('GPCT_RUN_ID',paste0(format(Sys.time(),'%Y%m%dT%H%M%S',tz='UTC'),'-gpbench'))
 stopifnot(grepl('^[A-Za-z0-9_-]+$',run_id))
 destination <- file.path(output_dir(),config$case,run_id)
@@ -9,7 +15,7 @@ dir.create(destination,recursive=TRUE)
 write_status <- function(status,message='') write.csv(data.frame(status,message,
   timestamp_utc=format(Sys.time(),tz='UTC')),file.path(destination,'run_status.csv'),row.names=FALSE)
 write_status('running'); saveRDS(config,file.path(destination,'settings.rds'))
-packages <- c('gsuite','gbase','digest','jsonlite','reticulate')
+packages <- c('gsuite','gbayes','gbase','digest','jsonlite','reticulate')
 write.csv(data.frame(package=packages,version=vapply(packages,function(p)
   as.character(utils::packageVersion(p)),character(1))),file.path(destination,'package_versions.csv'),row.names=FALSE)
 results <- predictions <- list()
@@ -34,24 +40,30 @@ run <- function() {
   saveRDS(folds,file.path(destination,'folds.rds'))
   saveRDS(list(source=input$metadata,input_md5=unname(tools::md5sum(input_path)),
     scripts_md5=tools::md5sum(c('scripts/run_prediction.R','scripts/evaluate.R','scripts/prepare.R',
-      'scripts/gpbench_folds.py','scripts/fit_greml.R',paste0('benchmarks/',config$case,'_prediction/config.R'))),
+      'scripts/gpbench_folds.py','scripts/fit_greml.R','scripts/fit_gbayes.R',paste0('benchmarks/',config$case,'_prediction/config.R'))),
     response_imputed_n=sum(response$imputed),config=config),file.path(destination,'provenance.rds'))
   rm(input); gc()
   # Data-only raw dosage kernel; no marker filtering, allele recoding or SD scaling.
   # Kernel normalization changes only parameter units: vg = markers * marker Vu.
-  cat('Building full raw-dosage kernel for greml/gsolve\n')
-  started <- proc.time()[['elapsed']]; kernel <- tcrossprod(X)/ncol(X)
-  shared_kernel_seconds <<- proc.time()[['elapsed']]-started
+  shared_kernel_seconds <<- 0
+  if('gblup_reml'%in%config$methods) {
+    cat('Building full raw-dosage kernel for greml/gsolve\n')
+    started <- proc.time()[['elapsed']]; kernel <- tcrossprod(X)/ncol(X)
+    shared_kernel_seconds <<- proc.time()[['elapsed']]-started
+  }
   any_failure <- FALSE
   for(fold in seq_len(config$folds)) {
     train <- which(folds$fold!=fold); test <- which(folds$fold==fold)
-    ytr <- y[train]; kernel_started <- proc.time()[['elapsed']]
-    Ktr <- kernel[train,train,drop=FALSE]; Ktarget <- kernel[test,train,drop=FALSE]
-    shared_kernel_seconds <<- shared_kernel_seconds+proc.time()[['elapsed']]-kernel_started
+    ytr <- y[train]
+    if('gblup_reml'%in%config$methods) {
+      kernel_started <- proc.time()[['elapsed']]
+      Ktr <- kernel[train,train,drop=FALSE]; Ktarget <- kernel[test,train,drop=FALSE]
+      shared_kernel_seconds <<- shared_kernel_seconds+proc.time()[['elapsed']]-kernel_started
+    }
     for(method in config$methods) {
       key <- paste0(method,'-fold',fold)
       row <- data.frame(method,fold,n_train=length(train),n_test=length(test),markers=ncol(X),
-        status='failed',convergence='unavailable',message='',fit_seconds=NA_real_,prediction_seconds=NA_real_,
+        status='failed',convergence='unavailable',message='',preparation_seconds=0,fit_seconds=NA_real_,prediction_seconds=NA_real_,
         method_elapsed_seconds=NA_real_,peak_ram_mb=NA_real_,ram_status='not measured',warning_count=0L,
         genetic_variance=NA_real_,residual_variance=NA_real_,
         native_backend='not applicable',native_reported_requested_threads=NA_real_,
@@ -78,10 +90,25 @@ run <- function() {
           stage <- 'prediction'; started <- proc.time()[['elapsed']]
           predicted <- as.numeric(fit$fixed_effects)+
             as.numeric(fit$parameters[['genetic']]*Ktarget %*% fit$Py)
+        } else if(method%in%c('gbayes_gaussian','gbayes_mixture')) {
+          Xtr<-X[train,,drop=FALSE];Xtarget<-X[test,,drop=FALSE]
+          row$preparation_seconds<-proc.time()[['elapsed']]-started
+          started<-proc.time()[['elapsed']]
+          result<-fit_gbayes(ytr,Xtr,method,config$gbayes)
+          row$fit_seconds<-proc.time()[['elapsed']]-started
+          diagnostics<-result[c('diagnostics','prior')]
+          row$convergence<-result$diagnostics$convergence$status
+          row$native_backend<-'gbayes streamed variational prediction; decoded chunks'
+          row$native_reported_requested_threads<-1L
+          row$native_reported_resolved_threads<-result$diagnostics$execution$actualWorkers
+          row$residual_variance<-result$prior$residual_variance
+          stage<-'prediction';started<-proc.time()[['elapsed']]
+          predicted<-as.numeric(predict(result$fit,Xtarget,type='phenotype'))
         } else stop('Unknown method')
         row$prediction_seconds <- proc.time()[['elapsed']]-started
         stopifnot(length(predicted)==length(test),all(is.finite(predicted)))
-        score <- metrics(y[test],predicted); row[names(score)] <- as.list(score); row$status <- 'completed'
+        score <- metrics(y[test],predicted); row[names(score)] <- as.list(score)
+        row$status <- if(row$convergence=='converged') 'completed' else 'provisional'
         saveRDS(diagnostics,file.path(destination,paste0(key,'-diagnostics.rds')))
         predictions[[key]] <<- data.frame(id=ids[test],fold,method,observed=y[test],predicted,
           phenotype_was_imputed=response$imputed[test],training_mean=mean(ytr))
@@ -91,7 +118,10 @@ run <- function() {
         if(stage=='prediction') row$prediction_seconds <<- proc.time()[['elapsed']]-started})
       row$method_elapsed_seconds <- proc.time()[['elapsed']]-begin; row$warning_count <- length(warnings)
       row$message <- paste(c(row$message[nzchar(row$message)],warnings),collapse='; ')
-      results[[key]] <<- row; save_tables(); cat(key,row$status,row$message,'\n'); gc()
+      results[[key]] <<- row; save_tables(); cat(key,row$status,row$convergence,row$fit_seconds,row$message,'\n')
+      if(exists('result'))rm(result)
+      if(exists('Xtr'))rm(Xtr,Xtarget)
+      gc()
     }
 
   }

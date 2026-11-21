@@ -2,8 +2,8 @@
 source('scripts/evaluate.R')
 source('scripts/plot_prediction.R')
 report_metrics <- c('predictive_ability','rmse','mae','mse','predictive_r_squared','calibration_intercept','calibration_slope')
-report_labels <- c(gblup_reml='Genomic BLUP')
-report_colors <- c(gblup_reml='#168575')
+report_labels <- c(gblup_reml='Genomic BLUP',gbayes_gaussian='Gaussian VB',gbayes_mixture='Normal-mixture VB')
+report_colors <- c(gblup_reml='#168575',gbayes_gaussian='#3267b1',gbayes_mixture='#9863b5')
 software_source_table <- function(sources) {
   sources<-unique(sources)
   markdown_table(data.frame(Software=sources$repository,Version=sources$version,
@@ -24,6 +24,17 @@ summarize_prediction_run <- function(run_dir) {
   config <- readRDS(file.path(run_dir,'settings.rds'))
   folds <- readRDS(file.path(run_dir,'folds.rds'))
   perf <- read.csv(file.path(run_dir,'performance.csv'))
+  if(!'preparation_seconds'%in%names(perf))perf$preparation_seconds<-0
+  perf$algorithm_iterations<-perf$prior_average_marker_variance<-perf$prior_inclusion_probability<-NA_real_
+  for(i in which(grepl('^gbayes_',perf$method))) {
+    path<-file.path(run_dir,paste0(perf$method[i],'-fold',perf$fold[i],'-diagnostics.rds'))
+    if(file.exists(path)) {
+      details<-readRDS(path)
+      perf$algorithm_iterations[i]<-details$diagnostics$execution$iterations
+      perf$prior_average_marker_variance[i]<-details$prior$average_marker_variance
+      perf$prior_inclusion_probability[i]<-details$prior$inclusion_probability
+    }
+  }
   p <- read.csv(file.path(run_dir,'predictions.csv'))
   versions <- read.csv(file.path(run_dir,'package_versions.csv'))
   provenance <- readRDS(file.path(run_dir,'provenance.rds'))
@@ -40,7 +51,7 @@ summarize_prediction_run <- function(run_dir) {
   perf$mean_predictor_rmse <- perf$relative_rmse_reduction <- NA_real_
   for(i in seq_len(nrow(perf))) {
     q <- p[p$method==perf$method[i]&p$fold==perf$fold[i],]
-    if(perf$status[i]=='completed') {
+    if(perf$status[i]%in%c('completed','provisional')) {
       stopifnot(setequal(q$id,folds$id[folds$fold==perf$fold[i]]))
       perf[i,report_metrics] <- as.list(metrics(q$observed,q$predicted))
       stopifnot(length(unique(q$training_mean))==1L)
@@ -51,18 +62,20 @@ summarize_prediction_run <- function(run_dir) {
   summaries <- pooled <- observed <- bins <- list()
   for(method in config$methods) {
     a <- perf[perf$method==method,]; q <- p[p$method==method,]
-    full <- nrow(a)==10L&&all(a$status=='completed')&&setequal(q$id,folds$id)
+    full <- nrow(a)==10L&&all(a$status%in%c('completed','provisional'))&&setequal(q$id,folds$id)
     row <- data.frame(dataset=config$dataset_id,trait=config$trait,method,
       summary_type='mean_of_10_fold_metrics',predictive_ability=NA_real_,rmse=NA_real_,mae=NA_real_,mse=NA_real_,
       predictive_r_squared=NA_real_,calibration_intercept=NA_real_,calibration_slope=NA_real_,
       predictive_ability_fold_sd=NA_real_,fit_seconds=NA_real_,prediction_seconds=NA_real_,
-      method_elapsed_seconds=NA_real_,kernel_seconds=execution$shared_kernel_seconds,
+      method_elapsed_seconds=NA_real_,preparation_seconds=NA_real_,
+      kernel_seconds=if(method=='gblup_reml')execution$shared_kernel_seconds else 0,
       workflow_seconds=NA_real_,case_elapsed_seconds=execution$case_elapsed_seconds,
       peak_ram_mb=NA_real_,ram_status='not measured',available_markers=config$p,
       markers_used_min=min(a$markers),markers_used_max=max(a$markers),
-      completed_folds=sum(a$status=='completed'),failed_folds=sum(a$status=='failed'),
+      completed_folds=sum(a$status=='completed'),provisional_folds=sum(a$status=='provisional'),failed_folds=sum(a$status=='failed'),
       warning_count=sum(a$warning_count),convergence=paste(unique(a$convergence),collapse='; '),
-      status=if(full) 'completed' else 'incomplete',mean_predictor_rmse=NA_real_,relative_rmse_reduction=NA_real_,
+      status=if(full)if(all(a$status=='completed'))'completed'else'provisional'else'incomplete',
+      mean_predictor_rmse=NA_real_,relative_rmse_reduction=NA_real_,run_id=basename(run_dir),
       recipe_url=paste0('https://github.com/psoerensen/gpct/tree/main/benchmarks/',config$case,'_prediction'),
       report_url=paste0('https://psoerensen.github.io/gpct/reports/',config$case,'.html'))
     if(full) {
@@ -71,8 +84,8 @@ summarize_prediction_run <- function(run_dir) {
       row$predictive_ability_fold_sd <- sd(a$predictive_ability)*sqrt(9/10) # numpy.std(ddof=0), descriptive
       row$mean_predictor_rmse <- mean(a$mean_predictor_rmse)
       row$relative_rmse_reduction <- mean(a$relative_rmse_reduction)
-      for(field in c('fit_seconds','prediction_seconds','method_elapsed_seconds')) row[[field]] <- sum(a[[field]])
-      row$workflow_seconds <- row$kernel_seconds+row$fit_seconds+row$prediction_seconds
+      for(field in c('fit_seconds','prediction_seconds','method_elapsed_seconds','preparation_seconds')) row[[field]] <- sum(a[[field]])
+      row$workflow_seconds <- row$kernel_seconds+row$preparation_seconds+row$fit_seconds+row$prediction_seconds
       pooled[[method]] <- data.frame(dataset=config$dataset_id,trait=config$trait,method,
         summary_type='pooled_oof',as.list(metrics(q$observed,q$predicted)))
       observed_folds <- lapply(1:10,function(k){r<-q[q$fold==k&!q$phenotype_was_imputed,];metrics(r$observed,r$predicted)})
@@ -92,9 +105,21 @@ summarize_prediction_run <- function(run_dir) {
     computation='greml component REML; gsolve CHOLMOD/MKL and exact selected inversion; K=ZZt/p; certified input metadata',
     tuning='No test-fold tuning',convergence=paste('Score tolerance',config$tolerance,
       '; hybrid EM-AI; requested direct threads 4; returned backend settings in fold CSV; cap 100'))
+  for(i in seq_len(nrow(settings)))if(settings$method[i]!='gblup_reml') {
+    settings$package[i]<-'gbayes';settings$package_version[i]<-versions$version[match('gbayes',versions$package)]
+    settings$native_engines[i]<-'gbayes native streamed variational prediction'
+    settings$model[i]<-if(settings$method[i]=='gbayes_gaussian')'Gaussian marker effects; fixed prior and residual variance'else
+      'Spike-and-normal mixture; fixed inclusion probability 0.1; fixed variances'
+    settings$computation[i]<-'bayes(method=normal_mixture,algorithm=vbayes); raw dosage; native intercept projection; no global marker Gram'
+    settings$tuning[i]<-'No tuning; training var(y) split h2=0.5; average effect variance=0.5*var(y)/sum(training marker variances); mixture nonzero variance divided by 0.1'
+    settings$convergence[i]<-paste('Per-sample negative-ELBO stabilization; tolerance',config$gbayes$tolerance,
+      '; sweep cap',config$gbayes$maximum_sweeps,'; chunk 128; local iterations 20; full refresh 8; one worker; managed 1 GiB; Gram cache 256 MiB')
+  }
   metadata <- data.frame(dataset=config$dataset_id,trait=config$trait,run_id=basename(run_dir),
     gpbench_revision=config$gpbench_revision,source_revision=provenance$source$source_revision,
     prepared_input_md5=provenance$input_md5,fold_seed=42L,folds=10L,score_tolerance=config$tolerance,
+    selected_methods=paste(config$methods,collapse=';'),
+    gbayes_elbo_tolerance=if(any(grepl('^gbayes_',config$methods)))config$gbayes$tolerance else NA_real_,
     validation='sklearn 1.6.1 KFold(10,shuffle=True,random_state=42); NumPy 1.26.4',
     phenotype_imputation='whole-dataset mean before splitting, matching GPBench; imputed targets flagged',
     imputed_targets=provenance$response_imputed_n,
@@ -102,11 +127,14 @@ summarize_prediction_run <- function(run_dir) {
   aggregate_bins <- do.call(rbind,bins)
   if(is.null(aggregate_bins)) aggregate_bins <- data.frame(dataset=character(),trait=character(),
     method=character(),bin=integer(),n=integer(),mean_prediction=double(),mean_observed=double())
-  solver_checks <- read.csv(file.path(run_dir,'solver_checks.csv'))
+  solver_checks <- if(file.exists(file.path(run_dir,'solver_checks.csv')))read.csv(file.path(run_dir,'solver_checks.csv'))else
+    data.frame(fold=integer(),status=character(),max_prediction_difference=double(),prediction_correlation=double(),elapsed_seconds=double())
   solver_checks$message <- NULL
+  solver_checks$dataset<-rep(config$dataset_id,nrow(solver_checks))
+  solver_checks$trait<-rep(config$trait,nrow(solver_checks))
   source_pins<-read.csv('environment/sources.csv',stringsAsFactors=FALSE)
-  source_pins<-source_pins[match(c('gsuite','greml','gsolve'),source_pins$repository),]
-  source_pins$version<-c('0.43.0','0.92.0','0.28.0')
+  source_pins<-source_pins[match(c('gsuite','greml','gsolve','gbayes'),source_pins$repository),]
+  source_pins$version<-c('0.43.0','0.92.0','0.28.0','0.1.16 (R package)')
   source_pins$access<-'Private implementation repository; authorized access required'
   tables<-list(dataset_catalogue=data.frame(dataset=config$dataset_id,species=d$species,trait=config$trait,
       phenotype_definition=d$preprocessing_history,individuals_available=config$n,individuals_evaluated=nrow(folds),
@@ -115,7 +143,7 @@ summarize_prediction_run <- function(run_dir) {
     method_settings=settings,software_sources=source_pins,benchmark_results=summary,fold_results=perf[,setdiff(names(perf),'message')],
     pooled_results=do.call(rbind,pooled),observed_only_metrics=do.call(rbind,observed),
     calibration_bins=aggregate_bins,run_metadata=metadata,
-    solver_checks=transform(solver_checks,dataset=config$dataset_id,trait=config$trait),
+    solver_checks=solver_checks,
     recipe_checksums=data.frame(dataset=config$dataset_id,source_file=names(provenance$scripts_md5),
       md5=unname(provenance$scripts_md5),canonical_lf_sha256=vapply(names(provenance$scripts_md5),function(path) {
         if(!file.exists(path)) return(NA_character_)
@@ -134,15 +162,18 @@ write_prediction_report <- function(tables,directory) {
   if(!is.null(attr(tables,'fit_session')))
     writeLines(sub('[[:space:]]+$','',attr(tables,'fit_session')),file.path(directory,'fit-sessionInfo.txt'))
   plot_prediction_report(tables,directory)
+  batch_note<-if(length(unique(tables$run_metadata$run_id))>1L)
+    'The reviewed greml/gsolve execution is retained; gbayes methods were measured in an additional execution batch on the same hardware and optimized runtime. Run IDs and fitting sessions distinguish the measurements.' else
+    'Run IDs and fitting sessions identify this execution batch. Combining it with earlier measurements requires matching input identities, saved splits and outcomes.'
   page <- c('---','layout: default','title: GPBench-matched benchmark','---','# GPBench-matched benchmark','',
     '## Scientific question and dataset','',
     'Predict supplied phenotypes using all source markers and the published GPBench ten-fold split algorithm. Original IDs, upstream processing and phenotype units remain unverified.','',
     markdown_table(tables$dataset_catalogue[,c('dataset','species','trait','individuals_evaluated','observed_targets','imputed_targets','available_markers','markers_used')]),'','[Full dataset catalogue and source definitions](dataset_catalogue.csv)','',
     '## Methods and validation','',
-    'Shuffled ten-fold KFold, seed 42, scikit-learn 1.6.1 and NumPy 1.26.4. Raw supplied dosage coding; no marker filtering or SD scaling. The benchmarked model estimates variance components by REML through our greml/gsolve implementation. greml uses the equivalent covariance K=ZZt/p. Implementations remain installed privately; no private source or binaries are distributed.','',
+    'Shuffled ten-fold KFold, seed 42, scikit-learn 1.6.1 and NumPy 1.26.4. All supplied markers and raw dosage coordinates are retained. Genomic BLUP estimates variances by REML through greml/gsolve, using K=ZZt/p. gbayes Gaussian and sparse normal-mixture VB use fixed working h2=0.5 and training-only phenotype/marker variances; the mixture fixes inclusion probability at 0.1. The native streamed interface projects an intercept without SD scaling. No model is tuned on test outcomes.','',
     'To reproduce GPBench, missing phenotypes are mean-imputed before splitting. Two maize DTT targets are imputed; cattle has none. Imputed labels are not genuinely observed phenotypes. The observed-target-only sensitivity summary excludes them from evaluation. This reproduction does not endorse whole-dataset phenotype imputation for a new scientific study.','',
     markdown_table(tables$method_settings[,c('method','package','package_version','native_engines','tuning','convergence')]),'','[Full model and method settings](method_settings.csv)','',
-    'Fitting calls gsuite::gs_lmm_fit through our R interface to the compiled greml/gsolve libraries. Exact implementation revisions are pinned below; these repositories are private.','',
+    'Fitting calls gsuite::gs_lmm_fit or gbayes::bayes through installed R interfaces to our compiled libraries. The gbayes R bindings are in the gsuite repository; the native core has its own gbayes repository. Exact source commits are pinned below; implementation source and binaries remain private.','',
     software_source_table(tables$software_sources),'','[Software and source commits](software_sources.csv)','',
     '## Results','',
     'Main scores are arithmetic means of ten test-fold metrics, matching GPBench. Predictive R2 uses each test fold mean as its reference. Descriptive fold standard deviations use NumPy ddof=0; no confidence intervals or independent fold replicates are implied. Pooled OOF metrics are separate.','',
@@ -153,8 +184,8 @@ write_prediction_report <- function(tables,directory) {
     paste0('<figure class="report-figure"><img src="',kind,'.svg" alt="',kind,' comparison within each dataset and trait, using the matched ten-fold validation."></figure>'),'',
     paste0('[Full-size ',kind,' SVG](',kind,'.svg)'), '')
   page <- c(page,
-    'Workflow seconds include ten fits, ten predictions and construction of the reusable raw-dosage kernel, including fold block preparation. Shared kernel construction is data-only and uses no held-out responses. Zero recorded seconds means below the elapsed timer resolution. These are single-execution measurements on our hardware. Peak RAM is not measured.','',
-    'R/OpenBLAS and the MKL environment request four threads. The component backend returns requested/resolved/support settings of one in this build; those returned values are retained in the fold CSV. These settings do not measure CPU utilization. The separate fixed-variance solver check requests one supported worker.','',
+    'Workflow seconds include method-specific preparation, ten fits and ten predictions. greml/gsolve additionally includes its reusable raw-dosage kernel and fold blocks. gbayes preparation includes training/target matrix extraction; fitting includes training prior calculations, native projection and variational updates. These are single-execution timings; peak RAM is unmeasured. Zero seconds means below timer resolution.','',batch_note,'',
+    'R/OpenBLAS and the MKL environment request four threads. The greml component backend returns requested/resolved/support settings of one in this build; gbayes requests and reports one package worker. Returned settings are retained in fold CSVs and do not measure CPU utilization. Variational convergence means negative-ELBO stabilization, not a certificate of a global mixture optimum. Provisional sweep-cap fits remain explicitly labelled.','',
     '## Calibration, convergence and solver checks','',
     '<figure class="report-figure"><img src="calibration.svg" alt="Aggregate OOF calibration bins with identity line, separately for each dataset and trait."></figure>','',
     '[Full-size calibration SVG](calibration.svg) · [Aggregate bins](calibration_bins.csv)','',
@@ -168,7 +199,7 @@ write_prediction_report <- function(tables,directory) {
   if('earlier_attempts'%in%names(tables)&&nrow(tables$earlier_attempts)) {
     failures<-tables$earlier_attempts[tables$earlier_attempts$status=='failed',]
     note<-c('## Earlier attempt and convergence sensitivity','',
-      'An earlier cattle run at score tolerance 1e-6 completed nine folds but failed the likelihood-step acceptance check in fold nine. The current benchmark reruns every fold at the common tolerance 1e-4. Earlier costs are disclosed separately and excluded from current-run timings; predictions are compared with the successful stricter fits.','',
+      'The retained greml baseline uses score tolerance 1e-4. Its earlier attempt at 1e-6 completed nine folds but failed the likelihood-step acceptance check in fold nine. That attempt and its costs remain disclosed separately. The gbayes convergence criterion is different and is specified in the method settings.','',
       markdown_table(failures),'','[Earlier statuses and costs](earlier_attempts.csv) · [Prediction sensitivity](tolerance_comparison.csv)','')
     position<-match('## Reproduce',page)-1L
     page<-append(page,note,after=position)

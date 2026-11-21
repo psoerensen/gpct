@@ -14,7 +14,7 @@ perf$markers<-config$p;perf$status<-'completed';perf$convergence<-'converged';pe
 perf$fit_seconds<-1;perf$prediction_seconds<-.1;perf$method_elapsed_seconds<-1.2
 for(field in report_metrics) perf[[field]]<-NA_real_
 write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
-write.csv(data.frame(package='gsuite',version='0.43.0'),
+write.csv(data.frame(package=c('gsuite','gbayes'),version=c('0.43.0','0.1.16')),
   file.path(root,'package_versions.csv'),row.names=FALSE)
 saveRDS(list(source=list(source_revision='synthetic'),input_md5='synthetic',response_imputed_n=0L,
   scripts_md5=c('synthetic.R'='synthetic')),file.path(root,'provenance.rds'))
@@ -26,13 +26,23 @@ t <- summarize_prediction_run(root)
 stopifnot(all(t$benchmark_results$completed_folds==10L),
   all(abs(t$benchmark_results$predictive_ability-1)<1e-12),
   abs(t$pooled_results$predictive_r_squared[1]-t$benchmark_results$predictive_r_squared[1])>1e-3,
-  all(t$benchmark_results$workflow_seconds==13),all(t$benchmark_results$relative_rmse_reduction>0))
+  t$benchmark_results$workflow_seconds[t$benchmark_results$method=='gblup_reml']==13,
+  all(t$benchmark_results$workflow_seconds[t$benchmark_results$method!='gblup_reml']==11),
+  all(t$benchmark_results$relative_rmse_reduction>0),
+  all(t$method_settings$package[t$method_settings$method!='gblup_reml']=='gbayes'))
 write_prediction_report(t,file.path(root,'report'))
 stopifnot(!any(grepl('predictions|folds[.]',list.files(file.path(root,'report')))))
 perf$status[perf$method=='gblup_reml'&perf$fold==10]<-'failed'
 write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
 failed <- summarize_prediction_run(root)$benchmark_results
 stopifnot(failed$status[1]=='incomplete',is.na(failed$predictive_ability[1]))
+perf$status[perf$method=='gblup_reml'&perf$fold==10]<-'completed'
+perf$status[perf$method=='gbayes_mixture'&perf$fold==10]<-'provisional'
+perf$convergence[perf$method=='gbayes_mixture'&perf$fold==10]<-'maximum_sweeps'
+write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
+provisional<-summarize_prediction_run(root)$benchmark_results
+stopifnot(provisional$status[provisional$method=='gbayes_mixture']=='provisional',
+  is.finite(provisional$predictive_ability[provisional$method=='gbayes_mixture']))
 p$id[2]<-p$id[1];write.csv(p,file.path(root,'predictions.csv'),row.names=FALSE)
 stopifnot(inherits(try(summarize_prediction_run(root),silent=TRUE),'try-error'))
 unlink(root,recursive=TRUE)

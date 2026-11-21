@@ -14,7 +14,7 @@ plot_prediction_report <- function(tables, directory) {
         a <- s[paste(s$dataset, s$trait, sep = " / ") == group, ]
         folds <- f[paste(f$dataset, f$trait, sep = " / ") == group, ]
         y <- rev(seq_len(nrow(a))); labels <- unname(report_labels[a$method])
-        valid <- a$status %in% c("completed", "completed_provisional")
+        valid <- a$status %in% c("completed", "completed_provisional", "provisional")
         if (kind %in% c("performance", "improvement")) {
           values <- if (kind == "performance") a$predictive_ability else a$relative_rmse_reduction
           small <- if (kind == "performance") folds$predictive_ability else folds$relative_rmse_reduction

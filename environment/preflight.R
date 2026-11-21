@@ -5,7 +5,7 @@ expected <- stats::setNames(pin$value, pin$key)
 stopifnot(as.character(getRversion()) == expected[["r_version"]])
 stopifnot(tolower(normalizePath(R.home(), winslash = "/")) ==
           tolower(normalizePath(file.path(root, "R"), winslash = "/")))
-for (p in c("gbase", "gsuite", "digest", "jsonlite", "reticulate")) {
+for (p in c("gbase", "gsuite", "gbayes", "digest", "jsonlite", "reticulate")) {
   if (!requireNamespace(p, quietly = TRUE)) stop("Missing required package: ", p)
   path <- tolower(normalizePath(find.package(p), winslash = "/"))
   if (!startsWith(path, paste0(tolower(normalizePath(root, winslash = "/")), "/")))
@@ -18,6 +18,8 @@ stopifnot(all(c("gs_lmm_fit", "gs_lmm_blup", "gs_lmm_control", "gs_relationship_
 stopifnot(as.character(utils::packageVersion('gbase'))==expected[['gbase_version']],
           as.character(utils::packageVersion('gsuite'))==expected[['gsuite_version']])
 native_versions <- gsuite::gsuite_versions()
+stopifnot(as.character(utils::packageVersion('gbayes'))==expected[['gbayes_version']],
+          all(c('bayes','diagnostics')%in%getNamespaceExports('gbayes')))
 stopifnot(all(c('covariance_diagonal','covariance_log_determinant','positive_definite_certified') %in%
               names(formals(gsuite::gs_relationship_matrix))))
 stopifnot(native_versions$gsolve$version == '0.28.0', native_versions$greml$version == '0.92.0')

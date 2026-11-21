@@ -9,7 +9,7 @@ param(
   [string]$DownloadCache = '',
   [ValidateRange(1,64)][int]$BlasThreads = 4,
   [ValidateSet('gbase','gbayes','gcorr','glma','gmap','gscore','gsea')]
-  [string[]]$Packages = @('gbase')
+  [string[]]$Packages = @('gbase','gbayes')
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
