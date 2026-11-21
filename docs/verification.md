@@ -28,7 +28,7 @@ Inspection date: **2026-11-21**.
 Detailed machine-readable array evidence is in
 `datasets/inspection.json`. No individual source data is included in that file.
 
-## Not performed
+## Initial limits and later updates
 
 No R installation or Rscript executable was found on PATH or in the checked
 standard R installation locations, including a read-only host check. Therefore
@@ -42,8 +42,9 @@ end-to-end outputs and runtime/memory costs remain unverified. In particular,
 the inspected gbayes source labels its dense prepared-design adapters as pending
 runtime qualification; this scaffold does not certify them.
 
-No scaffold content was pushed. GitHub Pages was not enabled, built or checked
-in a browser. The website source is prepared for later standard branch publishing.
+At the initial local-only delivery no content was pushed and Pages was not
+enabled. Later requested website updates were committed, pushed and verified
+on the public Pages site. Prediction results remain unavailable.
 
 ## Next execution steps
 

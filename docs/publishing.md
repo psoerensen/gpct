@@ -1,35 +1,33 @@
 ---
 layout: default
-title: Publishing later
+title: Publishing updates
 ---
-# Publishing later
+# Publishing updates
 
-Per the latest instruction, this scaffold is local. Content has not been pushed,
-and GitHub Pages has not been enabled. An empty public
-[psoerensen/gpct repository](https://github.com/psoerensen/gpct) was created before
-that instruction arrived; it has received no scaffold content from this task.
+The public [psoerensen/gpct repository](https://github.com/psoerensen/gpct) is
+connected to this checkout. The [Pages site](https://psoerensen.github.io/gpct/)
+publishes from `main` and `/docs`. The initial local-only delivery was followed
+by explicitly requested pushes and verified Pages deployments.
 
 The Pages source is `docs/`, using GitHub's standard Jekyll branch publishing.
 Its only YAML file is the standard Pages `_config.yml`; benchmark settings
 remain ordinary R lists. No custom web application, dashboard or deployment
 workflow is required.
 
-When ready, inspect local staged/tracked files for individual data and push the
-local main branch to the intended repository. Example commands from repo root:
+For later updates, inspect staged/tracked files for individual data and push the
+local main branch. From the repository root, after committing reviewed changes:
 
 ```text
-git remote add origin https://github.com/psoerensen/gpct.git
-git push -u origin main
+git push origin main
 ```
 
-Check `git remote -v` first and skip `remote add` if an appropriate origin already
-exists. If the remote has acquired commits, fetch and inspect them before
+Check `git remote -v` first. If the remote has acquired commits, fetch and inspect them before
 integrating; do not force-push over existing content.
 
-In GitHub repository **Settings → Pages → Build and deployment**, choose
+If setting up a separate copy, in **Settings → Pages → Build and deployment**, choose
 **Deploy from a branch**, branch **main**, folder **/docs**, then save.
-The intended URL is [psoerensen.github.io/gpct](https://psoerensen.github.io/gpct/).
-It is not a verified live site for this local delivery.
+The current URL is [psoerensen.github.io/gpct](https://psoerensen.github.io/gpct/).
+Check the Pages build/deployment and affected public links after each update.
 
 If publishing under another owner or repository name, update `url` and `baseurl`
 in `_config.yml` and hardcoded repository links in the Markdown first. Review

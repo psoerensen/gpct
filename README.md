@@ -91,6 +91,6 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) to add animal, plant or human datasets.
 Keep individual data, predictions, folds, caches and large files outside git.
 Publish only reviewed, shareable aggregate summaries.
 
-The local Pages source is ready under `docs/`. Per the latest instruction,
-content has not been pushed and Pages has not been enabled. See
-[publishing instructions](docs/publishing.md) for the later GitHub handoff.
+The public [GitHub Pages site](https://psoerensen.github.io/gpct/) publishes the
+`docs/` source from `main`. See [publishing instructions](docs/publishing.md)
+for updates and the aggregate-results review procedure.
