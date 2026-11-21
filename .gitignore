@@ -20,6 +20,12 @@ __pycache__/
 *.bim
 *.fam
 *.ext
+*.dll
+*.exe
+*.a
+*.lib
+*.so
+*.tar.gz
 *.log
 predictions*.csv
 folds*.csv

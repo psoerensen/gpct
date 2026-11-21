@@ -1,2 +1,0 @@
-"dataset","species","trait","phenotype_definition","individuals_available","individuals_eligible","available_markers","planned_markers","markers_used_min","markers_used_max","marker_usage_status","source"
-"gpbench_maize","Zea mays","DTT","Supplied GPBench DTT values; biological definition, upstream adjustments and units unverified",1458,1456,75304,512,NA,NA,"planned; actual fitted counts unavailable","https://huggingface.co/datasets/xw97/GPBench"

@@ -1,118 +1,102 @@
 ---
 layout: default
-title: 'Maize prediction: DTT'
+title: "Maize: genomic BLUP"
 ---
-# Maize prediction: DTT
-
-Executed 2026-11-21, run `20261121-openblas`. All three methods completed five folds with no warnings or failed fits. Both gbayes methods converged; rrBLUP exposes no convergence flag. All 512 selected markers were used in every fold.
-
-R 4.4.3, gbase 0.1.14, gbayes 0.1.16, rrBLUP 4.6.3; OpenBLAS 0.3.29 with four runtime threads, Intel Core Ultra 7 258V (8 logical processors), 32 GiB RAM. Timings are one execution, without uncertainty estimates. rrBLUP estimates variance components; the other methods use fixed settings, so timing differences include different fitting tasks.
-
-[Recipe checksums](../assets/reports/20261121-openblas/maize/recipe_checksums.csv). Original trait definitions, units and upstream processing remain unverified; this is a within-cohort 512-marker execution pilot.
-
-
-**Reviewed aggregate run summary; individual predictions and fold membership remain local.**
+# Maize: genomic BLUP
 
 ## Scientific question and dataset
 
-How well do the declared methods predict the supplied trait within this dataset under shared random five-fold validation? Source trait definitions, upstream adjustments and units remain unverified.
+Predict supplied phenotypes using all source markers and the published GPBench ten-fold split algorithm. Original IDs, upstream processing and phenotype units remain unverified.
 
-Recipe: [gpbench_maize](https://github.com/psoerensen/gpct/tree/main/benchmarks/maize_prediction)
+| Dataset | Species | Trait | Individuals Evaluated | Observed Targets | Imputed Targets | Available markers | Markers Used |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| gpbench_maize | Zea mays | DTT | 1458 | 1456 | 2 | 75304 | 75304 |
 
-| Species | Dataset | Trait | Individuals available | Eligible individuals | Available markers | Planned markers | Markers fitted, min | Markers fitted, max |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Zea mays | gpbench_maize | DTT | 1458 | 1456 | 75304 | 512 | 512 | 512 |
+[Full dataset catalogue and source definitions](../assets/reports/20261121-gsuite-final/maize/dataset_catalogue.csv)
 
-[Dataset catalogue CSV](../assets/reports/20261121-openblas/maize/dataset_catalogue.csv)
+## Methods and validation
 
-## Methods and validation design
+Shuffled ten-fold KFold, seed 42, scikit-learn 1.6.1 and NumPy 1.26.4. Raw supplied dosage coding; no marker filtering or SD scaling. The benchmarked model estimates variance components by REML through our greml/gsolve implementation. greml uses the equivalent covariance K=ZZt/p. Implementations remain installed privately; no private source or binaries are distributed.
 
-Single shared five-fold partition, seed 4401. All methods use the same eligible samples and frozen training-only transformations. Fixed pilot settings; no tuning on test folds. REML rrBLUP is the baseline.
+To reproduce GPBench, missing phenotypes are mean-imputed before splitting. Two maize DTT targets are imputed; cattle has none. Imputed labels are not genuinely observed phenotypes. The observed-target-only sensitivity summary excludes them from evaluation. This reproduction does not endorse whole-dataset phenotype imputation for a new scientific study.
 
-| Dataset | Trait | Method | Package | Package Version | Tuning Strategy | Model Settings | Convergence Criteria | Requested Package Threads | Actual Threads | Managed Memory Budget Mib |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| gpbench_maize | DTT | rrblup | rrBLUP | 4.6.3 | training-only REML variance estimation; no CV tuning | REML ridge; variance ratio fitted on training data; bounds 1e-9 to 1e9 | REML optimizer; no flag exposed | not available | not available | not available |
-| gpbench_maize | DTT | gbayes_gaussian | gbayes | 0.1.16 | none; fixed predeclared settings | marker_gaussian/pcg; standardized outcome; ve=0.5; prior variance=0.5/p; nit=2000 | native tolerance 1e-08 and iteration cap; inspect diagnostics | 1 | not available | 512 |
-| gpbench_maize | DTT | gbayes_elastic_net | gbayes | 0.1.16 | none; fixed predeclared settings | elastic_net/coordinate_descent; standardized outcome; lambda=0.1; alpha=0.5; nit=2000 | native tolerance 1e-08 and iteration cap; inspect diagnostics | 1 | not available | 512 |
+| Method | Package | Package Version | Native Engines | Tuning | Convergence |
+| --- | --- | --- | --- | --- | --- |
+| gblup_reml | gsuite | 0.43.0 | greml 0.92.0; gsolve 0.28.0 | No test-fold tuning | Score tolerance 1e-04 ; hybrid EM-AI; requested direct threads 4; returned backend settings in fold CSV; cap 100 |
 
-[Method settings CSV](../assets/reports/20261121-openblas/maize/method_settings.csv) · [Run metadata CSV](../assets/reports/20261121-openblas/maize/run_metadata.csv)
+[Full model and method settings](../assets/reports/20261121-gsuite-final/maize/method_settings.csv)
 
-## Main results
+Fitting calls gsuite::gs_lmm_fit through our R interface to the compiled greml/gsolve libraries. Exact implementation revisions are pinned below; these repositories are private.
 
-Main metrics are calculated from pooled out-of-fold predictions. Fold means are a separate descriptive summary. NA means not run, not measured or undefined; consult status. Available markers and actually fitted markers are separate.
+| Software | Version | Private Source Commit |
+| --- | --- | --- |
+| gsuite | 0.43.0 | [19f876e71df0](https://github.com/psoerensen/gsuite/tree/19f876e71df014b996dbd09d0ae01ab3d0709829) |
+| greml | 0.92.0 | [c84f83409e7a](https://github.com/psoerensen/greml/tree/c84f83409e7a08eeada20e854c6ff6c81c8ed25f) |
+| gsolve | 0.28.0 | [dd405973d6ae](https://github.com/psoerensen/gsolve/tree/dd405973d6aece137fb9d82367502f78c8feef2d) |
 
-| Dataset | Trait | Method | Predictive ability | RMSE | Predictive R² | Calibration Intercept | Calibration Slope | Fit (s) | Predict (s) | Method elapsed (s) | Peak RAM (MB) | Ram Status | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| gpbench_maize | DTT | rrblup | 0.47065 | 2.5280 | 0.22147 | 3.905 | 0.94275 | 5.92 | 0.00 | 5.99 | not available | not measured | completed |
-| gpbench_maize | DTT | gbayes_gaussian | 0.46426 | 2.5538 | 0.20550 | 12.449 | 0.81702 | 0.70 | 0.01 | 0.75 | not available | not measured | completed |
-| gpbench_maize | DTT | gbayes_elastic_net | 0.43266 | 2.5946 | 0.17987 | -17.894 | 1.26370 | 0.78 | 0.00 | 0.84 | not available | not measured | completed |
+[Software and source commits](../assets/reports/20261121-gsuite-final/maize/software_sources.csv)
 
-[Download summary CSV](../assets/reports/20261121-openblas/maize/benchmark_results.csv) · [Per-fold metrics](../assets/reports/20261121-openblas/maize/fold_results.csv) · [Fold means](../assets/reports/20261121-openblas/maize/fold_metric_means.csv)
+## Results
+
+Main scores are arithmetic means of ten test-fold metrics, matching GPBench. Predictive R2 uses each test fold mean as its reference. Descriptive fold standard deviations use NumPy ddof=0; no confidence intervals or independent fold replicates are implied. Pooled OOF metrics are separate.
+
+| Dataset | Trait | Method | Predictive ability | RMSE | Predictive R² | Calibration Slope | Fit (s) | Predict (s) | Kernel Seconds | Workflow Seconds | Status |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| gpbench_maize | DTT | gblup_reml | 0.65162 | 2.1753 | 0.41319 | 1.0001 | 31.8 | 0.02 | 1.81 | 33.63 | completed |
+
+[Results CSV](../assets/reports/20261121-gsuite-final/maize/benchmark_results.csv) · [Fold values](../assets/reports/20261121-gsuite-final/maize/fold_results.csv) · [Pooled OOF](../assets/reports/20261121-gsuite-final/maize/pooled_results.csv) · [Observed targets only](../assets/reports/20261121-gsuite-final/maize/observed_only_metrics.csv)
 
 ## Performance and computational cost
 
-Filled dots show pooled OOF scores; open dots show descriptive fold values. No confidence intervals are implied. Baseline changes use matched dataset/trait and folds. Raw RMSE is never combined across traits.
+<figure class="report-figure"><img src="../assets/reports/20261121-gsuite-final/maize/performance.svg" alt="performance comparison within each dataset and trait, using the matched ten-fold validation."></figure>
 
-<figure class="report-figure"><img src="../assets/reports/20261121-openblas/maize/performance.svg" alt="Predictive ability by method, with pooled and fold values distinguished."></figure>
+[Full-size performance SVG](../assets/reports/20261121-gsuite-final/maize/performance.svg)
 
-[Full-size performance SVG](../assets/reports/20261121-openblas/maize/performance.svg)
+<figure class="report-figure"><img src="../assets/reports/20261121-gsuite-final/maize/improvement.svg" alt="improvement comparison within each dataset and trait, using the matched ten-fold validation."></figure>
 
-<figure class="report-figure"><img src="../assets/reports/20261121-openblas/maize/improvement.svg" alt="Change in predictive ability from rrBLUP with a zero reference line."></figure>
+[Full-size improvement SVG](../assets/reports/20261121-gsuite-final/maize/improvement.svg)
 
-[Full-size baseline-improvement SVG](../assets/reports/20261121-openblas/maize/improvement.svg)
+<figure class="report-figure"><img src="../assets/reports/20261121-gsuite-final/maize/runtime.svg" alt="runtime comparison within each dataset and trait, using the matched ten-fold validation."></figure>
 
-<figure class="report-figure"><img src="../assets/reports/20261121-openblas/maize/runtime.svg" alt="Pooled predictive ability versus fitting seconds, coloured by method."></figure>
+[Full-size runtime SVG](../assets/reports/20261121-gsuite-final/maize/runtime.svg)
 
-[Full-size performance/runtime SVG](../assets/reports/20261121-openblas/maize/runtime.svg)
+Workflow seconds include ten fits, ten predictions and construction of the reusable raw-dosage kernel, including fold block preparation. Shared kernel construction is data-only and uses no held-out responses. Zero recorded seconds means below the elapsed timer resolution. These are single-execution measurements on our hardware. Peak RAM is not measured.
 
-Fitting and prediction seconds are summed over five folds. Method elapsed includes loading, diagnostics and scoring but excludes shared input/fold preparation and CSV writes. Case elapsed includes all methods and shared work and is not a per-method cost. Peak RAM and observed per-fit thread utilization remain unmeasured. gbayes requests one package worker. Run metadata records the loaded BLAS implementation, its runtime thread setting, binary checksum and hardware; a thread setting does not measure CPU utilization.
+R/OpenBLAS and the MKL environment request four threads. The component backend returns requested/resolved/support settings of one in this build; those returned values are retained in the fold CSV. These settings do not measure CPU utilization. The separate fixed-variance solver check requests one supported worker.
 
-## Calibration, convergence, warnings and failed fits
+## Calibration, convergence and solver checks
 
-Calibration uses pooled OOF quantile bins (up to ten, at least five individuals per published bin) and an identity line. Only aggregate bin means and counts leave the local run; review them before publication. These plots do not recalibrate predictions.
+<figure class="report-figure"><img src="../assets/reports/20261121-gsuite-final/maize/calibration.svg" alt="Aggregate OOF calibration bins with identity line, separately for each dataset and trait."></figure>
 
-<figure class="report-figure"><img src="../assets/reports/20261121-openblas/maize/calibration.svg" alt="Binned mean observed phenotype versus mean prediction, with an identity line."></figure>
+[Full-size calibration SVG](../assets/reports/20261121-gsuite-final/maize/calibration.svg) · [Aggregate bins](../assets/reports/20261121-gsuite-final/maize/calibration_bins.csv)
 
-[Full-size calibration SVG](../assets/reports/20261121-openblas/maize/calibration.svg)
+| Dataset | Method | Fold | Status | Convergence | Warning Count |
+| --- | --- | --- | --- | --- | --- |
+| gpbench_maize | gblup_reml | 1 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 2 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 3 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 4 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 5 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 6 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 7 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 8 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 9 | completed | converged | 0 |
+| gpbench_maize | gblup_reml | 10 | completed | converged | 0 |
 
-[Aggregate calibration CSV](../assets/reports/20261121-openblas/maize/calibration_bins.csv)
+The following fixed-variance gsolve check uses the variance estimates from our greml fit on representative folds: cattle folds 1 and 9 (including the previously problematic fold), maize fold 1. It checks prediction equivalence; its solve time excludes REML and is not another complete-method timing.
 
-| Method | Fold | Status | Convergence | Warning Count |
-| --- | --- | --- | --- | --- |
-| rrblup | 1 | completed | not exposed | 0 |
-| gbayes_gaussian | 1 | completed | converged | 0 |
-| gbayes_elastic_net | 1 | completed | converged | 0 |
-| rrblup | 2 | completed | not exposed | 0 |
-| gbayes_gaussian | 2 | completed | converged | 0 |
-| gbayes_elastic_net | 2 | completed | converged | 0 |
-| rrblup | 3 | completed | not exposed | 0 |
-| gbayes_gaussian | 3 | completed | converged | 0 |
-| gbayes_elastic_net | 3 | completed | converged | 0 |
-| rrblup | 4 | completed | not exposed | 0 |
-| gbayes_gaussian | 4 | completed | converged | 0 |
-| gbayes_elastic_net | 4 | completed | converged | 0 |
-| rrblup | 5 | completed | not exposed | 0 |
-| gbayes_gaussian | 5 | completed | converged | 0 |
-| gbayes_elastic_net | 5 | completed | converged | 0 |
+| Fold | Status | Max Prediction Difference | Prediction Correlation | Elapsed Seconds | Requested Workers | Stage | Dataset | Trait |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 1 | converged | 1.9657e-08 | 1 | 2.12 | 1 | representative-fold fixed-variance GLS/BLUP; two RHS; REML excluded | gpbench_maize | DTT |
 
-Failed or incomplete methods keep their fold statuses; pooled scores and comparison plots are withheld. Raw warning/error text and full diagnostic objects remain local because they can contain identifiers or paths. Unknown convergence and missing resource measurements are explicit. Completion does not certify scientific validity.
+[Solver checks CSV](../assets/reports/20261121-gsuite-final/maize/solver_checks.csv)
 
-## Reproduce and inspect
+## Reproduce
 
-From the repository root, first build and activate the pinned environment described in the repository's environment/README.md:
+Build and activate the pinned environment using environment/README.md in the repository. Set external GPCT_DATA_DIR and GPCT_OUTPUT_DIR; acknowledge positional alignment. Then run scripts/prepare.R CASE, benchmarks/CASE_prediction/run.R, scripts/check_solvers.R RUN_DIRECTORY and scripts/report_prediction.R RUN_DIRECTORY.
 
-```text
-Rscript --vanilla environment/preflight.R
-Rscript --vanilla scripts/check_dependencies.R
-Rscript --vanilla tests/check_protocol.R
-Rscript --vanilla tests/check_reporting.R
-Rscript --vanilla scripts/prepare.R maize
-Rscript --vanilla benchmarks/maize_prediction/run.R
-Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY
-```
+[Run metadata](../assets/reports/20261121-gsuite-final/maize/run_metadata.csv) · [Recipe checksums](../assets/reports/20261121-gsuite-final/maize/recipe_checksums.csv) · [Reporting session](../assets/reports/20261121-gsuite-final/maize/report-sessionInfo.txt)
 
-Set external GPCT_DATA_DIR/GPCT_OUTPUT_DIR and acknowledge the positional-ID contract before preparation. Do not publish individual predictions, folds or raw diagnostic files. Preserve the run's original settings, versions and input checksum.
+Individual predictions, fold assignments, saved fits, raw diagnostics, private implementation source and binaries stay outside the public repository.
 
-[Settings and versions](../assets/reports/20261121-openblas/maize/method_settings.csv) · [Reporting sessionInfo](../assets/reports/20261121-openblas/maize/report-sessionInfo.txt) · [Run metadata](../assets/reports/20261121-openblas/maize/run_metadata.csv)
-
-Repeated validation with identical method splits can be added later. Five folds are descriptive partitions, not independent experimental replicates. Association and genetic-correlation cases need separate outcomes and reporting schemas.
+[R packages loaded during fitting](../assets/reports/20261121-gsuite-final/maize/fit-sessionInfo.txt)

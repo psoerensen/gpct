@@ -8,7 +8,7 @@ Inspected 2026-11-21 from the
 [GPBench archive](https://huggingface.co/datasets/xw97/GPBench), pinned revision
 `f0204d8372fb5ec8fa29eb3f00c9a9d0a7656517`.
 
-| ID | Species | Samples | Markers | Available traits | Pilot target |
+| ID | Species | Samples | Markers | Available traits | Benchmark target |
 | --- | --- | --- | --- | --- | --- |
 | gpbench_cattle | Bos taurus | 5,024 | 42,551 | mkg, fpro, scs | mkg; 5,024 finite |
 | gpbench_maize | Zea mays | 1,458 | 75,304 | DTT, PH, EW | DTT; 1,456 finite |
@@ -21,8 +21,7 @@ range. Original sample IDs, allele orientation and marker positions are absent.
 Preparation checks SHA-256
 `fa02416336dd99d521a1533d2035b48fa02b723a7458236bd33b2c11b248ab67`
 for the 303,192,374-byte `Benchmarkdata.zip`. Only selected NPZ members are
-extracted outside git. The pilots select 512 evenly spaced source columns
-before any phenotype analysis. Synthetic row/column IDs identify archive
+extracted outside git. Every supplied marker is retained, with raw dosage coding. Synthetic row/column IDs identify archive
 positions. They do not establish biological identity; row-order alignment must
 be explicitly acknowledged.
 
@@ -31,7 +30,7 @@ be explicitly acknowledged.
 Upstream filtering, imputation, phenotype adjustment and units are unverified.
 All genotype entries in both inspected matrices are finite. All cattle outcomes
 are finite; maize finite counts are DTT 1,456, PH 1,457, EW 1,454.
-Downstream training-only processing cannot undo possible upstream leakage.
+GPBench mean-imputes missing phenotypes before splitting; matching that rule retains two imputed maize DTT targets, explicitly flagged. An observed-target-only sensitivity summary is separate. Neither this reproduction nor downstream processing certifies the upstream data as leakage-free.
 
 The Hugging Face card declares Apache-2.0 and the download is ungated. Original
 source rights and consent have not been independently established. gpct does

@@ -1,86 +1,45 @@
 ---
 layout: default
-title: Methods and package interfaces
+title: Methods and gsuite interfaces
 ---
-# Methods and package interfaces
+# Methods and gsuite interfaces
 
-All optimization is delegated to existing packages. No statistical method is
-implemented in gpct. The initial pilot keeps three predictors on the same
-512-marker matrix and saved splits.
+gpct benchmarks **methods and models implemented in the gsuite ecosystem**.
+Model names describe the statistical task; package and engine names identify
+our implementation. GPBench supplies data and a validation scheme.
 
-| Method | Existing interface | Settings |
+| Benchmarked model | Our interface | Statistical task |
 | --- | --- | --- |
-| REML ridge baseline | `rrBLUP::mixed.solve(y, Z, method="REML")` | Training-only variance-component estimation; bounds 1e-9 to 1e9 |
-| Fixed Gaussian marker prior | `gbayes::bayes(data, X, trait, method="marker_gaussian", algorithm="pcg")` | Standardized training response/features; ve=0.5; markerVariance=0.5/p |
-| Elastic net | `gbayes::bayes(data, X, trait, method="elastic_net", algorithm="coordinate_descent")` | lambda=0.1, alpha=0.5; training-standardized response/features |
+| Genomic BLUP with REML | gsuite::gs_lmm_fit, using greml and gsolve | Estimate genetic and residual variances on training data, then predict held-out phenotypes |
+| Numerical verification, outside the model ranking | gsuite::gsuite_solve with the fitted greml variances | Recompute fixed-variance GLS/BLUP predictions; no variance estimation |
 
-The Gaussian scale split is a predeclared working assumption, not an estimated
-heritability. The elastic-net penalty is fixed, not tuned. Both gbayes fits cap
-iterations at 2,000 with tolerance 1e-8 and managed memory 512 MiB. Future tuning
-must be nested inside training folds. REML ridge differs from fixed-prior ridge
-because its shrinkage is estimated from training data.
+The genomic BLUP model uses an intercept and the raw-dosage relationship
+K = ZZ'/p. REML uses the existing hybrid EM–AI optimizer, at most 100 iterations
+and score tolerance 1e-4. The supplied precision and its covariance metadata
+come from the same successful Cholesky factorization; no matrix repair is applied.
+The component interface uses CHOLMOD/MKL and exact selected inversion.
+Convergence, warnings, variance estimates and returned backend settings are
+recorded for every fold.
 
-gbayes phenotype prediction uses `stats::predict(fit, newdata=Xtest,
-type="phenotype")`; diagnostics use `gbayes::diagnostics(fit)`. rrBLUP prediction
-uses its returned intercept and marker effects. Training response scaling is
-inverted for both before evaluation.
+greml owns mixed-model likelihood and variance estimation. gsolve supplies
+numerical solvers; it is not a second prediction model. Their R interfaces are
+exposed through the root gsuite development package. Public recipes call these
+interfaces and do not contain the private numerical implementations.
 
-## API evidence and availability
+R uses OpenBLAS 0.3.29. The native integration uses Intel MKL/SuiteSparse.
+Requested runtime thread budgets and the settings returned by the native backend
+are reported separately; neither measures CPU utilization. The separate gsolve
+verification uses its supported one-worker setting.
 
-The baseline signature and returned `beta`, `u`, `Vu`, `Ve`, `LL` were checked
-against [CRAN rrBLUP documentation](https://cran.r-project.org/package=rrBLUP)
-and [its published R source](https://github.com/cran/rrBLUP/blob/master/R/mixed.solve.R).
+Other models implemented in the ecosystem, including gbayes prediction models,
+can receive their own benchmark entries. Association through glma and genetic
+correlation through gcorr require distinct evaluation designs. Scoring and mapping
+interfaces retain their gscore/gmap roles. An available interface is not evidence
+that a model has already been benchmarked.
 
-Read-only inspection of the existing gsuite checkout supplied actual package
-documentation and examples before calls were written:
-
-| Package source | Inspected documentation/examples | Scientific role |
-| --- | --- | --- |
-| gbayes 0.1.16 source | `packages/gbayes/man/bayes.Rd`, `prepared_design.Rd`, `bayesfit.Rd`; `R/prepared-design.R`; `tools/examples/gbayes/prepared-design.R` | Prediction pilot |
-| glma 0.1.2 source | `packages/glma/man/glma.Rd` and DESCRIPTION | Future quantitative/binary association and LOCO scans |
-| gcorr 0.1.10 source | DESCRIPTION and `man/ldsc.Rd` | Future covariance/correlation and architecture cases |
-| gsuite 0.43.0 source | DESCRIPTION | Future mixed-model and resource preparation cases |
-
-The [current public gbayes workflow](https://psoerensen.github.io/gtools/gsuite/docs/gbayes-workflow.html)
-documents the frozen 0.1.16 build and reports passing Gaussian/weighted elastic-net
-prepared-design examples. Some older local help/README text still labels that
-batch pending. These interfaces accept labelled, finite, centered dense X and
-have a default 2,048-feature limit. The pilot uses 512
-markers and never silently reduces a requested full-genome benchmark. Confirm
-local `help("prepared_design", package="gbayes")` and run the recipe before
-marking it runnable. A matching version number alone is insufficient.
-
-The [public source repository](https://psoerensen.github.io/gtools/gsuite/docs/source-package-repository.html)
-still separates public gbayes 0.1.1.1 from the development interfaces. The initial
-native libraries found on this laptop were the older public version, which
-does not export `bayes()`. A package's existence does not establish that it
-contains a particular documented development interface.
-
-Use the [checked-in environment recipe](https://github.com/psoerensen/gpct/tree/main/environment)
-to rebuild existing package code from pinned clean source commits into a private
-library and verify the fitting interfaces before a pilot. For package help, use
-`help("bayes", package="gbayes")`, `help("glma", package="glma")`,
-`help("ldsc", package="gcorr")`, and `help(package="gsuite")`.
-Related public guides: [gscore scoring](https://psoerensen.github.io/gtools/gsuite/docs/summary-interfaces.html),
-[gmap mapping](https://psoerensen.github.io/gtools/gsuite/docs/gmap-workflow.html),
-and [glma association](https://psoerensen.github.io/gtools/gsuite/docs/glma-workflow.html).
-Their installed interfaces were also inspected: gscore applies fitted weights,
-gmap interprets regional evidence/posteriors, and glma performs association/LOCO
-scans. They do not supply a replacement dense Gaussian/elastic-net predictor
-in the older installed releases. The chosen gbayes prepared-X route fits this
-NPZ pilot without inventing genomic positions or allele labels.
-
-No sibling checkout or shared installation is modified by the gpct build.
-
-## Future cases
-
-Full-marker BayesC/BayesR can use documented gbayes Glist/PLINK interfaces after
-legitimate source IDs/alleles or an approved import route are available. The
-current NPZ collection does not contain enough metadata to invent a BIM map.
-
-glma association tests answer locus-discovery/calibration questions; gcorr
-LD-score, covariance and genetic-correlation methods answer architecture and
-cross-trait questions. They should have separate benchmarks, reference truth,
-overlap/LD assumptions and evaluation measures. gsuite mixed-model cases need
-verified resource preparation and prediction semantics. None is forced into
-these prediction rankings.
+Private implementation source and binaries remain in their private owner
+repositories. Authorized maintainers can rebuild from the pinned commits in the
+[environment recipe](https://github.com/psoerensen/gpct/tree/main/environment).
+Public readers can inspect benchmark calls, settings, aggregate results and
+provenance. See the [protocol](protocol.html) and
+[existing numerical and mixed-model interfaces](https://psoerensen.github.io/gtools/gsuite/docs/gsolve-greml.html).

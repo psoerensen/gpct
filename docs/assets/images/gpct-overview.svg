@@ -1355,10 +1355,10 @@ L 1092.96 276.48
     <text style="font-weight: 700; font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="292.32" y="274.976406" transform="rotate(-0 292.32 274.976406)">Existing R methods</text>
    </g>
    <g id="text_27">
-    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="303.84" y="303.827188" transform="rotate(-0 303.84 303.827188)">rrBLUP baseline</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="303.84" y="303.827188" transform="rotate(-0 303.84 303.827188)">Genomic BLUP</text>
    </g>
    <g id="text_28">
-    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="303.84" y="335.507187" transform="rotate(-0 303.84 335.507187)">gbayes predictors</text>
+    <text style="font-size: 13px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="303.84" y="335.507187" transform="rotate(-0 303.84 335.507187)">greml + gsolve</text>
    </g>
    <g id="text_29">
     <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5b7082" x="292.32" y="374.83125" transform="rotate(-0 292.32 374.83125)">Fit on training samples</text>
@@ -1433,7 +1433,7 @@ L 1092.96 276.48
     <text style="font-size: 12px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #18334a" x="895.68" y="497.23125" transform="rotate(-0 895.68 497.23125)">New benchmark cases</text>
    </g>
    <g id="text_53">
-    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5b7082" x="33.12" y="537.995313" transform="rotate(-0 33.12 537.995313)">Initial pilots: cattle and maize prediction. Extensions shown above are planned.</text>
+    <text style="font-size: 11px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5b7082" x="33.12" y="537.995313" transform="rotate(-0 33.12 537.995313)">Current benchmarks: cattle and maize prediction. Extensions shown above are planned.</text>
    </g>
    <g id="text_54">
     <text style="font-size: 10px; font-family: 'DejaVu Sans'; text-anchor: start; fill: #5b7082" x="33.12" y="557.879375" transform="rotate(-0 33.12 557.879375)">Schematic overview: miniature charts illustrate output types and contain no measured benchmark results.</text>

@@ -1,56 +1,25 @@
-# Cattle prediction: mkg pilot
+# Cattle prediction: mkg
 
-**Status: completed 2026-11-21; all three methods completed five folds without warnings or failures.**
+Full-marker benchmark matching the published GPBench regression scheme.
 
-[Reviewed results and timings](https://psoerensen.github.io/gpct/reports/cattle.html). Both gbayes methods converged in every fold; rrBLUP exposes no convergence flag. Rebuild and activate the [pinned OpenBLAS environment](../../environment/README.md) before rerunning.
+Use all source rows and markers, raw dosage coding and the exact scikit-learn
+1.6.1 ten-fold splitter with seed 42. Main scores are arithmetic means of fold
+metrics. [Protocol](../../docs/protocol.md) specifies phenotype imputation,
+R2, source-ID limitations and timing scope.
 
-Question: how well do conventional REML ridge prediction and two fixed-setting
-gbayes predictors recover held-out supplied `mkg` values in random within-cohort
-five-fold validation? Target is the supplied, potentially pre-adjusted trait,
-in its source numeric units. It is not a verified raw milk measure or breeding
-value. See [dataset provenance](../../datasets/README.md).
+Benchmark genomic BLUP implemented in greml/gsolve, with REML variance estimation.
+A separate gsolve check uses our fitted variance estimates; its solve
+time excludes REML. Numerical implementations remain installed privately.
+No gsolve/greml implementation source or binaries are redistributed.
 
-Data: GPBench Cattle, 5,024 rows × 42,551 markers; all 5,024 `mkg` outcomes finite.
-This pilot uses **512 evenly spaced source marker columns**. It does not claim
-whole-genome performance. Original sample IDs and marker metadata are absent;
-explicit positional alignment acknowledgement is required.
-
-Methods: `rrBLUP::mixed.solve(..., method="REML")` is the established baseline.
-`gbayes::bayes(..., method="marker_gaussian", algorithm="pcg")` uses fixed
-residual variance 0.5 and equal marker prior variances 0.5/p on training-standardized
-outcomes and features. `method="elastic_net", algorithm="coordinate_descent"`
-uses lambda 0.1, alpha 0.5. Both have a 2,000-iteration cap and tolerance 1e-8.
-These are predeclared pilot settings, not tuned or estimated heritabilities.
-The REML ridge baseline learns its variance ratio within each training fold.
-
-Requires R, rrBLUP, compatible gbayes and native dependencies; preparation also
-needs digest, reticulate and existing Python/NumPy. Exact API and qualification
-limits: [methods](../../docs/methods.md). Optional glma/gcorr/gsuite are not
-loaded for prediction. No shared installation is changed.
-
-Validation: saved five-fold partitions, seed 4401, shared across all methods.
-Training means/SDs determine genotype imputation/scaling and outcome scaling.
-Training-constant markers are dropped identically for all methods within a fold.
-Predictions are returned to supplied phenotype units, including training means.
-No outer test outcomes enter fitting, preparation or tuning. Random splits do
-not test transfer across families, herds or time; source pedigree is unavailable.
-
-From the repository root after setting external directories and acknowledging
-positional IDs as in the [root README](../../README.md):
+Build and activate the [environment](../../environment/README.md), then run:
 
 ```text
-Rscript --vanilla scripts/check_dependencies.R
 Rscript --vanilla scripts/prepare.R cattle
 Rscript --vanilla benchmarks/cattle_prediction/run.R
+Rscript --vanilla scripts/check_solvers.R RUN_DIRECTORY
+Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY
 ```
 
-Expected output under `GPCT_OUTPUT_DIR/cattle/<run-id>/`:
-`predictions.csv`, `performance.csv`, `folds.rds`, `settings.rds`,
-`preprocessing-fold*.rds`, `*-diagnostics.rds`, `provenance.rds`,
-`package_versions.csv`, `sessionInfo-start.txt`, `sessionInfo.txt`,
-`run_status.csv`. Failed calls are explicit and metrics remain NA.
-See [evaluation definitions](../../docs/protocol.md).
-
-Future case: full-marker BayesC/BayesR via verified Glist/PLINK inputs, once
-genuine marker/allele metadata or a documented legitimate import route exists.
-Do not fabricate genomic metadata to force an interface.
+[Reviewed results](https://psoerensen.github.io/gpct/reports/cattle.html).
+Individual data, folds, predictions, fit objects and raw diagnostics stay external.

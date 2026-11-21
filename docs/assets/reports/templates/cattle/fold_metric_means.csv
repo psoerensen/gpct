@@ -1,4 +1,0 @@
-"dataset","trait","method","summary_type","predictive_ability","rmse","predictive_r_squared","calibration_intercept","calibration_slope","status"
-"gpbench_cattle","mkg","rrblup","mean_of_fold_metrics",NA,NA,NA,NA,NA,"planned"
-"gpbench_cattle","mkg","gbayes_gaussian","mean_of_fold_metrics",NA,NA,NA,NA,NA,"planned"
-"gpbench_cattle","mkg","gbayes_elastic_net","mean_of_fold_metrics",NA,NA,NA,NA,NA,"planned"

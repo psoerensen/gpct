@@ -1,42 +1,36 @@
 # Scripts
 
-Invoke all scripts with `Rscript --vanilla` from the repository root.
+Invoke scripts with `Rscript --vanilla` from the repository root after activating
+the pinned private environment.
 
 | Script | Purpose |
 | --- | --- |
-| `check_dependencies.R` | Report installed versions and Python/NumPy; installs nothing |
-| `prepare.R cattle` / `prepare.R maize` | Verify archive and prepare a positional 512-marker pilot |
-| `paths.R` | Enforce external artifact directories |
-| `evaluate.R` | Saved five-fold partitions, training-only preparation and metrics |
-| `run_prediction.R` | Shared thin recipe sourced by each case's `run.R` |
-| `report_prediction.R RUN_DIRECTORY` | Recompute pooled/fold summaries and generate aggregate CSVs, four static SVGs and a detailed report beside a local run |
+| `prepare.R cattle` / `prepare.R maize` | Verify the archive and prepare all supplied markers |
+| `paths.R` | Enforce external data and individual-artifact directories |
+| `gpbench_folds.py` | Save the actual scikit-learn ten-fold partitions, seed 42 |
+| `evaluate.R` | Verify saved splits; calculate fold and pooled metrics |
+| `fit_greml.R` | Thin call to our installed REML/BLUP interfaces |
+| `run_prediction.R` | Shared recipe sourced by each benchmark entry point |
+| `check_solvers.R RUN_DIRECTORY` | Verify our fixed-variance solver against our fitted predictions, after timing the benchmark |
+| `report_prediction.R RUN_DIRECTORY` | Generate aggregate CSVs, four SVGs and a report outside the checkout |
 
-No statistical optimizer is implemented here. Fitting uses `rrBLUP::mixed.solve`
-and `gbayes::bayes`. Folds and seeds are saved, with `RNGkind` fixed. Each run has
-a fresh timestamp/PID directory; set `GPCT_RUN_ID` for an explicit unique label.
-Existing run directories are refused. Changing eligible sample IDs causes a
-saved-fold mismatch error; retain the old folds as provenance and use a separate
-`GPCT_DATA_DIR` for a new protocol. The same IDs reuse folds even if values change;
-the prepared input checksum distinguishes such runs.
+Only methods/models implemented in gsuite are benchmarked. No external statistical
+fitter is used. Base R and optimized BLAS/LAPACK perform ordinary input preparation;
+our installed engines perform REML and mixed-model solving.
 
-Failures create `run_status.csv`; method-specific failures are also recorded in
-`performance.csv` and remaining method/fold combinations continue. Fatal input
-or preprocessing failures stop the run with a nonzero exit code. Timings use
-elapsed wall seconds and separate package fitting from prediction. Diagnostics
-serialization and shared preprocessing are excluded from those two timings.
-Failed fitting/prediction calls retain elapsed time to failure; a stage that was
-never reached has an unavailable time.
+Set explicit external GPCT_DATA_DIR and GPCT_OUTPUT_DIR paths. Existing run and
+report directories are refused. GPCT_RUN_ID selects a unique label. Input, split
+and recipe identities are retained with each run. Individual predictions include
+imputed-target flags and the training-mean reference used for the RMSE improvement
+plot. They are never copied to the website.
 
-All local outputs may contain sensitive individual information. They are not
-automatically copied to `results/` or the website.
+Failures and warnings remain visible in performance.csv and run_status.csv.
+Fitting and prediction times exclude diagnostics serialization. Kernel preparation
+and total case time are recorded separately. A fixed-variance solver check is not
+a complete REML timing. Peak RAM remains unavailable.
 
-Reporting uses base R and validates OOF sample/fold alignment before summarizing.
-Run `Rscript --vanilla tests/check_reporting.R` for synthetic checks of pooled
-versus fold-average metrics, failed fits and missing resources. Use
-`Rscript --vanilla scripts/report_prediction.R --templates NEW_DIRECTORY` for
-blank collection/case templates. See `docs/reporting.md` for schemas, timing and
-thread-count scope, and the manual aggregate-publication procedure.
-
-New prediction runs additionally record per-method elapsed time, warning counts,
-worker requests and unavailable peak-RAM/actual-thread fields, plus case-wide
-`execution.csv`. The managed-memory setting is not a peak-RAM measurement.
+Reporting verifies OOF row/fold alignment, distinguishes means of fold metrics
+from pooled scores, and keeps fold variation descriptive. It fits no models.
+Run tests/check_protocol.R, tests/check_interfaces.R and tests/check_reporting.R
+before publication. Publish only the reviewed aggregate allowlist described in
+docs/reporting.md.

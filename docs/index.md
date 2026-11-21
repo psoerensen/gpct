@@ -5,8 +5,8 @@ title: Reproducible genomic prediction
 <h1 class="page-heading">Reproducible genomic prediction and statistical genetics benchmarks</h1>
 
 **gpct** collects datasets, ordinary R analysis recipes, execution instructions
-and reviewed results for genomic prediction and related statistical genetics.
-Existing packages perform the computation. gpct is a benchmark collection.
+and reviewed results for methods and models implemented in the gsuite ecosystem,
+covering genomic prediction and related statistical genetics.
 
 <figure class="overview-figure">
   <a href="{{ '/assets/images/gpct-overview.svg' | relative_url }}" aria-label="Open the full-size gpct overview SVG">
@@ -24,21 +24,16 @@ used, which samples were held out, how each method was fitted, and how its
 predictions performed. Start with cattle and maize, then extend the same
 documented approach to further animal, plant and human datasets.
 
-## Start with two explicit pilots
+## Two matched full-marker benchmarks
 
 | Case | Dataset | Target | Status |
 | --- | --- | --- | --- |
 | Cattle prediction | GPBench Cattle | supplied mkg | Completed; [results](results.html) |
 | Maize prediction | GPBench Maize | supplied DTT | Completed; [results](results.html) |
 
-Each pilot uses 512 predeclared source marker columns, the same saved five-fold
-splits across methods (seed 4401), training-only processing and predictions on
-the source trait scale. The baseline is REML rrBLUP, compared with fixed Gaussian
-and elastic-net gbayes fits. These are execution pilots, not genome-wide rankings.
+Both benchmarks use all supplied markers, the same saved GPBench ten-fold splits (seed 42), raw dosage coding and genomic BLUP through our greml/gsolve interfaces. REML estimates variance components before BLUP prediction. A separate fixed-variance check tests our solver. Mean-imputed maize targets are explicitly flagged.
 
-Read the [dataset catalogue](datasets.html), [reproduction commands](benchmarks.html),
-[package interfaces](methods.html) and [evaluation protocol](protocol.html).
-See [real pilot results and timings](results.html), including all five fold values and aggregate calibration plots.
+Read the [dataset catalogue](datasets.html), [reproduction commands](benchmarks.html), [interfaces](methods.html), [protocol](protocol.html) and [results and timings](results.html).
 
 ## Contribute
 

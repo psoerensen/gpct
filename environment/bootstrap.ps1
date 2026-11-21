@@ -4,11 +4,12 @@ param(
   [string]$RHome = '',
   [string]$RtoolsHome = 'C:/rtools44',
   [string]$SourceRoot = '',
+  [string]$Python = '',
   [string]$EnvRoot = "$env:USERPROFILE/gpct-environments/windows-r443-openblas",
   [string]$DownloadCache = '',
   [ValidateRange(1,64)][int]$BlasThreads = 4,
   [ValidateSet('gbase','gbayes','gcorr','glma','gmap','gscore','gsea')]
-  [string[]]$Packages = @('gbase','gbayes')
+  [string[]]$Packages = @('gbase')
 )
 $ErrorActionPreference = 'Stop'
 Set-StrictMode -Version Latest
@@ -120,15 +121,25 @@ foreach ($item in $sourcePins) {
     $from=$item.url
     if ($SourceRoot) {
       $candidate=Join-Path $SourceRoot $item.repository
-      if (Test-Path -LiteralPath (Join-Path $candidate '.git')) { $from=$candidate }
+      if (Test-Path -LiteralPath (Join-Path $candidate '.git')) {
+        $hasCommit=$false
+        try {
+          & git -C $candidate cat-file -e ($item.revision+'^{commit}') 2>$null
+          $hasCommit=($LASTEXITCODE -eq 0)
+        } catch { $hasCommit=$false }
+        if ($hasCommit) { $from=$candidate }
+      }
     }
     Checked git @('fetch','--quiet','--depth','1',$from,$item.revision) $target
     Checked git @('checkout','--quiet','--detach',$item.revision) $target
   }
   $actual=(& git -C $target rev-parse HEAD).Trim()
-  if ($actual -ne $item.revision) { throw "Source revision mismatch: $($item.repository)" }
   $dirty=@(& git -C $target status --porcelain --untracked-files=no)
   if ($dirty.Count) { throw "Source snapshot has tracked edits: $target" }
+  if ($actual -ne $item.revision) {
+    Checked git @('fetch','--quiet','--depth','1','origin',$item.revision) $target
+    Checked git @('checkout','--quiet','--detach',$item.revision) $target
+  }
 }
 $selected=@('gbase')+@($Packages)
 if (@($selected | Where-Object {$_ -ne 'gbase'}).Count) { $selected+= 'gbayes' }
@@ -152,3 +163,14 @@ $manifest=@(
 )
 $manifest | Export-Csv -LiteralPath (Join-Path $EnvRoot 'runtime-checksums.csv') -NoTypeInformation
 Write-Output "GPCT environment build and smoke checks passed: $EnvRoot"
+if ($Python) {
+  $pythonVersion=& $Python -c 'import sys; print("%d.%d" % sys.version_info[:2])'
+  if ($LASTEXITCODE -ne 0 -or $pythonVersion -ne '3.12') { throw 'Supply Python 3.12 for the pinned wheel set.' }
+  $pythonRoot=Join-Path $EnvRoot 'python'
+  if (!(Test-Path -LiteralPath (Join-Path $pythonRoot 'Scripts/python.exe'))) {
+    Checked $Python @('-m','venv',$pythonRoot) $repo
+  }
+  $pythonExe=Join-Path $pythonRoot 'Scripts/python.exe'
+  Checked $pythonExe @('-m','pip','--isolated','install','--require-hashes','-r',
+    (Join-Path $PSScriptRoot 'requirements-windows-3.12.txt')) $repo
+}

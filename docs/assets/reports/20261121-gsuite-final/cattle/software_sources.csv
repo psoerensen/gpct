@@ -1,0 +1,4 @@
+"repository","url","revision","version","access"
+"gsuite","https://github.com/psoerensen/gsuite.git","19f876e71df014b996dbd09d0ae01ab3d0709829","0.43.0","Private implementation repository; authorized access required"
+"greml","https://github.com/psoerensen/greml.git","c84f83409e7a08eeada20e854c6ff6c81c8ed25f","0.92.0","Private implementation repository; authorized access required"
+"gsolve","https://github.com/psoerensen/gsolve.git","dd405973d6aece137fb9d82367502f78c8feef2d","0.28.0","Private implementation repository; authorized access required"

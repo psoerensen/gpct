@@ -1,0 +1,4 @@
+"fold","status","max_prediction_difference","prediction_correlation","elapsed_seconds","requested_workers","stage","dataset","trait"
+1,"converged",4.28416524478337e-10,1,103.36,1,"representative-fold fixed-variance GLS/BLUP; two RHS; REML excluded","gpbench_cattle","mkg"
+9,"converged",5.73359915101435e-10,1,72.19,1,"representative-fold fixed-variance GLS/BLUP; two RHS; REML excluded","gpbench_cattle","mkg"
+1,"converged",1.96572500499315e-08,1,2.12,1,"representative-fold fixed-variance GLS/BLUP; two RHS; REML excluded","gpbench_maize","DTT"

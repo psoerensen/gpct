@@ -1,4 +1,0 @@
-"dataset","trait","method","summary_type","predictive_ability","rmse","predictive_r_squared","calibration_intercept","calibration_slope","status"
-"gpbench_cattle","mkg","rrblup","mean_of_fold_metrics",0.54072580191246,0.841920151876101,0.291394754296179,-0.00044998565111518,0.992261687439758,"completed"
-"gpbench_cattle","mkg","gbayes_gaussian","mean_of_fold_metrics",0.535623189644949,0.847964966789627,0.281117169274184,-0.000569092626690397,0.886765522242754,"completed"
-"gpbench_cattle","mkg","gbayes_elastic_net","mean_of_fold_metrics",0.437961350920813,0.92047627629315,0.153145971447373,-0.000884953893001885,1.80863604107703,"completed"

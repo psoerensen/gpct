@@ -34,8 +34,8 @@ ph <- np$load(file.path(raw, members[2]), allow_pickle = FALSE)
 genotype <- reticulate::py_get_item(g, "arr_0")
 shape <- as.integer(unlist(reticulate::py_to_r(genotype$shape)))
 if (!identical(shape, as.integer(c(config$n, config$p)))) stop("Genotype shape differs from registry.")
-columns <- unique(as.integer(round(seq(1, shape[2], length.out = config$marker_count))))
-X <- reticulate::py_to_r(np$take(genotype, columns - 1L, axis = 1L))
+columns <- seq_len(shape[2])
+X <- reticulate::py_to_r(genotype)
 Y <- reticulate::py_to_r(reticulate::py_get_item(ph, "arr_0"))
 traits <- as.character(reticulate::py_to_r(reticulate::py_get_item(ph, "arr_1")))
 if (!is.matrix(X) || any(!is.finite(X)) || any(!X %in% 0:2)) stop("Unexpected selected genotype coding.")
@@ -48,11 +48,11 @@ colnames(Y) <- traits
 prepared <- list(X = X, Y = Y, ids = ids, source_columns = columns,
   metadata = list(dataset_id = config$dataset_id, source_revision = revision,
     archive_sha256 = checksum, positional_alignment_accepted = TRUE,
-    marker_scope = "512 evenly spaced source columns; no outcome selection",
+    marker_scope = "all supplied source marker columns; original dosage coding",
     upstream_processing = "unknown", prepared_utc = format(Sys.time(), tz = "UTC"),
     numpy_version = reticulate::py_to_r(np$`__version__`)))
-destination <- file.path(root, "prepared", paste0(args, ".rds"))
+destination <- file.path(root, "prepared", paste0(args, "-gpbench.rds"))
 dir.create(dirname(destination), recursive = TRUE, showWarnings = FALSE)
-saveRDS(prepared, destination)
+saveRDS(prepared, destination, compress = FALSE)
 g$close(); ph$close()
 cat("Prepared:", destination, "\n")

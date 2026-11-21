@@ -1,4 +1,0 @@
-"dataset","trait","method","package","package_version","tuning_strategy","model_settings","convergence_criteria","requested_package_threads","actual_threads","managed_memory_budget_mib"
-"gpbench_maize","DTT","rrblup","rrBLUP","not run","training-only REML variance estimation; no CV tuning","REML ridge; variance ratio fitted on training data; bounds 1e-9 to 1e9","REML optimizer; no flag exposed",NA,NA,NA
-"gpbench_maize","DTT","gbayes_gaussian","gbayes","not run","none; fixed predeclared settings","marker_gaussian/pcg; standardized outcome; ve=0.5; prior variance=0.5/p; nit=2000","native tolerance 1e-08 and iteration cap; inspect diagnostics",1,NA,512
-"gpbench_maize","DTT","gbayes_elastic_net","gbayes","not run","none; fixed predeclared settings","elastic_net/coordinate_descent; standardized outcome; lambda=0.1; alpha=0.5; nit=2000","native tolerance 1e-08 and iteration cap; inspect diagnostics",1,NA,512

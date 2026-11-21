@@ -11,6 +11,8 @@ Copy a benchmark folder and edit its ordinary R config and README. State the
 scientific target, data eligibility rules, method settings, validation population,
 commands and outputs. Existing APIs must be checked against actual package help
 and examples. Different scientific questions belong in separate benchmark cases.
+Benchmark methods and models implemented in the gsuite ecosystem. Record model
+names separately from the gsuite packages and engines implementing them.
 Do not add statistical solvers or a general workflow engine here.
 
 Use shared saved folds. Fit imputation, scaling, covariate adjustments and tuning

@@ -1,132 +1,76 @@
-# Rebuild the gpct Windows environment
+# Rebuild the benchmark environment
 
-The benchmark recipes use existing ecosystem interfaces. A new laptop needs a
-way to rebuild those interfaces, not an undocumented copy of an old library.
-This directory pins that recipe. It builds existing package source without
-editing an owner checkout or adding statistical methods.
+The public repository contains environment recipes and benchmark calls, not
+private numerical implementation source or binaries. All snapshots, build
+products, installed libraries, input data and individual results remain external.
 
-## Inputs and isolation
+## Pinned components
 
-| Input | Pin / check |
-| --- | --- |
-| R | 4.4.3 UCRT x64; copied into a private environment before any BLAS replacement |
-| Rtools44 | GCC 13.3.0, with the SHA-256-pinned OpenBLAS 0.3.29 static archive |
-| R BLAS exports | Pinned upstream R source commit and SHA-256 in `runtime.csv` |
-| CRAN dependencies | Exact Windows 4.4 package URLs, versions and SHA-256 in `cran-windows-4.4.csv` |
-| Ecosystem source | Exact Git commits in `sources.csv`; clean snapshots, excluding uncommitted owner edits |
-| Package assembly | The pinned gsuite `tools/build/build_source_repository.R`, reused unchanged |
+- R 4.4.3 UCRT x64 and Rtools44 GCC 13.3.0.
+- OpenBLAS 0.3.29 for R BLAS; archive/export hashes in runtime.csv.
+- CRAN Windows dependencies with exact URLs/hashes in cran-windows-4.4.csv.
+- Python 3.12 with NumPy 1.26.4, SciPy 1.13.1 and scikit-learn 1.6.1; exact wheels/hashes in requirements-windows-3.12.txt.
+- Private integration: gsuite 0.43.0, gsolve 0.28.0 and greml 0.92.0; source commits in sources.csv.
+- Native build prerequisites used here: Intel MKL 2026.2.1, Intel OpenMP 2026.2.0, SuiteSparse 7.12.3 and Windows SDK x64 10.0.26100.7705. They are private build inputs, not redistributions by gpct.
 
-Prerequisites on a fresh Windows laptop:
+Install [R 4.4.3](https://cran.r-project.org/bin/windows/base/old/4.4.3/R-4.4.3-win.exe),
+[Rtools44](https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6459-6401.exe),
+Git and Python 3.12. Authenticate for the pinned private repositories. Use the
+private gsuite owner's documented native-prerequisite setup for MKL, SuiteSparse
+and the SDK; retain its verified download hashes and qualification evidence.
+A public checkout does not grant private source access or distribute that setup.
 
-1. Install [R 4.4.3](https://cran.r-project.org/bin/windows/base/old/4.4.3/R-4.4.3-win.exe).
-2. Install the x64 [Rtools44 6459-6401](https://cran.r-project.org/bin/windows/Rtools/rtools44/files/rtools44-6459-6401.exe)
-   at `C:/rtools44`. The recipe checks the compiler and exact OpenBLAS archive;
-   a different toolchain fails rather than silently changing the environment.
-3. Install Git and authenticate for any source repositories that require access.
-   The source pins are not a promise that private development repositories are
-   anonymously downloadable. No credentials are stored in gpct.
-
-PowerShell 7 is the tested shell. The default environment is
-`~/gpct-environments/windows-r443-openblas`, outside this checkout. Archives,
-source snapshots, build logs/caches, the R runtime and installed packages stay
-there or in the configured download cache. Original source repositories and
-shared R installations are read-only inputs.
-
-## One build command
-
-From the gpct repository root:
-
-```powershell
-./environment/bootstrap.ps1 -RHome 'C:/Program Files/R/R-4.4.3'
-```
-
-If the registered R 4.4.3 installation is already correct, `-RHome` is optional.
-To reuse local source repositories as a download cache while still checking out
-the pinned clean commits into separate snapshots:
+## Build in PowerShell 7
 
 ```powershell
 ./environment/bootstrap.ps1 `
-  -RHome 'C:/path/to/R-4.4.3' `
-  -SourceRoot 'C:/Users/YOU/Documents/GitHub'
+  -RHome 'C:/Program Files/R/R-4.4.3' `
+  -Python 'C:/path/to/python-3.12.exe'
+
+./environment/build-private.ps1 `
+  -PrerequisiteRoot 'C:/path/to/qualified-native-dependencies'
 ```
 
-`-EnvRoot`, `-DownloadCache` and `-BlasThreads` can be supplied explicitly.
-The default four BLAS runtime threads are separate from the single gbayes
-package worker requested by each pilot.
+The default target is ~/gpct-environments/windows-r443-openblas. Supply EnvRoot
+explicitly to both scripts to change it. SourceRoot on bootstrap is an optional
+local Git cache; pinned clean snapshots are still checked out separately. Owner
+checkouts and shared R/Python installations are never build destinations.
 
-The default build selects `gbase` and `gbayes`, plus the pinned CRAN dependencies
-needed by the pilots. Source snapshots include the owners required by the
-canonical builder. The same existing builder can be requested for the seven
-public packages:
+The native prerequisite directory must have the existing owner layout:
+intel/Library, suitesparse-prefix and windows-sdk-x64-10.0.26100.7705. The private
+build reuses the owner's unchanged tools/build/build_workflow.ps1 in the pinned
+gsuite snapshot. It builds the required native dependencies and root R integration
+in that snapshot's build directory. The pinned canonical Windows release verifier hard-codes a separate R 4.4.1 installation, so its absence is recorded explicitly; the wrapper instead requires fresh benchmark interface checks under the private R 4.4.3/OpenBLAS runtime. It does not claim the legacy release verifier passed.
+The full SuiteSparse closure is staged, including CAMD/CCOLAMD.
 
-```powershell
-./environment/bootstrap.ps1 -Packages gbase,gbayes,gcorr,glma,gmap,gscore,gsea
-```
+The base bootstrap uses the owner's source-package builder for gbase, with
+skip-check/local-only. Neither step is a full R CMD check or release qualification.
+No source package or binary is uploaded to gtools by these scripts.
 
-That command is a build recipe, not a claim that all seven have been freshly
-qualified on this laptop. Current execution evidence belongs in
-`docs/verification.md`. The root gsuite package and licensed standalone
-application are separate distribution units.
-
-The script uses the canonical source-package builder with `--skip-check` and
-`--local-only`: package assembly, compilation, installation and the builder's
-load smoke check run, but a complete `R CMD check` and broad scientific
-qualification are not implied. The gpct smoke test separately checks the
-documented Gaussian and weighted elastic-net example and numerical BLAS basics.
-
-## Activate, verify and run
-
-In each new PowerShell session:
+## Activate and verify
 
 ```powershell
 ./environment/activate.ps1
 Rscript --vanilla environment/preflight.R
-Rscript --vanilla environment/smoke_test.R
-
-$env:GPCT_DATA_DIR = 'C:/data/gpct'
-$env:GPCT_OUTPUT_DIR = 'C:/results/gpct'
-$env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
-$env:RETICULATE_PYTHON = 'C:/path/to/python-with-numpy.exe'
-
-Rscript --vanilla scripts/prepare.R cattle
-Rscript --vanilla benchmarks/cattle_prediction/run.R
-Rscript --vanilla scripts/prepare.R maize
-Rscript --vanilla benchmarks/maize_prediction/run.R
+Rscript --vanilla tests/check_protocol.R
+Rscript --vanilla tests/check_interfaces.R
+Rscript --vanilla tests/check_reporting.R
 ```
 
-Preparation also needs an existing Python with NumPy; `reticulate` does not
-install Python automatically. The archive revision, checksum and data contract
-remain in `datasets/README.md` and the registry.
+Activation selects only libraries inside the private environment. It sets four
+BLAS/MKL runtime threads by default, separately from the gsolve PCG worker count.
+Preflight verifies the private R location, package paths, interface exports,
+native versions, loaded OpenBLAS implementation/thread setting and DLL hash.
+Interface checks compare equivalent small REML models and an independent dense
+linear-solve reference. Run logs and native binaries stay private.
 
-Preflight checks R and package versions, package paths, exported fitting
-interfaces, the actually loaded OpenBLAS implementation and runtime thread
-setting. The smoke test uses the exact small example from the
-[public gbayes workflow](https://psoerensen.github.io/gtools/gsuite/docs/gbayes-workflow.html#runnable-gaussian-and-weighted-elastic-net-examples).
-It verifies expected coefficients and prediction without touching the benchmark
-data. Its output is not a benchmark result.
+R retains its supplied LAPACK library while BLAS uses OpenBLAS, following
+[R's fast-BLAS mechanism](https://cran.r-project.org/bin/windows/base/rw-FAQ.html#Can-I-use-a-fast-BLAS_003f).
+A runtime thread setting does not measure observed CPU utilization. The benchmark
+records fitting, prediction, kernel preparation and whole-case time separately;
+peak RAM remains unmeasured.
 
-R retains its supplied LAPACK library while BLAS calls use OpenBLAS. This follows
-R's [Windows fast-BLAS mechanism](https://cran.r-project.org/bin/windows/base/rw-FAQ.html#Can-I-use-a-fast-BLAS_003f)
-and [OpenBLAS linker recipe](https://github.com/wch/r-source/blob/trunk/src/extra/blas/Makefile.win).
-`blas_probe.c` only inspects the loaded DLL and OpenBLAS configuration; it
-implements no numerical method. `runtime-checksums.csv` records the resulting
-R/BLAS binary hashes. A configured memory budget is not a peak-RAM measurement.
-
-## Rebuild and release policy
-
-Keep the lock files under Git. Change a source revision, toolchain or dependency
-only deliberately, then rebuild and rerun the smoke checks. Downloads are
-checksum-verified and any mismatch stops the build. If an upstream archive is
-removed, retain a verified cached copy or update the lock explicitly; the recipe
-does not substitute an unpinned newer version.
-
-The build can resume using its source/download caches, but canonical package
-assembly may rebuild a package. It does not delete or clean original owner
-caches. Preserve failed build evidence and diagnose failures in the isolated
-environment.
-
-No package or native binary is committed to gpct or automatically published to
-gtools. Publishing a source-package release to gtools is a separate maintainer
-workflow with package checks, interface tests, checksums, release indices and
-an explicit publication request. The benchmark pages publish reviewed aggregate
-outputs, not an unqualified ecosystem release.
+These recipes pin the build inputs available to this authorized maintainer.
+They have not been tested as an anonymous, network-only clean-room rebuild.
+Do not substitute newer dependencies silently. Preserve failed build logs and
+original owner caches; diagnose environment failures in the isolated environment.

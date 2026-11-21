@@ -1,0 +1,11 @@
+"dataset","trait","method","bin","n","mean_prediction","mean_observed"
+"gpbench_cattle","mkg","gblup_reml",1,503,-1.38145375100113,-1.3867504612326
+"gpbench_cattle","mkg","gblup_reml",2,502,-0.808507454720241,-0.80749985059761
+"gpbench_cattle","mkg","gblup_reml",3,502,-0.516132381928678,-0.537956521912351
+"gpbench_cattle","mkg","gblup_reml",4,503,-0.294029991758429,-0.295050743538767
+"gpbench_cattle","mkg","gblup_reml",5,502,-0.0909749286530115,-0.0744717231075697
+"gpbench_cattle","mkg","gblup_reml",6,502,0.11036608246099,0.0705504561752988
+"gpbench_cattle","mkg","gblup_reml",7,503,0.317195855553555,0.30977064612326
+"gpbench_cattle","mkg","gblup_reml",8,502,0.536747946787594,0.541073812749004
+"gpbench_cattle","mkg","gblup_reml",9,502,0.832061939237925,0.834586247011952
+"gpbench_cattle","mkg","gblup_reml",10,503,1.3493897488746,1.3458003638171

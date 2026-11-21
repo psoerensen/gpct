@@ -1,115 +1,39 @@
-# Synthetic checks only; these values never become website benchmark results.
-source("scripts/report_prediction.R")
-fixture <- tempfile("gpct-report-")
-dir.create(fixture)
-config <- case_config("cattle")
-saveRDS(config, file.path(fixture, "settings.rds"))
-ids <- sprintf("test-%03d", 1:50)
-fold <- rep(1:5, 10)
-saved <- data.frame(id = ids, fold = fold)
-attr(saved, "seed") <- 4401L
-saveRDS(saved, file.path(fixture, "folds.rds"))
-versions <- data.frame(package = c("rrBLUP", "gbayes"), version = c("test", "test"))
-write.csv(versions, file.path(fixture, "package_versions.csv"), row.names = FALSE)
-y <- sin(seq_along(ids)) + seq_along(ids)/10
-predictions <- lapply(config$methods, function(method) {
-  prediction <- switch(method, rrblup = .6*y + cos(seq_along(ids)),
-    gbayes_gaussian = y + .1*sin(seq_along(ids)), gbayes_elastic_net = rep(mean(y), length(y)))
-  data.frame(id = ids, fold = fold, method = method, observed = y, predicted = prediction,
-    training_mean = vapply(fold, function(k) mean(y[fold != k]), numeric(1)))
-})
-p <- do.call(rbind, predictions)
-perf <- do.call(rbind, lapply(config$methods, function(method) do.call(rbind, lapply(1:5, function(k) {
-  data.frame(method = method, fold = k, status = "completed", convergence = "converged",
-    markers = 512L - k, fit_seconds = k, prediction_seconds = .1, method_elapsed_seconds = k + .2,
-    warning_count = 0L)
-}))))
-write_inputs <- function(p, perf) {
-  write.csv(p, file.path(fixture, "predictions.csv"), row.names = FALSE)
-  write.csv(perf, file.path(fixture, "performance.csv"), row.names = FALSE)
-}
-write_inputs(p, perf)
-tables <- finish_report_tables(summarize_prediction_run(fixture))
-s <- tables$benchmark_results
-baseline <- s[s$method == "rrblup", ]
-gaussian <- s[s$method == "gbayes_gaussian", ]
-q <- p[p$method == "rrblup", ]
-expected_r2 <- 1 - sum((q$observed-q$predicted)^2)/sum((q$observed-q$training_mean)^2)
-stopifnot(abs(baseline$predictive_r_squared - expected_r2) < 1e-12,
-          baseline$fit_seconds == 15, baseline$prediction_seconds == .5,
-          baseline$markers_used_min == 507, baseline$markers_used_max == 511,
-          baseline$available_markers == 42551, baseline$planned_markers == 512,
-          is.na(baseline$peak_ram_mb), baseline$ram_status == "not measured",
-          is.na(baseline$actual_threads), baseline$delta_predictive_ability == 0,
-          all(tables$calibration_bins$n >= 5), !"id" %in% names(tables$calibration_bins))
-stopifnot(abs(gaussian$delta_predictive_ability -
-  (gaussian$predictive_ability-baseline$predictive_ability)) < 1e-12,
-  abs(gaussian$relative_rmse_reduction - (1-gaussian$rmse/baseline$rmse)) < 1e-12)
-fold_mean <- tables$fold_metric_means$predictive_r_squared[tables$fold_metric_means$method == "rrblup"]
-stopifnot(abs(fold_mean-baseline$predictive_r_squared) > 1e-5,
-          is.na(s$predictive_ability[s$method == "gbayes_elastic_net"]))
-out <- tempfile("report-output-")
-write_prediction_report(tables, out)
-stopifnot(all(file.exists(file.path(out, paste0(c("performance", "improvement", "runtime", "calibration"), ".svg")))),
-          file.exists(file.path(out, "benchmark_results.csv")),
-          !file.exists(file.path(out, "predictions.csv")),
-          !file.exists(file.path(out, "folds.rds")))
-bad <- perf; bad$status[bad$method == "gbayes_gaussian" & bad$fold == 3] <- "failed"
-partial <- p[!(p$method == "gbayes_gaussian" & p$fold == 3), ]
-write_inputs(partial, bad)
-failed <- finish_report_tables(summarize_prediction_run(fixture))
-a <- failed$benchmark_results[failed$benchmark_results$method == "gbayes_gaussian", ]
-stopifnot(a$status == "failed", a$failed_folds == 1L, a$completed_folds == 4L,
-          is.na(a$predictive_ability), is.na(a$delta_predictive_ability),
-          !any(failed$calibration_bins$method == "gbayes_gaussian"))
-bad <- perf; bad$status[bad$method == "rrblup" & bad$fold == 3] <- "failed"
-partial <- p[!(p$method == "rrblup" & p$fold == 3), ]
-write_inputs(partial, bad)
-no_baseline <- finish_report_tables(summarize_prediction_run(fixture))$benchmark_results
-stopifnot(all(is.na(no_baseline$delta_predictive_ability)),
-          all(is.na(no_baseline$relative_rmse_reduction)))
-write_inputs(p, perf[-1, ])
-incomplete <- summarize_prediction_run(fixture)$benchmark_results
-stopifnot(incomplete$status[incomplete$method == perf$method[1]] == "incomplete")
-write_inputs(rbind(p, p[1, ]), perf)
-stopifnot(inherits(try(summarize_prediction_run(fixture), silent = TRUE), "try-error"))
-bad <- p; bad$fold[1] <- 5
-write_inputs(bad, perf)
-stopifnot(inherits(try(summarize_prediction_run(fixture), silent = TRUE), "try-error"))
-bad <- p; bad$observed[1] <- bad$observed[1]+1
-write_inputs(bad, perf)
-stopifnot(inherits(try(summarize_prediction_run(fixture), silent = TRUE), "try-error"))
-unlink(c(fixture, out), recursive = TRUE)
-
-# Exercise runner failure recording and timing without fitting a package model.
-check_failed_runner <- function() {
-  root <- tempfile("gpct-runner-"); dir.create(root)
-  old <- Sys.getenv(c("GPCT_DATA_DIR", "GPCT_OUTPUT_DIR", "GPCT_RUN_ID"), unset = NA_character_)
-  on.exit({
-    for (key in names(old)) if (is.na(old[[key]])) Sys.unsetenv(key) else
-      do.call(Sys.setenv, stats::setNames(list(old[[key]]), key))
-    unlink(root, recursive = TRUE)
-  })
-  Sys.setenv(GPCT_DATA_DIR = file.path(root, "data"), GPCT_OUTPUT_DIR = file.path(root, "out"), GPCT_RUN_ID = "failure-check")
-  dir.create(file.path(root, "data", "prepared"), recursive = TRUE)
-  cfg <- case_config("cattle"); cfg$n <- 50L
-  # Unknown method exercises explicit failure after preprocessing; no fit executes.
-  cfg$methods <- "deliberately_unavailable_test_method"
-  X <- outer(1:50, 1:512, function(i, j) sin(i+j))
-  dimnames(X) <- list(ids, paste0("marker-", 1:512))
-  Y <- matrix(y, ncol = 1, dimnames = list(ids, "mkg"))
-  saveRDS(list(X = X, Y = Y, ids = ids,
-    metadata = list(dataset_id = cfg$dataset_id, positional_alignment_accepted = TRUE)),
-    file.path(root, "data", "prepared", "cattle.rds"))
-  env <- new.env(parent = globalenv()); env$config <- cfg; env$exit_status <- NULL
-  env$quit <- function(status) env$exit_status <- status
-  sys.source("scripts/run_prediction.R", env)
-  destination <- file.path(root, "out", "cattle", "failure-check")
-  rows <- read.csv(file.path(destination, "performance.csv"))
-  execution <- read.csv(file.path(destination, "execution.csv"))
-  stopifnot(env$exit_status == 1L, nrow(rows) == 5L, all(rows$status == "failed"),
-    all(is.finite(rows$method_elapsed_seconds)), all(is.na(rows$peak_ram_mb)),
-    is.finite(execution$case_elapsed_seconds), execution$ram_status == "not measured")
-}
-check_failed_runner()
-cat("Reporting checks passed; synthetic outputs removed.\n")
+source('scripts/report_prediction.R')
+root <- tempfile('gpct-report-test-');dir.create(root)
+e <- new.env();sys.source('benchmarks/cattle_prediction/config.R',e);config <- e$config;config$n<-60L
+saveRDS(config,file.path(root,'settings.rds'))
+folds <- data.frame(id=paste0('synthetic-',1:60),source_row=1:60,fold=rep(1:10,each=6))
+saveRDS(folds,file.path(root,'folds.rds'))
+p <- do.call(rbind,lapply(config$methods,function(method) data.frame(id=folds$id,fold=folds$fold,method,
+  observed=seq_len(60)/10,predicted=seq_len(60)/10*.8+rep(1:10,each=6)/20,
+  phenotype_was_imputed=FALSE,
+  training_mean=vapply(folds$fold,function(k)mean((seq_len(60)/10)[folds$fold!=k]),numeric(1)))))
+write.csv(p,file.path(root,'predictions.csv'),row.names=FALSE)
+perf <- expand.grid(method=config$methods,fold=1:10,stringsAsFactors=FALSE)
+perf$markers<-config$p;perf$status<-'completed';perf$convergence<-'converged';perf$warning_count<-0L
+perf$fit_seconds<-1;perf$prediction_seconds<-.1;perf$method_elapsed_seconds<-1.2
+for(field in report_metrics) perf[[field]]<-NA_real_
+write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
+write.csv(data.frame(package='gsuite',version='0.43.0'),
+  file.path(root,'package_versions.csv'),row.names=FALSE)
+saveRDS(list(source=list(source_revision='synthetic'),input_md5='synthetic',response_imputed_n=0L,
+  scripts_md5=c('synthetic.R'='synthetic')),file.path(root,'provenance.rds'))
+write.csv(data.frame(case_elapsed_seconds=30,shared_kernel_seconds=2,blas_implementation='synthetic'),
+  file.path(root,'execution.csv'),row.names=FALSE)
+write.csv(data.frame(fold=1:10,status='converged',max_prediction_difference=0,
+  prediction_correlation=1,elapsed_seconds=.1),file.path(root,'solver_checks.csv'),row.names=FALSE)
+t <- summarize_prediction_run(root)
+stopifnot(all(t$benchmark_results$completed_folds==10L),
+  all(abs(t$benchmark_results$predictive_ability-1)<1e-12),
+  abs(t$pooled_results$predictive_r_squared[1]-t$benchmark_results$predictive_r_squared[1])>1e-3,
+  all(t$benchmark_results$workflow_seconds==13),all(t$benchmark_results$relative_rmse_reduction>0))
+write_prediction_report(t,file.path(root,'report'))
+stopifnot(!any(grepl('predictions|folds[.]',list.files(file.path(root,'report')))))
+perf$status[perf$method=='gblup_reml'&perf$fold==10]<-'failed'
+write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
+failed <- summarize_prediction_run(root)$benchmark_results
+stopifnot(failed$status[1]=='incomplete',is.na(failed$predictive_ability[1]))
+p$id[2]<-p$id[1];write.csv(p,file.path(root,'predictions.csv'),row.names=FALSE)
+stopifnot(inherits(try(summarize_prediction_run(root),silent=TRUE),'try-error'))
+unlink(root,recursive=TRUE)
+cat('Ten-fold summaries, pooled distinction, workflow costs, failures and identity checks passed; synthetic outputs removed.\n')

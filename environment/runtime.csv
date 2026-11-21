@@ -7,4 +7,6 @@ openblas_archive_sha256,9f0c38cfb21735ec684163ef88cc4f8e28da213b1eac1a5ec1058bfe
 blas_def_url,https://raw.githubusercontent.com/wch/r-source/702728a10fb4f4385cbc0818c55b106c423aab12/src/extra/blas/Rblas.def
 blas_def_sha256,6c599bfb71e8f93a73ed5c99cafe1c47273a40bf41c841b0d62d6fedad82de2a
 gbase_version,0.1.14
-gbayes_version,0.1.16
+gsuite_version,0.43.0
+gsolve_version,0.28.0
+greml_version,0.92.0

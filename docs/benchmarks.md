@@ -4,56 +4,52 @@ title: Benchmark recipes
 ---
 # Benchmark recipes
 
-Both 512-marker cases **completed on 2026-11-21** using the pinned private R/OpenBLAS environment. All three methods completed five folds without warnings or failed fits. Both gbayes methods converged; rrBLUP exposes no convergence flag.
+Cattle/mkg and maize/DTT use the published GPBench regression scheme with all
+source markers and ten folds. [Results](results.html) and detailed
+[cattle](reports/cattle.html)/[maize](reports/maize.html) reports use the same
+scientific structure while retaining distinct trait units and source limitations.
 
-| Case | Question | Eligibility | Scope |
+| Case | Rows evaluated | Markers | Missing target handling |
 | --- | --- | --- | --- |
-| Cattle/mkg | Predict supplied mkg within cohort | 5,024 finite outcomes | 512-marker pilot |
-| Maize/DTT | Predict supplied DTT within panel | 1,456 finite outcomes; two excluded | 512-marker pilot |
+| Cattle / mkg | 5,024 | 42,551 | None missing |
+| Maize / DTT | 1,458 | 75,304 | Two mean-imputed DTT targets flagged; observed-only sensitivity score |
 
-Detailed measured reports: [cattle/mkg](reports/cattle.html) and
-[maize/DTT](reports/maize.html). Both follow the same sequence: scientific
-question, methods/validation, results table, performance/cost plots,
-calibration/diagnostics, and reproduction details. See the
-[standard comparison tables and plots](results.html).
-
-These targets use supplied numeric units. Biological definitions, preprocessing
-and units need original-source confirmation. Random splits do not evaluate
-family, herd, environment or temporal transfer.
+These recipes benchmark genomic BLUP implemented in greml/gsolve, estimating
+variance components by REML before prediction. The gsolve fixed-variance
+check is a separate numerical comparison, not another complete model fit.
 
 ## Reproduce locally
 
-Build and activate the [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment) first. Preparation needs digest,
-reticulate and an existing Python with NumPy. Prediction needs rrBLUP and a
-compatible gbayes exposing the inspected prepared-design interface. Analysis scripts report missing dependencies and install nothing; the explicit environment bootstrap installs into an isolated private library. Read [interface limits](methods.html).
-
-From the repository root, in PowerShell:
+Build and activate the [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment).
+The private integration requires authorized access; implementation source and
+binaries are not distributed with gpct. R uses OpenBLAS and the private native
+integration uses its existing Intel MKL backend.
 
 ```powershell
 ./environment/activate.ps1
-Rscript --vanilla environment/preflight.R
 $env:GPCT_DATA_DIR = 'C:/data/gpct'
 $env:GPCT_OUTPUT_DIR = 'C:/results/gpct'
 $env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
-# $env:RETICULATE_PYTHON = 'C:/path/to/python.exe'
-Rscript --vanilla scripts/check_dependencies.R
+Rscript --vanilla environment/preflight.R
 Rscript --vanilla tests/check_protocol.R
+Rscript --vanilla tests/check_interfaces.R
+Rscript --vanilla tests/check_reporting.R
 Rscript --vanilla scripts/prepare.R cattle
 Rscript --vanilla benchmarks/cattle_prediction/run.R
 Rscript --vanilla scripts/prepare.R maize
 Rscript --vanilla benchmarks/maize_prediction/run.R
+Rscript --vanilla scripts/check_solvers.R RUN_DIRECTORY
+Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY
 ```
 
-`GPCT_ACCEPT_POSITIONAL_IDS=yes` acknowledges the unverified upstream row-order
-contract; read [data limitations](datasets.html) first. Data/output paths must
-be outside the repository. Preparation downloads the pinned archive unless
-`GPCT_ARCHIVE` points to an existing copy. Allow several GB RAM for NPZ decoding.
+Preparation downloads and verifies the pinned archive unless GPCT_ARCHIVE points
+to an existing copy. Full matrices require several GB RAM and external disk space.
+No individual outputs are written inside the repository. Source-position IDs
+acknowledge the unverified upstream row-order convention; equal array sizes do
+not prove biological alignment.
 
-Every run saves out-of-fold predictions with source-position IDs, fold metrics,
-separate fit/prediction timings, raw diagnostics, settings, fold-specific
-preprocessing, versions, seeds, checksums, sessionInfo and explicit failure
-status. Review `run_status.csv` and every `performance.csv` row. Missing or
-unsupported APIs fail visibly; completion does not prove adequate convergence.
-
-Each benchmark folder contains its README, `config.R` and `run.R`. Shared
-[validation and metric definitions](protocol.html) ensure comparable scales.
+The runner records folds, OOF predictions, imputed-target flags, metrics,
+fit/prediction/kernel timing, settings, versions, recipe/input checksums,
+diagnostics and explicit status. Inspect every fold before publication.
+Random within-cohort CV does not establish transfer across families, herds,
+environments or time. See the [protocol](protocol.html).

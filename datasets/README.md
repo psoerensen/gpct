@@ -1,9 +1,9 @@
 # Dataset catalogue and preparation
 
 The machine-readable [registry](registry.csv) starts with two GPBench datasets.
-Verified counts describe the complete source arrays, not the 512-marker pilots.
+Verified counts describe the complete source arrays, and the full-marker benchmarks.
 
-| ID | Array shape | Traits | Finite outcomes for pilot |
+| ID | Array shape | Traits | Finite target outcomes |
 | --- | --- | --- | --- |
 | `gpbench_cattle` | 5,024 × 42,551 | mkg, fpro, scs | mkg: 5,024 |
 | `gpbench_maize` | 1,458 × 75,304 | DTT, PH, EW | DTT: 1,456 |
@@ -46,23 +46,20 @@ the cattle response as raw milk yield or estimate breeding-value accuracy.
 
 Follow the commands in the root README. `scripts/prepare.R cattle` (or `maize`)
 verifies the archive checksum and exact member paths, refuses object/pickle
-arrays, checks dimensions and dosage coding, and selects 512 evenly spaced
-source marker columns without looking at outcomes. It saves `prepared/<case>.rds`
+arrays, checks dimensions and dosage coding, and retains every source marker. It saves `prepared/<case>-gpbench.rds`
 under `GPCT_DATA_DIR`, containing X, phenotypes, surrogate IDs, source columns,
-source checksum and preparation metadata. No imputation or scaling is done
-until training folds are defined. Runs drop only nonfinite selected outcomes.
+source checksum and preparation metadata. Genotype dosages are passed through without scaling or filtering, matching the published GPBench regression script. The runner mean-imputes missing phenotypes before splitting to match that script; the two imputed maize DTT targets are flagged and a separate observed-target-only sensitivity score is published.
 
 Set `GPCT_ACCEPT_POSITIONAL_IDS=yes` after accepting the upstream convention
 that the two arrays have matching row order. Equal row counts cannot prove
 biological alignment. Surrogates such as `gpbench_cattle:row:000001` preserve
-source position, including after outcome exclusions; they are never represented
+source position, including imputed-target flags; they are never represented
 as original animal/line identifiers. Markers likewise identify source columns,
 not mapped SNPs. Do not invent BIM alleles or genomic positions.
 
 The default data directory is `~/gpct-data`; outputs default to `~/gpct-results`.
-Both are configurable and scripts refuse paths inside the checkout. A Python
-with NumPy is used through `reticulate` only to read NPZ files. Configure it
-with `RETICULATE_PYTHON`; scripts never create Python environments or install
+Both are configurable and scripts refuse paths inside the checkout. Preparation reads NPZ files through `reticulate` and NumPy. The separate saved-split recipe calls the pinned scikit-learn KFold implementation. Configure Python
+with `RETICULATE_PYTHON`; analysis scripts never create Python environments or install
 packages. Prepare one dataset at a time to bound memory use.
 
 To add further species, create a registry entry and a small explicit preparation

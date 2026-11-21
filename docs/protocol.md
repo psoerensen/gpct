@@ -1,83 +1,80 @@
 ---
 layout: default
-title: Validation and evaluation
+title: Evaluation protocol
 ---
-# Validation and evaluation
+# Evaluation protocol
 
-<figure class="workflow-figure" tabindex="0" aria-label="Benchmark workflow; scroll horizontally on smaller screens">
-  <a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" aria-label="Open the full-size gpct workflow figure">
-    <img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="GPBench cattle and maize genotypes and traits enter shared five-fold validation with seed 4401. Existing R packages fit each training fold, then predict held-out samples. Evaluation records predictive ability, error, calibration, timings and failures. Individual records stay local; only reviewed aggregate summaries go to the public site. Both initial 512-marker pilots completed on 2026-11-21; reviewed results and timings are available.">
-  </a>
-  <figcaption>From source datasets to reproducible comparisons: every method uses the same held-out samples. Individual data stay local; reviewed aggregate results can be shared. The figure describes the workflow, not measured performance.</figcaption>
-</figure>
+<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="All cattle and maize markers enter the same GPBench ten-fold splits with seed 42. Our greml/gsolve model estimates variance components by REML, predicts held-out targets, and reports aggregate performance and costs. Imputed phenotype targets are flagged and private numerical implementations remain external."></a><figcaption>Matched full-marker validation, complete REML workflows and separate fixed-variance solver checks. GPBench phenotype imputation is explicitly flagged.</figcaption></figure>
 
 [Open the full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}).
 
-## Prediction target and partitions
+## Match the published regression scheme
 
-Predict the supplied selected phenotype in source numeric units. This is
-**predictive ability**, not accuracy relative to unobserved genetic merit.
-Upstream phenotype preprocessing and trait units remain uncertain.
+The data and validation reference is the authors' [GPBench regression script](https://github.com/xwzhang2118/GPBench/blob/2c92073fb8c67e6d6c5c1cda8bd410f191c7ef02/method_reg/rrBLUP/rrBLUP.py).
+Its external fitter is not executed. Model fitting uses our gsuite interfaces.
+Use all rows in source order and all 42,551 cattle or 75,304 maize markers.
+Pass the stored genotype dosages directly: no SNP filtering, empirical-SD scaling,
+allele recoding, or outcome-based feature selection. Original marker annotations
+and sample identifiers are absent, so source-position surrogates are labelled.
 
-Remove only nonfinite selected outcomes before partitioning, retain source row
-IDs, and save five balanced random folds using seed **4401**. R RNG settings
-are Mersenne-Twister / Inversion / Rejection. Fold files live outside git and
-are reused across every compared method. Sample-ID or ordering mismatches stop
-execution. Each run also retains a fold copy and input checksum.
+Generate the actual sklearn.model_selection.KFold(n_splits=10, shuffle=True,
+random_state=42) partitions with scikit-learn 1.6.1 and NumPy 1.26.4. Every method
+uses those same saved partitions. Train/test rows remain in source order.
+R's random-number generator is not substituted for the Python splitter.
 
-Random within-panel splits can share related individuals or environments and
-are not estimates of deployment performance across families, ancestry or time.
-Those targets require separately labelled designs with appropriate metadata.
+## Phenotype handling
 
-## Training-only transformations
+The upstream code replaces missing phenotypes with their whole-dataset mean
+before cross-validation. Matching this rule retains all 1,458 maize rows,
+including two mean-imputed DTT targets. Cattle mkg has no missing values.
+Imputed targets are flagged locally and counted publicly; an observed-target-only
+sensitivity score excludes them from evaluation, while retaining the same fits.
+That sensitivity score does not remove the upstream imputation rule from training.
 
-Within each fold, impute nonfinite genotype values with training marker means,
-drop all-missing or training-constant markers, then center and divide by training
-sample SD. Apply the same frozen transformation to test genotypes. Standardize
-training outcomes using their own mean and sample SD. Only the training outcome
-table reaches package fitting; test outcomes enter scoring after prediction.
+Whole-dataset phenotype imputation can use held-out information. We reproduce
+it transparently for the source comparison; it is not a recommended validation
+rule for a new scientific analysis. No further test responses enter REML fitting
+or tuning. No test-fold hyperparameter tuning is performed.
 
-Pilot penalties/prior scales are fixed in configs. There is no tuning on outer
-test folds. Future covariate adjustment, QC selection or tuning must also be
-learned using training data, with inner folds where needed. Source preprocessing
-is undocumented and may already have used whole-cohort information.
+## Genomic BLUP in gsuite
 
-All three methods return standardized phenotype predictions with an intercept.
-Invert the training response scaling to compare methods in the same source units.
-No method receives a test-set mean or SD. Test outcomes are not available to the
-fitting call, although the local script must hold them for later evaluation.
+We fit y = intercept + g + e through greml, with covariance K = Z Z' / p,
+where p is the
+full marker count. Its genetic variance parameter equals p times marker-effect
+variance. The held-out BLUP uses the corresponding train/target cross-covariance.
+The existing private gsolve engine supplies numerical operations.
 
-## Metrics per held-out fold
+A separate fixed-variance gsolve check uses our greml variance estimates and
+recomputes the GLS intercept. Prediction differences and solve time are reported separately. It
+does not estimate variances and is not ranked as a complete competing REML fit.
 
-Let y be test outcomes, p their predictions, and m the **training** outcome mean.
+## Metrics and aggregation
 
-| Metric | Definition |
-| --- | --- |
-| Predictive ability | Pearson correlation cor(y,p); undefined if either vector is constant |
-| RMSE | sqrt(mean((y-p)^2)), in supplied phenotype units |
-| Predictive R-squared | 1 - sum((y-p)^2) / sum((y-m)^2); improvement over the training-mean predictor on these same test individuals |
-| Calibration intercept | Intercept from test-only OLS y = a + b p + error |
-| Calibration slope | Slope b from that diagnostic regression; ideal a=0 and b=1 |
+For each test fold, calculate Pearson correlation, MAE, MSE, RMSE and predictive
+R2 = 1 - sum((observed - predicted)^2) / sum((observed - test_fold_mean)^2).
+This R2 reference matches sklearn.metrics.r2_score. It is not squared correlation.
+Calibration is the intercept and slope of observed phenotype regressed on prediction.
 
-Predictive R-squared can be negative and is not squared correlation. A zero
-denominator gives NA. Constant predictions give NA correlation and calibration
-coefficients; no constant is silently reported as a perfect score. Calibration
-uses test outcomes only as a diagnostic and never recalibrates saved predictions.
+The main score is the arithmetic mean of ten fold scores, matching GPBench.
+The descriptive standard deviation of correlations uses NumPy's ddof=0 convention.
+Pooled out-of-fold metrics are provided separately; they are not silently substituted
+for fold means. Fold variation is descriptive. Folds are not independent experimental
+replicates, and no confidence intervals are implied. Compare methods within each
+dataset/trait; raw RMSE values across traits have different units.
 
-## Records and publication
+## Computational costs and disclosure
 
-Save every individual out-of-fold prediction with ID/method/fold, every fold's
-metrics and sample counts, wall times for fitting/prediction, raw available
-diagnostics, settings, seeds, preprocessing, package versions and sessionInfo.
-Package failure is explicit with NA metrics; a fatal stage writes failed run
-status and a nonzero exit. Unknown convergence is labelled unavailable, never
-assumed. rrBLUP does not expose a convergence flag through mixed.solve.
+Record fit, prediction, reusable kernel preparation, method elapsed and total case
+time separately. Complete-workflow timing includes the greml/gsolve kernel build
+and fold block preparation once, plus all ten fits and predictions. Kernel preparation
+uses genotypes only.
+Whole-case time includes input loading and saving. Reporting and fixed-variance
+solver checks run separately after the benchmark. Timings are one execution on the
+recorded hardware, not measurements of the authors' computing environment.
 
-Do not publish incomplete-method averages as comparable results. Later summaries
-should state all five fold values and any aggregation/uncertainty convention.
-Pooled out-of-fold R-squared must use each individual's own training-fold mean
-in its denominator; do not replace it with the full-cohort mean. Five folds are
-not independent biological replicates. Compare methods with matched folds.
-
-Only reviewed aggregate tables and figures may be copied to the site. Individual
-predictions, folds, diagnostics with sample axes and source data stay local.
+Loaded BLAS versions, thread settings and binary hashes are recorded. Runtime
+thread settings do not measure CPU utilization. Peak RAM is explicitly unmeasured.
+Keep failed fits, warnings, nonconvergence and missing measurements visible.
+Only reviewed aggregate CSVs, calibration bins and SVGs are published. Private
+numerical source, binaries, individual predictions, fold assignments and raw
+fit objects remain external.

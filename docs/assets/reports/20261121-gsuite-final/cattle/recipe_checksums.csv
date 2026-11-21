@@ -1,0 +1,7 @@
+"dataset","source_file","md5","canonical_lf_sha256"
+"gpbench_cattle","scripts/run_prediction.R","86bffdf62141904aab6cd0bc74156a0f","70327e9d26052d570bd3e46f3f6e94866ebdcf19813391106cb4e7551ac8f3a7"
+"gpbench_cattle","scripts/evaluate.R","be7c2348ee212952f0eec034003f91a3","9d0028d55c930a600bb0a2fda6b3dc1aaa2e4732027583cf09ad9e6ec846e220"
+"gpbench_cattle","scripts/prepare.R","c98718ab7750787cc6e9389468a69164","2fb0981de827cee976a6ef51ef51beb0567410011bc1af22bb2a3b32620b0494"
+"gpbench_cattle","scripts/gpbench_folds.py","b3b012976c015a832f97545b24091fa1","fefb684c42e9a4fc6ebed5e0189772c069345c32ac4000d363d720bbe792227a"
+"gpbench_cattle","scripts/fit_greml.R","2330db00ad94755d2851a8cc971366b8","e6863c115b0a173f3761d4045da9b3cc3682085e01f5c0f7206617fc06de90dc"
+"gpbench_cattle","benchmarks/cattle_prediction/config.R","c49fe9e0b127e8b075ad2c1c4bef9588","7091ac3dfc5d1f79143e0d73e939a131f3235a57aeee1760a51319ee3804953e"

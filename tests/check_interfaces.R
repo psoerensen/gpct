@@ -1,0 +1,31 @@
+# Verify our implementations against each other and basic numerical identities.
+source('environment/preflight.R')
+source('scripts/fit_greml.R')
+set.seed(42)
+Z<-matrix(sample(0:2,80*120,replace=TRUE),80,120)
+K<-tcrossprod(Z)/ncol(Z)
+y<-2+drop(t(chol(K))%*%rnorm(80))+rnorm(80,sd=.6)
+train<-1:65;test<-66:80;initial<-c(genetic=.8,residual=.5)
+fixed<-matrix(1,length(train),1,dimnames=list(NULL,'intercept'))
+model<-gsuite::gs_model(fixed,
+  list(gsuite::gs_dense_covariance(K[train,train],'genetic'),gsuite::gs_residual('residual')),
+  method='reml',route='exact_dense',initial=initial)
+reference<-gsuite::gs_model_fit(model,y[train],initial,
+  gsuite::gs_control(parameter_uncertainty=FALSE,warn='none'),optimize=FALSE)
+same<-fit_greml(y[train],K[train,train],initial=initial,optimize=FALSE)
+stopifnot(reference$status$ok,same$status$ok,max(abs(reference$Py-same$Py))<1e-8,
+  max(abs(reference$fixed_effects-same$fixed_effects))<1e-8)
+estimated_reference<-gsuite::gs_model_fit(model,y[train],initial,
+  gsuite::gs_control(optimizer_maximum_iterations=100L,optimizer_score_tolerance=1e-6,
+    parameter_uncertainty=FALSE,warn='none'))
+estimated<-fit_greml(y[train],K[train,train],initial=initial)
+stopifnot(estimated_reference$status$ok,estimated_reference$converged,
+  estimated$status$ok,estimated$converged,
+  max(abs(estimated_reference$parameters-estimated$parameters))<1e-4)
+V<-initial[['genetic']]*K[train,train]+initial[['residual']]*diag(length(train))
+rhs<-cbind(y[train],1)
+solved<-gsuite::gsuite_solve(V,rhs,
+  control=list(relative_tolerance=1e-12,maximum_iterations=200L,threads=1L))
+stopifnot(length(solved$converged)>0,all(solved$converged),
+  max(abs(solved$solution-solve(V,rhs)))<1e-8)
+cat('Our REML paths agree; our fixed-variance solver passes the numerical reference.\n')

@@ -1,0 +1,3 @@
+"dataset","trait","method","summary_type","n","predictive_ability","rmse","mae","mse","predictive_r_squared","calibration_intercept","calibration_slope"
+"gpbench_cattle","mkg","gblup_reml","mean_of_10_fold_metrics_observed_targets_only",5024,0.781031427497297,0.623534212747514,0.495839337781603,0.389120863929685,0.608146156125804,-0.00573302813902321,0.999961233507377
+"gpbench_maize","DTT","gblup_reml","mean_of_10_fold_metrics_observed_targets_only",1456,0.652131972527696,2.17584208535145,1.70726532768982,4.75591412880856,0.41369393629955,-0.121608923315867,1.0015691623523

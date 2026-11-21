@@ -1,2 +1,0 @@
-"dataset","trait","fold_seed","method_seed_start","source_revision","prepared_input_md5","validation","reporting_R"
-"gpbench_maize","DTT",4401,4401,"f0204d8372fb5ec8fa29eb3f00c9a9d0a7656517",NA,"single shared random five-fold run; training-only preparation","R version 4.6.0 (2026-04-24)"

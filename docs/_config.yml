@@ -1,5 +1,5 @@
 title: gpct
-description: Reproducible genomic prediction and statistical genetics benchmarks
+description: Benchmarks for methods and models implemented in the gsuite ecosystem
 url: https://psoerensen.github.io
 baseurl: /gpct
 markdown: kramdown
