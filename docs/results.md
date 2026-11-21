@@ -4,43 +4,44 @@ title: Results and timings
 ---
 # Results and timings
 
-Three prediction models implemented in the **gsuite ecosystem** are evaluated on cattle and maize using the same saved GPBench ten-fold partitions and all supplied markers. greml/gsolve fits genomic BLUP with REML. gbayes fits Gaussian VB and sparse normal-mixture VB through its existing native streamed interface.
+Cattle/mkg and maize/DTT compare five gsuite ecosystem models on the same saved ten-fold GPBench partitions (shuffle enabled, seed 42). The new GLMA fits use verified native MKL. Earlier greml/gsolve and gbayes measurements are retained, with their execution identities and backend differences explicit.
 
 ## What was compared?
 
-| Dataset | Species | Trait | Individuals Evaluated | Observed Targets | Imputed Targets | Available markers | Markers Used |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| gpbench_cattle | Bos taurus | mkg | 5024 | 5024 | 0 | 42551 | 42551 |
-| gpbench_maize | Zea mays | DTT | 1458 | 1456 | 2 | 75304 | 75304 |
+All methods receive the same 42,551 cattle or 75,304 maize dosage columns. Genomic BLUP estimates variance by REML through greml/gsolve. gbayes Gaussian and normal-mixture VB use declared fixed training-only priors. GLMA Gaussian and GLMA prior-selected are the **full-marker prediction fits underlying glma_infinitesimal_loco() and glma_prior_selected_loco()**. They run without chromosome exclusions or association scans; no marker map is invented.
 
-[Full dataset catalogue](assets/reports/20261121-gsuite-models/dataset_catalogue.csv)
+GLMA retains its native empirical marker SD scaling, constant-training-marker exclusion, blocked RHE/Monte Carlo variance refinement and internal training-fold validation. Prior-selected considers ten ridge/elastic candidates; Gaussian uses ridge. No outer test outcomes enter variance fitting or selection beyond the explicitly reproduced GPBench phenotype-imputation rule. These model/preprocessing differences mean workflow timings do not isolate solver speed.
 
-Genomic BLUP estimates genetic and residual variances within each training fold. Both gbayes models use fixed working h2=0.5: residual variance is half the training phenotype variance, and average marker variance is the other half divided by the sum of training marker variances. The mixture has a zero spike of probability 0.9 and a normal component of probability 0.1; its nonzero variance is ten times the Gaussian marker variance. These are declared benchmark priors, without test-fold tuning.
-
-Raw dosage coordinates are preserved. The gbayes native interface projects the training intercept and recovers it for target prediction; it performs no SD normalization or marker filtering. The full-marker streamed route avoids a global marker-by-marker Gram matrix.
-
-[Exact model settings and convergence controls](assets/reports/20261121-gsuite-models/method_settings.csv)
+[Dataset catalogue](assets/reports/20261121-glma-mkl/dataset_catalogue.csv)
  ·
-[Per-fold priors, sweeps, metrics and status](assets/reports/20261121-gsuite-models/fold_results.csv)
+[Exact method settings](assets/reports/20261121-glma-mkl/method_settings.csv)
+ ·
+[Per-fold GLMA selected priors and acceptance](assets/reports/20261121-glma-mkl/glma_fit_diagnostics.csv)
 
 ## How well did it work?
 
-| Dataset | Model | Correlation | RMSE | Predictive R2 | Calibration Slope | Status | Report |
+| Dataset | Model | Correlation | RMSE | Predictive R Squared | Calibration Slope | Status | Details |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| Cattle / mkg | [Genomic BLUP](https://github.com/psoerensen/gpct/tree/c75423fbc69fab75141241b347fa715dc6f214e4/benchmarks/cattle_prediction) | 0.7810 | 0.6235 | 0.6081 | 1.0000 | 10/10 converged | [Cattle](reports/cattle.html) |
-| Cattle / mkg | [Gaussian VB](https://github.com/psoerensen/gpct/tree/ef46c2b48c292223787ecce7686826982b0db585/benchmarks/cattle_prediction) | 0.7686 | 0.6478 | 0.5774 | 1.1560 | 10/10 converged | [Cattle](reports/cattle.html) |
-| Cattle / mkg | [Normal-mixture VB](https://github.com/psoerensen/gpct/tree/ef46c2b48c292223787ecce7686826982b0db585/benchmarks/cattle_prediction) | 0.7769 | 0.6427 | 0.5841 | 1.2003 | 10/10 converged | [Cattle](reports/cattle.html) |
-| Maize / DTT | [Genomic BLUP](https://github.com/psoerensen/gpct/tree/c75423fbc69fab75141241b347fa715dc6f214e4/benchmarks/maize_prediction) | 0.6516 | 2.1753 | 0.4132 | 1.0001 | 10/10 converged | [Maize](reports/maize.html) |
-| Maize / DTT | [Gaussian VB](https://github.com/psoerensen/gpct/tree/ef46c2b48c292223787ecce7686826982b0db585/benchmarks/maize_prediction) | 0.6292 | 2.2410 | 0.3793 | 1.1770 | 10/10 converged | [Maize](reports/maize.html) |
-| Maize / DTT | [Normal-mixture VB](https://github.com/psoerensen/gpct/tree/ef46c2b48c292223787ecce7686826982b0db585/benchmarks/maize_prediction) | 0.6287 | 2.2459 | 0.3767 | 1.2014 | 10/10 converged | [Maize](reports/maize.html) |
+| Cattle / mkg | Genomic BLUP | 0.7810 | 0.6235 | 0.6081 | 1.0000 | 10/10 converged | [Cattle](reports/cattle.html) |
+| Cattle / mkg | Gaussian VB | 0.7686 | 0.6478 | 0.5774 | 1.1560 | 10/10 converged | [Cattle](reports/cattle.html) |
+| Cattle / mkg | Normal-mixture VB | 0.7769 | 0.6427 | 0.5841 | 1.2003 | 10/10 converged | [Cattle](reports/cattle.html) |
+| Cattle / mkg | GLMA Gaussian | 0.7677 | 0.6415 | 0.5855 | 1.0459 | 10/10 accepted | [Cattle](reports/cattle.html) |
+| Cattle / mkg | GLMA prior-selected | 0.7745 | 0.6350 | 0.5940 | 1.0803 | 10/10 accepted | [Cattle](reports/cattle.html) |
+| Maize / DTT | Genomic BLUP | 0.6516 | 2.1753 | 0.4132 | 1.0001 | 10/10 converged | [Maize](reports/maize.html) |
+| Maize / DTT | Gaussian VB | 0.6292 | 2.2410 | 0.3793 | 1.1770 | 10/10 converged | [Maize](reports/maize.html) |
+| Maize / DTT | Normal-mixture VB | 0.6287 | 2.2459 | 0.3767 | 1.2014 | 10/10 converged | [Maize](reports/maize.html) |
+| Maize / DTT | GLMA Gaussian | 0.6088 | 2.2833 | 0.3556 | 1.1503 | 10/10 accepted | [Maize](reports/maize.html) |
+| Maize / DTT | GLMA prior-selected | 0.5993 | 2.3014 | 0.3438 | 1.1742 | 10/10 accepted | [Maize](reports/maize.html) |
 
-[Full benchmark results CSV](assets/reports/20261121-gsuite-models/benchmark_results.csv)
+[Full benchmark results CSV](assets/reports/20261121-glma-mkl/benchmark_results.csv)
  ·
-[Pooled OOF scores](assets/reports/20261121-gsuite-models/pooled_results.csv)
+[Fold scores](assets/reports/20261121-glma-mkl/fold_results.csv)
  ·
-[Observed-target-only sensitivity](assets/reports/20261121-gsuite-models/observed_only_metrics.csv)
+[Pooled OOF scores](assets/reports/20261121-glma-mkl/pooled_results.csv)
+ ·
+[Observed-target-only sensitivity](assets/reports/20261121-glma-mkl/observed_only_metrics.csv)
 
-Main scores are arithmetic means of ten test-fold metrics. Predictive R² uses the test-fold mean as its reference and is not squared correlation. Fold variation is descriptive; folds are not independent experimental replicates and no confidence intervals are implied. Compare RMSE within each dataset–trait combination because source units differ.
+Main scores are arithmetic means of ten test-fold metrics, matching GPBench. Predictive R² is not squared correlation. Fold variation is descriptive; folds are not independent experimental replicates and no confidence intervals are implied. Compare RMSE within each dataset/trait. Two maize DTT targets are whole-dataset mean-imputed, matching the source scheme, and explicitly flagged; observed-target-only sensitivity excludes them from scoring.
 
 ## What did it cost?
 
@@ -49,81 +50,68 @@ Main scores are arithmetic means of ten test-fold metrics. Predictive R² uses t
 | Cattle / mkg | Genomic BLUP | 11.65 | 453.07 | 0.05 | 464.77 | Not measured |
 | Cattle / mkg | Gaussian VB | 5.39 | 581.28 | 1.39 | 588.06 | Not measured |
 | Cattle / mkg | Normal-mixture VB | 5.22 | 509.51 | 1.29 | 516.02 | Not measured |
+| Cattle / mkg | GLMA Gaussian | 3.90 | 257.79 | 0.45 | 262.14 | Not measured |
+| Cattle / mkg | GLMA prior-selected | 3.78 | 339.69 | 0.43 | 343.90 | Not measured |
 | Maize / DTT | Genomic BLUP | 1.81 | 31.80 | 0.02 | 33.63 | Not measured |
 | Maize / DTT | Gaussian VB | 2.44 | 345.69 | 0.67 | 348.80 | Not measured |
 | Maize / DTT | Normal-mixture VB | 2.53 | 480.16 | 0.75 | 483.44 | Not measured |
+| Maize / DTT | GLMA Gaussian | 1.75 | 89.48 | 0.20 | 91.43 | Not measured |
+| Maize / DTT | GLMA prior-selected | 1.69 | 160.41 | 0.22 | 162.32 | Not measured |
 
-Preparation includes the raw-dosage kernel and fold blocks for greml/gsolve, or training/target matrix extraction for gbayes. Fitting includes method-specific setup, training-prior calculations and the native fit. Workflow time sums preparation, ten fits and ten predictions. Case-wide elapsed time includes loading/saving and is kept separately in the CSV. Peak RAM was not measured.
+Workflow time sums preparation, fitting and held-out prediction over ten folds. greml/gsolve includes its reusable raw-dosage kernel. GLMA includes a dosage-only cache, target extraction, native packing of training rows, variance refinement, candidate selection and global refitting. Both GLMA methods are charged the full reusable cache cost once. These are single sequential executions on an Intel Core Ultra 7 258V, 8 logical processors and 32 GiB RAM; peak RAM is unmeasured.
 
-These are single-execution elapsed timings on an Intel Core Ultra 7 258V, 8 logical processors and 32 GiB RAM. The reviewed greml/gsolve run is retained; gbayes is an additional execution batch on the same hardware, R/OpenBLAS binary and saved splits. Input MD5s, OOF identities/outcomes, imputed-target flags and training means were checked for equality before combining. Run IDs distinguish the batches.
+greml/gsolve uses MKL/CHOLMOD and reports one component-backend worker. GLMA uses the full MKL native prefix with four coordinate/MKL workers; actual DGEMM dispatch was verified separately. The earlier standalone gbayes core is portable, without MKL dense kernels, and reports one worker. R OpenBLAS uses four threads, but does not automatically accelerate that portable C++ core. Backend and acceptance-rule differences must accompany any speed comparison.
 
-[Checks establishing the shared benchmark inputs](assets/reports/20261121-gsuite-models/identity_checks.csv)
+[Run identities, hardware and BLAS](assets/reports/20261121-glma-mkl/run_metadata.csv)
  ·
-[Run identities, hardware and BLAS](assets/reports/20261121-gsuite-models/run_metadata.csv)
-
-R/OpenBLAS and MKL environment settings request four threads. The greml component backend reports requested/resolved/support settings of one in this build; gbayes requests and reports one package worker. These settings do not measure CPU utilization. Variational convergence means native negative-ELBO stabilization, not a global mixture optimum. Failed and provisional fits remain explicitly labelled.
-
-## Software and source
-
-R 4.4.3 uses OpenBLAS 0.3.29. greml/gsolve uses the CHOLMOD/MKL component path; gbayes uses its compiled streamed variational prediction engine. The gbayes R bindings are in gsuite, while its native core has its own repository. Private implementation source and binaries are not distributed by gpct.
-
-| Software | Version | Private Source Commit |
-| --- | --- | --- |
-| gsuite | 0.43.0 | [19f876e71df0](https://github.com/psoerensen/gsuite/tree/19f876e71df014b996dbd09d0ae01ab3d0709829) |
-| greml | 0.92.0 | [c84f83409e7a](https://github.com/psoerensen/greml/tree/c84f83409e7a08eeada20e854c6ff6c81c8ed25f) |
-| gsolve | 0.28.0 | [dd405973d6ae](https://github.com/psoerensen/gsolve/tree/dd405973d6aece137fb9d82367502f78c8feef2d) |
-| gbayes | 0.1.16 (R package) | [67e8bdf1b617](https://github.com/psoerensen/gbayes/tree/67e8bdf1b617272e65174399889926c92ca11706) |
-
-[Software versions and exact source commits](assets/reports/20261121-gsuite-models/software_sources.csv)
+[Checks establishing shared inputs and folds](assets/reports/20261121-glma-mkl/identity_checks.csv)
  ·
-[Native binary identities](assets/reports/20261121-gsuite-models/native_runtime_checksums.csv)
- ·
-[Measured recipe hashes and Git commits](assets/reports/20261121-gsuite-models/recipe_checksums.csv)
- ·
-[R packages loaded during fitting](assets/reports/20261121-gsuite-models/fit-sessionInfo.txt)
+[Native binary hashes](assets/reports/20261121-glma-mkl/native_runtime_checksums.csv)
+
+## Does the R interface slow down GLMA?
+
+A separate fold-one repeat traces the Rcpp .Call boundary and is excluded from benchmark costs. It distinguishes the complete native call from the inner fitter: C++ genotype packing, setup and conversion sit outside the inner fitter timer. The outside-native R wrapper cost is reported at the elapsed timer resolution; loading, saving and held-out prediction are separate.
+
+All four repeats recorded **0.00 seconds outside the native call**, at roughly 0.01-second timer resolution. Native preparation and conversion accounted for 2.45–4.04 seconds per fit. These checks do not identify the R wrapper as a meaningful fitting bottleneck.
+
+[R/native boundary timing check](assets/reports/20261121-glma-mkl/glma_interface_cost.csv)
 
 ## Performance, cost and calibration plots
 
-<figure class="report-figure"><img src="assets/reports/20261121-gsuite-models/performance.svg" alt="Mean and descriptive fold correlations for three gsuite models, separately for cattle and maize."></figure>
+<figure class="report-figure"><img src="assets/reports/20261121-glma-mkl/performance.svg" alt="performance comparison of five gsuite prediction models within cattle/mkg and maize/DTT, using shared ten-fold validation."></figure>
 
-[Open full-size performance SVG](assets/reports/20261121-gsuite-models/performance.svg)
+[Open full-size performance SVG](assets/reports/20261121-glma-mkl/performance.svg)
 
-<figure class="report-figure"><img src="assets/reports/20261121-gsuite-models/improvement.svg" alt="Relative RMSE reduction versus the training-mean predictor, with a zero reference, for three gsuite models."></figure>
+<figure class="report-figure"><img src="assets/reports/20261121-glma-mkl/improvement.svg" alt="improvement comparison of five gsuite prediction models within cattle/mkg and maize/DTT, using shared ten-fold validation."></figure>
 
-[Open full-size improvement SVG](assets/reports/20261121-gsuite-models/improvement.svg)
+[Open full-size improvement SVG](assets/reports/20261121-glma-mkl/improvement.svg)
 
-<figure class="report-figure"><img src="assets/reports/20261121-gsuite-models/runtime.svg" alt="Mean fold correlation versus complete workflow seconds for each gsuite model, separately by dataset and trait."></figure>
+<figure class="report-figure"><img src="assets/reports/20261121-glma-mkl/runtime.svg" alt="runtime comparison of five gsuite prediction models within cattle/mkg and maize/DTT, using shared ten-fold validation."></figure>
 
-[Open full-size runtime SVG](assets/reports/20261121-gsuite-models/runtime.svg)
+[Open full-size runtime SVG](assets/reports/20261121-glma-mkl/runtime.svg)
 
-<figure class="report-figure"><img src="assets/reports/20261121-gsuite-models/calibration.svg" alt="Reviewed aggregate out-of-fold calibration bins and identity lines for genomic BLUP, Gaussian VB and normal-mixture VB."></figure>
+<figure class="report-figure"><img src="assets/reports/20261121-glma-mkl/calibration.svg" alt="calibration comparison of five gsuite prediction models within cattle/mkg and maize/DTT, using shared ten-fold validation."></figure>
 
-[Open full-size calibration SVG](assets/reports/20261121-gsuite-models/calibration.svg)
+[Open full-size calibration SVG](assets/reports/20261121-glma-mkl/calibration.svg)
 
-The improvement reference predicts the training-fold mean. Calibration publishes only aggregate quantile bins with at least five individuals. Individual predictions remain local. GPBench mean-imputes two missing maize DTT values before splitting; the observed-target-only evaluation excludes those targets from scoring while retaining the same fits. See the [protocol](protocol.html).
+The improvement reference predicts the training-fold mean. Calibration publishes reviewed aggregate quantile bins with at least five individuals; individual predictions remain local.
 
-## Published reference and numerical checks
+## Source, verification and reproduction
 
-The following published GPBench rrBLUP aggregates provide context for our genomic BLUP implementation. Its external fitter was not executed. Its hardware timing is not a controlled comparison with ours. Rounded agreement does not establish identical undocumented upstream processing.
+GLMA acceptance is its native approximate joint-workflow rule, including prediction stability and adaptive chunk retirement. It is not exact REML or a strict global ELBO certificate. All failures and provisional statuses remain explicit. Earlier greml convergence sensitivity and separate fixed-variance gsolve numerical checks are retained. The external GPBench fitter was not executed.
 
-| Dataset | Reference Method | Our Correlation | Gpbench Correlation | Our r Squared | Gpbench r Squared |
-| --- | --- | --- | --- | --- | --- |
-| gpbench_cattle | rrBLUP | 0.78103 | 0.7810 | 0.60815 | 0.6081 |
-| gpbench_maize | rrBLUP | 0.65162 | 0.6516 | 0.41319 | 0.4131 |
-
-[Published reference and its source](assets/reports/20261121-gsuite-models/reference_comparison.csv)
-
-The retained greml/gsolve fits use score tolerance 1e-4. The earlier cattle attempt at 1e-6 failed the likelihood-step acceptance check in fold nine after 202.22 seconds; its status and costs remain disclosed separately. Separate representative-fold gsolve checks verify GLS/BLUP predictions, outside the benchmark timings. The gbayes Gaussian limit was checked against a basic numerical ridge reference, including held-out prediction; mixture outputs, convergence and reporting were also checked.
-
-[Earlier greml attempt statuses and costs](assets/reports/20261121-gsuite-models/earlier_attempts.csv)
+[Software and exact private source commits](assets/reports/20261121-glma-mkl/software_sources.csv)
  ·
-[greml convergence sensitivity](assets/reports/20261121-gsuite-models/tolerance_comparison.csv)
+[Immutable recipe commits and checksums](assets/reports/20261121-glma-mkl/recipe_checksums.csv)
  ·
-[Separate gsolve verification](assets/reports/20261121-gsuite-models/solver_checks.csv)
+[Earlier greml attempt](assets/reports/20261121-glma-mkl/earlier_attempts.csv)
+ ·
+[greml tolerance sensitivity](assets/reports/20261121-glma-mkl/tolerance_comparison.csv)
+ ·
+[Separate gsolve checks](assets/reports/20261121-glma-mkl/solver_checks.csv)
+ ·
+[Published GPBench reference](assets/reports/20261121-glma-mkl/reference_comparison.csv)
 
-## Reproduce
+Use the [benchmark recipes](benchmarks.html), [interfaces](methods.html), [protocol](protocol.html) and [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment). Select just the added fits with GPCT_METHODS=glma_infinitesimal,glma_prior_selected. Private source checkpoints and the explicit MKL build recipe are pinned; no private implementation source or binaries enter gpct.
 
-Use the [benchmark recipes](benchmarks.html) and [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment). Default recipes run all three models. The additional gbayes batch can be selected with GPCT_METHODS=gbayes_gaussian,gbayes_mixture; the immutable source commit is recorded in the result and recipe CSVs.
-
-[Reporting session](assets/reports/20261121-gsuite-models/report-sessionInfo.txt)
- · [Verification record](verification.html). Individual data, predictions, folds, fitted effects and raw diagnostics remain outside the public repository.
+[Verification record](verification.html). Individual data, predictions, folds, effects and raw diagnostics remain private.

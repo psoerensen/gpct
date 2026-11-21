@@ -1,0 +1,10 @@
+"dataset","fold","strict_tolerance","final_tolerance","max_prediction_difference","correlation_difference"
+"gpbench_cattle",1,1e-06,1e-04,2.89370971628955e-09,7.6647910240979e-11
+"gpbench_cattle",2,1e-06,1e-04,1.55559239933822e-08,3.71443986679765e-11
+"gpbench_cattle",3,1e-06,1e-04,1.99997098881965e-08,6.92049750838919e-11
+"gpbench_cattle",4,1e-06,1e-04,0,0
+"gpbench_cattle",5,1e-06,1e-04,3.488859867673e-09,5.30127053366414e-11
+"gpbench_cattle",6,1e-06,1e-04,1.8437070903321e-07,-2.7810043157217e-10
+"gpbench_cattle",7,1e-06,1e-04,3.66798191819839e-09,-5.72630831641163e-12
+"gpbench_cattle",8,1e-06,1e-04,4.22293529034334e-08,-2.72477596041654e-10
+"gpbench_cattle",10,1e-06,1e-04,1.40920920044252e-07,-1.31832877947602e-09

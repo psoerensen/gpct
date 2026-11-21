@@ -29,6 +29,9 @@ A public checkout does not grant private source access or distribute that setup.
 
 ./environment/build-private.ps1 `
   -PrerequisiteRoot 'C:/path/to/qualified-native-dependencies'
+
+./environment/build-glma-mkl.ps1 `
+  -PrerequisiteRoot 'C:/path/to/qualified-native-dependencies'
 ```
 
 The default target is ~/gpct-environments/windows-r443-openblas. Supply EnvRoot
@@ -64,6 +67,18 @@ Preflight verifies the private R location, package paths, interface exports,
 native versions, loaded OpenBLAS implementation/thread setting and DLL hash.
 Interface checks compare equivalent small REML models and an independent dense
 linear-solve reference. Run logs and native binaries stay private.
+
+The [GLMA MKL interface check](glma-mkl-check.md) records a separate verified
+full-prefix build of the two existing LOCO interfaces, including actual MKL
+dispatch and the private build-support patch needed by their R wrapper.
+
+The full-marker prediction adapter and explicit MKL build opt-in are now pinned
+in the private gsuite/glma revisions in sources.csv. build-glma-mkl.ps1 builds
+that adapter, checks its Gaussian predictions against an independent fixed-V
+solve, and requires observed MKL DGEMM dispatch. It does not fabricate biological
+marker annotations or execute association/LOCO scans on GPBench arrays.
+Set GPCT_DATA_DIR and GPCT_OUTPUT_DIR explicitly when running recipes: R's `~`
+can resolve to a redirected Windows Documents directory.
 
 R retains its supplied LAPACK library while BLAS uses OpenBLAS, following
 [R's fast-BLAS mechanism](https://cran.r-project.org/bin/windows/base/rw-FAQ.html#Can-I-use-a-fast-BLAS_003f).

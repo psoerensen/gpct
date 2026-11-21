@@ -22,6 +22,14 @@ random_state=42) partitions with scikit-learn 1.6.1 and NumPy 1.26.4. Every meth
 uses those same saved partitions. Train/test rows remain in source order.
 R's random-number generator is not substituted for the Python splitter.
 
+GLMA full-marker prediction uses those same outer folds and input dosage columns,
+with its native training-only empirical SD standardization. Constant training
+columns have zero effects and are counted separately. Its Gaussian and ten-prior
+joint fits estimate variance by blocked RHE/Monte Carlo refinement and use an
+internal training-fold validation split. They do not perform chromosome exclusions
+or association scans. These preprocessing and fitting differences are declared
+model choices; the comparison is not a test of interchangeable solvers.
+
 ## Phenotype handling
 
 The upstream code replaces missing phenotypes with their whole-dataset mean

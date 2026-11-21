@@ -28,6 +28,8 @@ installs software, or publishes individual artifacts.
 | run_metadata.csv | Input/source identity, splits, imputation counts, loaded BLAS and hardware |
 | recipe_checksums.csv | Run-time byte MD5 and canonical LF SHA-256 identities of recipes |
 | identity_checks.csv | Equality of input, saved folds, outcomes, target flags and BLAS when combining execution batches |
+| glma_fit_diagnostics.csv | Per-fold selected prior, native acceptance, actual marker count and phase timings |
+| glma_interface_cost.csv | Separate fold-one R/native boundary tracing; excluded from benchmark totals |
 | fit-sessionInfo.txt | R packages loaded during fitting, labelled by execution batch |
 | Four SVGs | Performance, RMSE reduction versus training mean, performance/workflow time and calibration |
 

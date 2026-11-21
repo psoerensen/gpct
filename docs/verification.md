@@ -4,8 +4,9 @@ title: Verification record
 ---
 # Verification record
 
-Verified 2026-11-21. The current reports benchmark genomic BLUP, Gaussian VB and
-sparse normal-mixture VB implemented in our gsuite ecosystem, using all supplied cattle and maize markers and the pinned
+Verified 2026-11-21. The current reports benchmark genomic BLUP, Gaussian VB,
+sparse normal-mixture VB, and GLMA Gaussian/prior-selected full-marker prediction
+implemented in our gsuite ecosystem, using all supplied cattle and maize markers and the pinned
 GPBench ten-fold validation scheme. See [results and timings](results.html).
 
 ## Statistical execution
@@ -20,7 +21,7 @@ convergence and sweep counts are reported; maximum-sweep results remain provisio
 
 Gaussian VB was checked against a basic ridge linear-system identity on a small
 labelled design, including held-out prediction. The sparse mixture passed native
-finite-output and convergence checks. Reporting tests cover all three models,
+finite-output and convergence checks. Reporting tests cover all five models,
 method-specific preparation/kernel cost accounting and provisional statuses.
 
 - Both retained genomic BLUP cases completed all ten folds at score tolerance 1e-4, with converged REML fits, no failed fits and no warnings. An earlier cattle attempt at 1e-6 failed the likelihood-step acceptance check in fold nine after 202.22 seconds; its status and costs are disclosed separately. Predictions are compared against the nine successful stricter fits.
@@ -32,6 +33,21 @@ method-specific preparation/kernel cost accounting and provisional statuses.
 - Published GPBench numbers provide context only. Its external statistical fitter is not executed by these recipes.
 
 ## Runtime and interface checks
+
+The GLMA adapter calls the existing joint prediction modes in native C++,
+without chromosome metadata, LOCO refits or association scans. Only outer
+training rows/outcomes enter the fitter, including its internal selection split.
+It retains native empirical marker standardization and constant-marker handling.
+The prepared-genotype adapter and R/MKL build opt-in are pinned and pushed in
+private GLMA and gsuite branches; original owner checkouts are unchanged.
+The default standalone portable package does not imply MKL acceleration.
+Actual MKL DGEMM dispatch was observed in the adapter's numerical check.
+Gaussian predictions agreed with an independent fixed-V solve to maximum
+absolute difference 2.99e-5 on the controlled fixture. Native joint acceptance
+is approximate workflow acceptance, rather than exact REML convergence.
+Separate fold-one boundary traces distinguish the R wrapper, the complete
+native call and its inner fitting timer; these repeats are excluded from
+benchmark costs and published with the reports.
 
 R 4.4.3 runs in an isolated environment with OpenBLAS 0.3.29. Preflight checks
 package locations, installed interfaces, native engine versions, loaded BLAS,

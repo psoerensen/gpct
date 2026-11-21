@@ -1,0 +1,3 @@
+"dataset","method","fold","scope","r_fit_call_seconds","native_call_seconds","native_inner_fit_seconds","outside_native_call_seconds","native_preparation_and_conversion_seconds"
+"gpbench_maize","glma_infinitesimal",1,"Separate repeat; Rcpp boundary tracing; excluded from benchmark totals",6.87,6.87,4.4210727,0,2.4489273
+"gpbench_maize","glma_prior_selected",1,"Separate repeat; Rcpp boundary tracing; excluded from benchmark totals",14.36,14.36,11.6356647,0,2.72433530000001

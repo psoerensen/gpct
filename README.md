@@ -9,8 +9,8 @@ with scikit-learn 1.6.1 and seed 42, and arithmetic means of test-fold metrics.
 
 | Benchmark | Individuals | Markers | Methods |
 | --- | --- | --- | --- |
-| Cattle / mkg | 5,024 | 42,551 | Genomic BLUP (greml/gsolve); Gaussian VB and normal-mixture VB (gbayes) |
-| Maize / DTT | 1,458 | 75,304 | Genomic BLUP (greml/gsolve); Gaussian VB and normal-mixture VB (gbayes) |
+| Cattle / mkg | 5,024 | 42,551 | Genomic BLUP; gbayes Gaussian/mixture VB; GLMA Gaussian/prior-selected prediction |
+| Maize / DTT | 1,458 | 75,304 | Genomic BLUP; gbayes Gaussian/mixture VB; GLMA Gaussian/prior-selected prediction |
 
 GPBench mean-imputes missing phenotypes before splitting. To reproduce that
 scheme, the two missing maize DTT values are imputed and flagged. A separate
@@ -59,7 +59,14 @@ checks are reported separately and are not represented as complete REML fits.
 Timings are elapsed seconds from one execution; peak RAM is not measured.
 Fold variation is descriptive, not independent experimental replication.
 
-Default configs run all three models. To add only the gbayes models to an existing
+Default configs run five models, including the GLMA Gaussian and prior-selected
+full-marker prediction fits underlying the LOCO workflows. These use training-only
+empirical marker standardization and the native approximate RHE/MC variance and
+selection procedure, without chromosome exclusions. Build their MKL interface with
+environment/build-glma-mkl.ps1. To run only these additional fits, set
+`$env:GPCT_METHODS = 'glma_infinitesimal,glma_prior_selected'`.
+
+To add only the gbayes models to an existing
 reviewed benchmark, set `$env:GPCT_METHODS = 'gbayes_gaussian,gbayes_mixture'` in PowerShell before running.
 The published comparison retains the original greml/gsolve measurements and
 labels the additional gbayes execution separately. Input, split and outcome

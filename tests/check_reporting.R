@@ -14,7 +14,7 @@ perf$markers<-config$p;perf$status<-'completed';perf$convergence<-'converged';pe
 perf$fit_seconds<-1;perf$prediction_seconds<-.1;perf$method_elapsed_seconds<-1.2
 for(field in report_metrics) perf[[field]]<-NA_real_
 write.csv(perf,file.path(root,'performance.csv'),row.names=FALSE)
-write.csv(data.frame(package=c('gsuite','gbayes'),version=c('0.43.0','0.1.16')),
+write.csv(data.frame(package=c('gsuite','gbayes','glma'),version=c('0.43.0','0.1.16','0.1.2')),
   file.path(root,'package_versions.csv'),row.names=FALSE)
 saveRDS(list(source=list(source_revision='synthetic'),input_md5='synthetic',response_imputed_n=0L,
   scripts_md5=c('synthetic.R'='synthetic')),file.path(root,'provenance.rds'))
@@ -29,7 +29,8 @@ stopifnot(all(t$benchmark_results$completed_folds==10L),
   t$benchmark_results$workflow_seconds[t$benchmark_results$method=='gblup_reml']==13,
   all(t$benchmark_results$workflow_seconds[t$benchmark_results$method!='gblup_reml']==11),
   all(t$benchmark_results$relative_rmse_reduction>0),
-  all(t$method_settings$package[t$method_settings$method!='gblup_reml']=='gbayes'))
+  all(t$method_settings$package[grepl('^gbayes_',t$method_settings$method)]=='gbayes'),
+  all(t$method_settings$package[grepl('^glma_',t$method_settings$method)]=='glma'))
 write_prediction_report(t,file.path(root,'report'))
 stopifnot(!any(grepl('predictions|folds[.]',list.files(file.path(root,'report')))))
 perf$status[perf$method=='gblup_reml'&perf$fold==10]<-'failed'

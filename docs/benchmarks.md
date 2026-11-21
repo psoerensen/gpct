@@ -16,7 +16,11 @@ scientific structure while retaining distinct trait units and source limitations
 
 These recipes benchmark genomic BLUP implemented in greml/gsolve, estimating
 variance components by REML, and gbayes Gaussian/normal-mixture VB with fixed
-training-only priors. All three use the same data and folds. The gsolve fixed-variance
+training-only priors, plus GLMA Gaussian and prior-selected full-marker prediction.
+All five use the same outer folds and supplied markers; GLMA applies its native
+training-only SD scaling, constant-marker exclusion and RHE/MC variance and inner
+selection procedure. These are prediction fits underlying its LOCO interfaces,
+without chromosome exclusions or association scans. The gsolve fixed-variance
 check is a separate numerical comparison, not another complete model fit.
 
 ## Reproduce locally
@@ -35,6 +39,7 @@ Rscript --vanilla environment/preflight.R
 Rscript --vanilla tests/check_protocol.R
 Rscript --vanilla tests/check_interfaces.R
 Rscript --vanilla tests/check_gbayes.R
+Rscript --vanilla tests/check_glma_prediction.R
 Rscript --vanilla tests/check_reporting.R
 Rscript --vanilla scripts/prepare.R cattle
 Rscript --vanilla benchmarks/cattle_prediction/run.R

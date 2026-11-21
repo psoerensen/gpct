@@ -2,13 +2,17 @@
 source('scripts/evaluate.R')
 source('scripts/plot_prediction.R')
 report_metrics <- c('predictive_ability','rmse','mae','mse','predictive_r_squared','calibration_intercept','calibration_slope')
-report_labels <- c(gblup_reml='Genomic BLUP',gbayes_gaussian='Gaussian VB',gbayes_mixture='Normal-mixture VB')
-report_colors <- c(gblup_reml='#168575',gbayes_gaussian='#3267b1',gbayes_mixture='#9863b5')
+report_labels <- c(gblup_reml='Genomic BLUP',gbayes_gaussian='Gaussian VB',gbayes_mixture='Normal-mixture VB',
+  glma_infinitesimal='GLMA Gaussian',glma_prior_selected='GLMA prior-selected')
+report_colors <- c(gblup_reml='#168575',gbayes_gaussian='#3267b1',gbayes_mixture='#9863b5',
+  glma_infinitesimal='#c7761b',glma_prior_selected='#b84365')
 software_source_table <- function(sources) {
   sources<-unique(sources)
-  markdown_table(data.frame(Software=sources$repository,Version=sources$version,
+  table<-data.frame(Software=sources$repository,Version=sources$version,
     Private_source_commit=paste0('[',substr(sources$revision,1,12),'](',
-      sub('[.]git$','',sources$url),'/tree/',sources$revision,')')))
+      sub('[.]git$','',sources$url),'/tree/',sources$revision,')'))
+  if('run_id'%in%names(sources)) table$Execution<-sources$run_id
+  markdown_table(table)
 }
 
 calibration_bins <- function(p,dataset,trait,method) {
@@ -36,6 +40,14 @@ summarize_prediction_run <- function(run_dir) {
       perf$prior_inclusion_probability[i]<-details$prior$inclusion_probability
       perf$native_source_read_seconds[i]<-details$diagnostics$batchExecution$sourceReadSeconds
       perf$native_product_backend[i]<-details$diagnostics$batchExecution$productBackend
+    }
+  }
+  for(i in which(grepl('^glma_',perf$method))) {
+    path<-file.path(run_dir,paste0(perf$method[i],'-fold',perf$fold[i],'-diagnostics.rds'))
+    if(file.exists(path)) {
+      details<-readRDS(path)
+      perf$algorithm_iterations[i]<-details$sweeps
+      perf$native_product_backend[i]<-'decoded; MKL dense products'
     }
   }
   p <- read.csv(file.path(run_dir,'predictions.csv'))
@@ -108,7 +120,7 @@ summarize_prediction_run <- function(run_dir) {
     computation='greml component REML; gsolve CHOLMOD/MKL and exact selected inversion; K=ZZt/p; certified input metadata',
     tuning='No test-fold tuning',convergence=paste('Score tolerance',config$tolerance,
       '; hybrid EM-AI; requested direct threads 4; returned backend settings in fold CSV; cap 100'))
-  for(i in seq_len(nrow(settings)))if(settings$method[i]!='gblup_reml') {
+  for(i in seq_len(nrow(settings)))if(grepl('^gbayes_',settings$method[i])) {
     settings$package[i]<-'gbayes';settings$package_version[i]<-versions$version[match('gbayes',versions$package)]
     settings$native_engines[i]<-'gbayes native streamed variational prediction'
     settings$model[i]<-if(settings$method[i]=='gbayes_gaussian')'Gaussian marker effects; fixed prior and residual variance'else
@@ -117,6 +129,17 @@ summarize_prediction_run <- function(run_dir) {
     settings$tuning[i]<-'No tuning; training var(y) split h2=0.5; average effect variance=0.5*var(y)/sum(training marker variances); mixture nonzero variance divided by 0.1'
     settings$convergence[i]<-paste('Per-sample negative-ELBO stabilization; tolerance',config$gbayes$tolerance,
       '; sweep cap',config$gbayes$maximum_sweeps,'; chunk 128; local iterations 20; full refresh 8; one worker; managed 1 GiB; Gram cache 256 MiB')
+  }
+  for(i in which(grepl('^glma_',settings$method))) {
+    settings$package[i]<-'glma'
+    settings$package_version[i]<-versions$version[match('glma',versions$package)]
+    settings$native_engines[i]<-'glma 0.1.2; gbayes; greml; gsolve MKL'
+    settings$model[i]<-if(settings$method[i]=='glma_infinitesimal')
+      'Gaussian full-marker joint prediction; empirical standardized marker effects' else
+      'Ten ridge/elastic prior candidates; full-marker joint prediction'
+    settings$computation[i]<-'Existing native joint full-panel fit; no LOCO exclusions or GWAS calibration; train-only empirical standardization; constant training markers excluded'
+    settings$tuning[i]<-'Blocked RHE/MC heritability grid; inner 10% validation within each outer training fold; split seed 17092026; no outer test outcomes'
+    settings$convergence[i]<-'Native approximate joint workflow acceptance; prediction stability and adaptive chunk retirement; default sweep cap 100; chunk 256; four coordinate/MKL threads; managed 1 GiB'
   }
   metadata <- data.frame(dataset=config$dataset_id,trait=config$trait,run_id=basename(run_dir),
     gpbench_revision=config$gpbench_revision,source_revision=provenance$source$source_revision,
@@ -135,9 +158,12 @@ summarize_prediction_run <- function(run_dir) {
   solver_checks$message <- NULL
   solver_checks$dataset<-rep(config$dataset_id,nrow(solver_checks))
   solver_checks$trait<-rep(config$trait,nrow(solver_checks))
-  source_pins<-read.csv('environment/sources.csv',stringsAsFactors=FALSE)
-  source_pins<-source_pins[match(c('gsuite','greml','gsolve','gbayes'),source_pins$repository),]
-  source_pins$version<-c('0.43.0','0.92.0','0.28.0','0.1.16 (R package)')
+  source_pins<-if(!is.null(provenance$source_pins))provenance$source_pins else read.csv('environment/sources.csv',stringsAsFactors=FALSE)
+  owners<-c('gsuite','greml','gsolve','gbayes',if(any(grepl('^glma_',config$methods)))c('glma','gbits','gmat'))
+  source_pins<-source_pins[match(owners,source_pins$repository),]
+  source_pins$version<-c('0.43.0','0.92.0','0.28.0',
+    if(any(grepl('^glma_',config$methods))&&!any(grepl('^gbayes_',config$methods)))'0.1.0 (native core)'else'0.1.16 (R package)',
+    if('glma'%in%owners)c('0.1.2','0.21.0','0.7.0'))
   source_pins$access<-'Private implementation repository; authorized access required'
   tables<-list(dataset_catalogue=data.frame(dataset=config$dataset_id,species=d$species,trait=config$trait,
       phenotype_definition=d$preprocessing_history,individuals_available=config$n,individuals_evaluated=nrow(folds),
@@ -166,17 +192,19 @@ write_prediction_report <- function(tables,directory) {
     writeLines(sub('[[:space:]]+$','',attr(tables,'fit_session')),file.path(directory,'fit-sessionInfo.txt'))
   plot_prediction_report(tables,directory)
   batch_note<-if(length(unique(tables$run_metadata$run_id))>1L)
-    'The reviewed greml/gsolve execution is retained; gbayes methods were measured in an additional execution batch on the same hardware and optimized runtime. Run IDs and fitting sessions distinguish the measurements.' else
+    'Reviewed earlier executions are retained; added methods were measured in separate sequential execution batches on the same hardware and saved folds. Run IDs, source revisions, fitting sessions and backend descriptions distinguish the measurements.' else
     'Run IDs and fitting sessions identify this execution batch. Combining it with earlier measurements requires matching input identities, saved splits and outcomes.'
   page <- c('---','layout: default','title: GPBench-matched benchmark','---','# GPBench-matched benchmark','',
     '## Scientific question and dataset','',
     'Predict supplied phenotypes using all source markers and the published GPBench ten-fold split algorithm. Original IDs, upstream processing and phenotype units remain unverified.','',
     markdown_table(tables$dataset_catalogue[,c('dataset','species','trait','individuals_evaluated','observed_targets','imputed_targets','available_markers','markers_used')]),'','[Full dataset catalogue and source definitions](dataset_catalogue.csv)','',
     '## Methods and validation','',
-    'Shuffled ten-fold KFold, seed 42, scikit-learn 1.6.1 and NumPy 1.26.4. All supplied markers and raw dosage coordinates are retained. Genomic BLUP estimates variances by REML through greml/gsolve, using K=ZZt/p. gbayes Gaussian and sparse normal-mixture VB use fixed working h2=0.5 and training-only phenotype/marker variances; the mixture fixes inclusion probability at 0.1. The native streamed interface projects an intercept without SD scaling. No model is tuned on test outcomes.','',
+    'Shuffled ten-fold KFold, seed 42, scikit-learn 1.6.1 and NumPy 1.26.4. Every method receives the same saved splits and all supplied dosage columns. Genomic BLUP estimates variances by REML through greml/gsolve, using K=ZZt/p. gbayes Gaussian and sparse normal-mixture VB use fixed working h2=0.5 and training-only phenotype/marker variances; the mixture fixes inclusion probability at 0.1. These three methods use raw dosage coordinates without SD scaling.','',
+    'GLMA Gaussian and GLMA prior-selected are the full-marker prediction fits underlying glma_infinitesimal_loco() and glma_prior_selected_loco(), respectively. They use the existing native joint fitting modes, without chromosome exclusions or association calibration. GPBench has no chromosome maps; none are invented. Within each outer training fold, GLMA standardizes markers by empirical SD, estimates variance using blocked RHE/Monte Carlo refinement, and uses its internal 10% validation split (seed 17092026). Prior-selected compares ten ridge/elastic candidates; Gaussian uses ridge. The native joint selection/variance procedure sees only outer training outcomes. Its inner selection score is not an external accuracy estimate. Constant training markers are excluded from standardized fitting and receive zero prediction effects; actual counts are in fold/results CSVs.','',
+    'The methods share external validation, but differ in preprocessing, prior models, variance estimation and acceptance criteria. Their timings compare complete workflows and do not isolate solver speed. No outer test outcomes enter fitting or prior selection beyond the explicitly reproduced phenotype-imputation rule below.','',
     'To reproduce GPBench, missing phenotypes are mean-imputed before splitting. Two maize DTT targets are imputed; cattle has none. Imputed labels are not genuinely observed phenotypes. The observed-target-only sensitivity summary excludes them from evaluation. This reproduction does not endorse whole-dataset phenotype imputation for a new scientific study.','',
     markdown_table(tables$method_settings[,c('method','package','package_version','native_engines','tuning','convergence')]),'','[Full model and method settings](method_settings.csv)','',
-    'Fitting calls gsuite::gs_lmm_fit or gbayes::bayes through installed R interfaces to our compiled libraries. The gbayes R bindings are in the gsuite repository; the native core has its own gbayes repository. Exact source commits are pinned below; implementation source and binaries remain private.','',
+    'Fitting calls gsuite::gs_lmm_fit, gbayes::bayes or the thin glma::glma_full_marker_prediction adapter to our compiled libraries. The GLMA adapter exposes existing C++ fitting and returns effects for a held-out forward prediction; it implements no new estimator. R bindings live in gsuite; native cores have their own repositories. Exact source commits are pinned below; implementation source and binaries remain private.','',
     software_source_table(tables$software_sources),'','[Software and source commits](software_sources.csv)','',
     '## Results','',
     'Main scores are arithmetic means of ten test-fold metrics, matching GPBench. Predictive R2 uses each test fold mean as its reference. Descriptive fold standard deviations use NumPy ddof=0; no confidence intervals or independent fold replicates are implied. Pooled OOF metrics are separate.','',
@@ -187,8 +215,9 @@ write_prediction_report <- function(tables,directory) {
     paste0('<figure class="report-figure"><img src="',kind,'.svg" alt="',kind,' comparison within each dataset and trait, using the matched ten-fold validation."></figure>'),'',
     paste0('[Full-size ',kind,' SVG](',kind,'.svg)'), '')
   page <- c(page,
-    'Workflow seconds include method-specific preparation, ten fits and ten predictions. greml/gsolve additionally includes its reusable raw-dosage kernel and fold blocks. gbayes preparation includes training/target matrix extraction; fitting includes training prior calculations, native projection and variational updates. These are single-execution timings; peak RAM is unmeasured. Zero seconds means below timer resolution.','',batch_note,'',
-    'R/OpenBLAS and the MKL environment request four threads. The greml component backend returns requested/resolved/support settings of one in this build; gbayes requests and reports one package worker. Returned settings are retained in fold CSVs and do not measure CPU utilization. Variational convergence means negative-ELBO stabilization, not a certificate of a global mixture optimum. Provisional sweep-cap fits remain explicitly labelled.','',
+    'Workflow seconds include method-specific preparation, ten fits and ten predictions. greml/gsolve includes its reusable raw-dosage kernel and fold blocks. gbayes preparation includes training/target extraction and fitting includes prior calculations. GLMA preparation includes one dosage-only BED cache and target extraction; fitting includes packing training rows, training-marker standardization, RHE/MC variance estimation, candidate selection and the global refit. Each GLMA method is charged the full reusable cache cost once. Native timings exclude verbose tracing. These are single-execution measurements; peak RAM is unmeasured. Zero seconds means below timer resolution.','',batch_note,'',
+    'R uses OpenBLAS with four threads. greml/gsolve uses its MKL/CHOLMOD native backend, which reports one component-backend worker. GLMA uses the full native MKL prefix with four requested coordinate/MKL workers; a separate numerical check verified actual MKL DGEMM calls. The earlier gbayes standalone measurements use a portable compiled core without MKL dense kernels and report one worker: R OpenBLAS does not accelerate that core automatically. These backend differences must be considered when comparing times. Returned thread settings do not measure CPU utilization.','',
+    'greml acceptance is REML convergence at the declared tolerance. gbayes acceptance is negative-ELBO stabilization. GLMA acceptance is its native approximate joint workflow rule, including prediction stability and adaptive chunk retirement; it is not exact REML or a strict global ELBO certificate. Failed and provisional fits remain explicit.','',
     '## Calibration, convergence and solver checks','',
     '<figure class="report-figure"><img src="calibration.svg" alt="Aggregate OOF calibration bins with identity line, separately for each dataset and trait."></figure>','',
     '[Full-size calibration SVG](calibration.svg) · [Aggregate bins](calibration_bins.csv)','',
@@ -209,6 +238,15 @@ write_prediction_report <- function(tables,directory) {
   }
   if(!is.null(attr(tables,'fit_session')))
     page<-c(page,'','[R packages loaded during fitting](fit-sessionInfo.txt)')
+  if('glma_fit_diagnostics'%in%names(tables)) page<-c(page,'',
+    '## GLMA fitting diagnostics','',
+    '[Per-fold selected priors, native acceptance, marker counts and phase timings](glma_fit_diagnostics.csv)','',
+    'These are aggregate fit diagnostics; no individual predictions or inner validation identities are published.')
+  if('glma_interface_cost'%in%names(tables)) page<-c(page,'',
+    '## R interface timing check','',
+    'A separate repeat of fold one traces the native Rcpp .Call boundary. It is excluded from benchmark timing totals. Native-call time includes C++ packing, setup and conversion; the inner fitter timer excludes those phases. The difference between the R fitting call and .Call is the measured outside-native wrapper cost, at the coarse elapsed timer resolution. It does not include dataset loading, report generation or the separately recorded target prediction.','',
+    markdown_table(tables$glma_interface_cost[,c('dataset','method','r_fit_call_seconds','native_call_seconds','native_inner_fit_seconds','outside_native_call_seconds','native_preparation_and_conversion_seconds')]),'',
+    '[Interface timing check CSV](glma_interface_cost.csv)')
   writeLines(page,file.path(directory,'report.md'))
   writeLines(sub('[[:space:]]+$','',capture.output(sessionInfo())),file.path(directory,'report-sessionInfo.txt'))
 }

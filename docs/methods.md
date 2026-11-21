@@ -13,6 +13,8 @@ our implementation. GPBench supplies data and a validation scheme.
 | Genomic BLUP with REML | gsuite::gs_lmm_fit, using greml and gsolve | Estimate genetic and residual variances on training data, then predict held-out phenotypes |
 | Gaussian VB | gbayes::bayes, method="normal_mixture", algorithm="vbayes", one positive variance | Fit Gaussian marker effects with fixed training-only prior and residual variance |
 | Sparse normal-mixture VB | Same native streamed interface, zero spike plus one normal component | Fit a fixed spike-and-normal prior with inclusion probability 0.1 |
+| GLMA Gaussian | glma::glma_full_marker_prediction, method="infinitesimal" | Existing joint Gaussian full-marker prediction fit underlying glma_infinitesimal_loco(); no chromosome exclusions |
+| GLMA prior-selected | Same thin interface, method="prior_selected" | Existing ten-candidate ridge/elastic joint prediction fit underlying glma_prior_selected_loco(); no chromosome exclusions |
 | Numerical verification, outside the model ranking | gsuite::gsuite_solve with the fitted greml variances | Recompute fixed-variance GLS/BLUP predictions; no variance estimation |
 
 The genomic BLUP model uses an intercept and the raw-dosage relationship
@@ -39,6 +41,30 @@ per-call Gram cache and a 1 GiB managed-memory budget. It requests one package
 worker. The managed budget excludes caller data/runtime memory and is not peak
 RAM. Convergence is objective stabilization, not a global-optimum certificate;
 sweep-cap fits remain provisional. Per-fold prior values and sweeps are exported.
+
+The GLMA prediction adapter uses existing native C++ joint modes on each outer
+training fold. It applies empirical marker SD standardization, excludes constant
+training markers (zero effects), and estimates variance using blocked RHE/Monte
+Carlo refinement. Its internal 10% validation split uses seed 17092026 within the
+outer training rows. Prior-selected considers ten ridge/elastic candidates;
+Gaussian uses ridge. All variance estimation, centering and selection stays
+inside the outer training fold. The native joint procedure is retained as
+implemented; its internal score is a selection score, not external validation.
+The adapter returns a single global prediction model, without LOCO refits,
+association scans or calibration. No biological marker annotations are invented.
+Actual used-marker counts and selected priors are reported per fold.
+
+GLMA uses decoded products, chunk size 256, four coordinate/MKL workers, default
+sweep cap 100 and a 1 GiB managed budget. Its native approximate workflow
+acceptance includes prediction stability and adaptive chunk retirement; it is
+not exact REML or a strict global ELBO certificate. A numerical check verified
+actual MKL DGEMM calls and agreement with a fixed-V Gaussian reference.
+
+The earlier gbayes standalone build is a portable C++ core without MKL dense
+kernels. R OpenBLAS does not accelerate those C++ products automatically.
+greml/gsolve and the new GLMA build use the full native MKL prefix. Timings
+therefore compare the documented complete workflows, including these backend
+and preprocessing differences, rather than isolating numerical solver speed.
 
 greml owns mixed-model likelihood and variance estimation. gsolve supplies
 numerical solvers; it is not a second prediction model. Their R interfaces are

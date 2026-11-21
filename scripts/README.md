@@ -11,6 +11,8 @@ the pinned private environment.
 | `evaluate.R` | Verify saved splits; calculate fold and pooled metrics |
 | `fit_greml.R` | Thin call to our installed REML/BLUP interfaces |
 | `fit_gbayes.R` | Training-only working priors and thin calls to existing streamed Gaussian/normal-mixture VB |
+| `fit_glma.R` | Thin calls to existing native joint Gaussian/prior-selected full-marker prediction; no LOCO |
+| `combine_glma_reports.R` | Verify matching private inputs/folds/outcomes and combine reviewed aggregate history with the completed GLMA batch |
 | `run_prediction.R` | Shared recipe sourced by each benchmark entry point |
 | `check_solvers.R RUN_DIRECTORY` | Verify our fixed-variance solver against our fitted predictions, after timing the benchmark |
 | `report_prediction.R RUN_DIRECTORY` | Generate aggregate CSVs, four SVGs and a report outside the checkout |
