@@ -27,7 +27,6 @@ a:focus-visible { outline: 3px solid #0366d6; outline-offset: 3px; }
 
 @media (max-width: 600px) {
   .site-nav { gap: .5rem 1rem; }
-  .workflow-figure { overflow-x: auto; }
-  .workflow-figure img { min-width: 960px; }
-  .report-figure img { min-width: 760px; }
+  .workflow-figure img,
+  .report-figure img { min-width: 0; }
 }

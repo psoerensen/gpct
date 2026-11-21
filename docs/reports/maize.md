@@ -22,19 +22,19 @@ Shared training-Glist preparation across ten folds: 10.04 seconds. Fitting inclu
 
 ## Predictive performance
 
-![Predictive performance](../assets/reports/gbayes-glist-1t/maize/performance.svg)
+[![Predictive performance](../assets/reports/gbayes-glist-1t/maize/performance.svg)](../assets/reports/gbayes-glist-1t/maize/performance.svg)
 
 ## Improvement over Gaussian
 
-![Difference from Gaussian PCG](../assets/reports/gbayes-glist-1t/maize/improvement.svg)
+[![Difference from Gaussian PCG](../assets/reports/gbayes-glist-1t/maize/improvement.svg)](../assets/reports/gbayes-glist-1t/maize/improvement.svg)
 
 ## Performance and cost
 
-![Performance versus runtime](../assets/reports/gbayes-glist-1t/maize/runtime.svg)
+[![Performance versus runtime](../assets/reports/gbayes-glist-1t/maize/runtime.svg)](../assets/reports/gbayes-glist-1t/maize/runtime.svg)
 
 ## Calibration
 
-![Aggregate calibration](../assets/reports/gbayes-glist-1t/maize/calibration.svg)
+[![Aggregate calibration](../assets/reports/gbayes-glist-1t/maize/calibration.svg)](../assets/reports/gbayes-glist-1t/maize/calibration.svg)
 
 Mean-imputed evaluation targets: 2 . Observed-target-only pooled correlations are provided in the summary CSV. No individual prediction plots or records are published.
 

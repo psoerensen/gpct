@@ -22,19 +22,19 @@ Shared training-Glist preparation across ten folds: 12.52 seconds. Fitting inclu
 
 ## Predictive performance
 
-![Predictive performance](../assets/reports/gbayes-glist-1t/cattle/performance.svg)
+[![Predictive performance](../assets/reports/gbayes-glist-1t/cattle/performance.svg)](../assets/reports/gbayes-glist-1t/cattle/performance.svg)
 
 ## Improvement over Gaussian
 
-![Difference from Gaussian PCG](../assets/reports/gbayes-glist-1t/cattle/improvement.svg)
+[![Difference from Gaussian PCG](../assets/reports/gbayes-glist-1t/cattle/improvement.svg)](../assets/reports/gbayes-glist-1t/cattle/improvement.svg)
 
 ## Performance and cost
 
-![Performance versus runtime](../assets/reports/gbayes-glist-1t/cattle/runtime.svg)
+[![Performance versus runtime](../assets/reports/gbayes-glist-1t/cattle/runtime.svg)](../assets/reports/gbayes-glist-1t/cattle/runtime.svg)
 
 ## Calibration
 
-![Aggregate calibration](../assets/reports/gbayes-glist-1t/cattle/calibration.svg)
+[![Aggregate calibration](../assets/reports/gbayes-glist-1t/cattle/calibration.svg)](../assets/reports/gbayes-glist-1t/cattle/calibration.svg)
 
 Mean-imputed evaluation targets: 0 . Observed-target-only pooled correlations are provided in the summary CSV. No individual prediction plots or records are published.
 

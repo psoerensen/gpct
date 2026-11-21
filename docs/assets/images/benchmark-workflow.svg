@@ -61,7 +61,7 @@
   <text x="596" y="139" class="heading">gbayes methods</text>
   <text x="596" y="169" class="body muted">Fit, then predict</text>
   <text x="596" y="211" class="body" font-weight="600">Existing C++ engines</text>
-  <text x="596" y="241" class="small" font-weight="600">Glist in; held-out predictions out</text>
+  <text x="596" y="241" class="small" font-weight="600">Glist → fit → predict</text>
   <path d="M596 264 H800" stroke="#c9dfd1"/>
   <text x="596" y="297" class="small">One native worker</text>
   <text x="596" y="321" class="small">Train on the same folds.</text>
