@@ -1,6 +1,8 @@
 # Maize prediction: DTT pilot
 
-**Status: planned; recipe written, not executed in R.**
+**Status: completed 2026-11-21; all three methods completed five folds without warnings or failures.**
+
+[Reviewed results and timings](https://psoerensen.github.io/gpct/reports/maize.html). Both gbayes methods converged in every fold; rrBLUP exposes no convergence flag. Rebuild and activate the [pinned OpenBLAS environment](../../environment/README.md) before rerunning.
 
 Question: how well do conventional REML ridge prediction and two fixed-setting
 gbayes predictors recover held-out supplied `DTT` values in random within-panel

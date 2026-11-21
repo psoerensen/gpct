@@ -32,7 +32,7 @@ inspect `run_status.csv` and resolve that failure before attempting a summary.
 | `fold_results.csv` | Per-method, per-fold metrics and statuses; no IDs or individual predictions |
 | `fold_metric_means.csv` | Arithmetic means of the five fold metrics, clearly labelled separately from pooled scores |
 | `calibration_bins.csv` | Aggregate bin counts, mean predictions and mean observed phenotype |
-| `run_metadata.csv` | Dataset/trait, source revision, input checksum where available, seeds and reporting R version |
+| `run_metadata.csv` | Dataset/trait, run ID, source revision, input checksum, seeds, loaded BLAS/version/thread setting/checksum, hardware and reporting R version |
 | `performance.svg` | Pooled and descriptive fold predictive-ability dots |
 | `improvement.svg` | Predictive-ability difference from rrBLUP, with matched fold differences and a zero reference |
 | `runtime.svg` | Pooled predictive ability versus summed fitting seconds |
@@ -86,7 +86,7 @@ peak-RAM availability per fold. It also writes `execution.csv` for the case.
   session recording. It is reported as context and must not be summed over methods.
 - gbayes explicitly requests `ncores=1`. rrBLUP does not expose a worker-count
   argument; BLAS/OpenMP can use their own threads. Actual usage stays NA unless
-  measured. Relevant thread environment variables are retained in local execution records.
+  measured. The loaded OpenBLAS runtime thread setting and binary checksum are recorded separately in run metadata; a setting does not measure CPU utilization. Relevant environment variables remain in local execution records.
 - Peak RAM is **not measured** by this runner. Its NA is not zero, R object size,
   a configured memory budget or a claim about process memory. Later OS-level
   measurements need their scope/unit documented before filling that field.

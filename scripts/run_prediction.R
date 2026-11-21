@@ -2,6 +2,18 @@
 execution_started <- proc.time()[["elapsed"]]
 source("scripts/paths.R")
 source("scripts/evaluate.R")
+blas_implementation <- "not recorded"; blas_threads <- NA_integer_; blas_sha256 <- NA_character_
+env_root <- Sys.getenv("GPCT_ENV_DIR")
+if (nzchar(env_root) && file.exists(file.path(env_root, "probe", "blas_probe.dll"))) {
+  if (!"blas_probe" %in% names(getLoadedDLLs())) dyn.load(file.path(env_root, "probe", "blas_probe.dll"))
+  blas <- .Call("gpct_blas_info")
+  blas_implementation <- blas$implementation; blas_threads <- blas$threads
+  manifest <- file.path(env_root, "runtime-checksums.csv")
+  if (file.exists(manifest)) {
+    checksums <- read.csv(manifest, stringsAsFactors = FALSE)
+    blas_sha256 <- checksums$sha256[match("Rblas.dll", checksums$component)]
+  }
+}
 run_id <- Sys.getenv("GPCT_RUN_ID", paste0(format(Sys.time(), "%Y%m%dT%H%M%S", tz = "UTC"), "-", Sys.getpid()))
 if (!grepl("^[A-Za-z0-9_-]+$", run_id)) stop("Invalid GPCT_RUN_ID")
 destination <- file.path(output_dir(), config$case, run_id)
@@ -158,6 +170,14 @@ write.csv(data.frame(case_elapsed_seconds = proc.time()[["elapsed"]] - execution
   MKL_NUM_THREADS = Sys.getenv("MKL_NUM_THREADS", unset = "unset"),
   peak_ram_mb = NA_real_, ram_status = "not measured"),
   file.path(destination, "execution.csv"), row.names = FALSE)
+execution <- read.csv(file.path(destination, "execution.csv"), stringsAsFactors = FALSE)
+execution$blas_implementation <- blas_implementation
+execution$blas_runtime_threads <- blas_threads
+execution$blas_binary_sha256 <- blas_sha256
+execution$cpu_model <- Sys.getenv("GPCT_CPU_MODEL", unset = "not recorded")
+execution$logical_processors <- Sys.getenv("GPCT_LOGICAL_PROCESSORS", unset = "not recorded")
+execution$installed_ram_gib <- Sys.getenv("GPCT_INSTALLED_RAM_GIB", unset = "not recorded")
+write.csv(execution, file.path(destination, "execution.csv"), row.names = FALSE)
 if (ok) write_status("completed", "Review per-method convergence; completion does not certify scientific validity.")
 cat("Run artifacts:", destination, "\n")
 if (!ok) quit(status = 1L)

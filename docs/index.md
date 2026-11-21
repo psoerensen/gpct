@@ -28,8 +28,8 @@ documented approach to further animal, plant and human datasets.
 
 | Case | Dataset | Target | Status |
 | --- | --- | --- | --- |
-| Cattle prediction | GPBench Cattle | supplied mkg | Planned; R execution pending |
-| Maize prediction | GPBench Maize | supplied DTT | Planned; R execution pending |
+| Cattle prediction | GPBench Cattle | supplied mkg | Completed; [results](results.html) |
+| Maize prediction | GPBench Maize | supplied DTT | Completed; [results](results.html) |
 
 Each pilot uses 512 predeclared source marker columns, the same saved five-fold
 splits across methods (seed 4401), training-only processing and predictions on
@@ -38,7 +38,7 @@ and elastic-net gbayes fits. These are execution pilots, not genome-wide ranking
 
 Read the [dataset catalogue](datasets.html), [reproduction commands](benchmarks.html),
 [package interfaces](methods.html) and [evaluation protocol](protocol.html).
-There are [no benchmark performance results yet](results.html).
+See [real pilot results and timings](results.html), including all five fold values and aggregate calibration plots.
 
 ## Contribute
 

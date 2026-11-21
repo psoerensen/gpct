@@ -9,28 +9,32 @@ or provide an orchestration framework.
 
 | Case | Trait | Scope | Status |
 | --- | --- | --- | --- |
-| [Cattle prediction](benchmarks/cattle_prediction/README.md) | `mkg` | 512-marker pilot | Planned; recipe written, R execution pending |
-| [Maize prediction](benchmarks/maize_prediction/README.md) | `DTT` | 512-marker pilot | Planned; recipe written, R execution pending |
+| [Cattle prediction](benchmarks/cattle_prediction/README.md) | `mkg` | 512-marker pilot | Completed 2026-11-21; all three methods, five folds |
+| [Maize prediction](benchmarks/maize_prediction/README.md) | `DTT` | 512-marker pilot | Completed 2026-11-21; all three methods, five folds |
 
-The GPBench archive and aggregate metadata have been inspected. No prediction
-benchmark has been executed and there are no performance results. See
+Both pilots completed with real out-of-fold results and fit/prediction timings. See the [published comparisons](https://psoerensen.github.io/gpct/results.html) and
 [verification](docs/verification.md) for evidence and precise missing steps.
 The pilot is an execution example, not a genome-wide comparison or a reproduction
 of GPBench's published ten-fold experiments.
 
 ## Start here
 
-Use an existing R installation with `rrBLUP`, a compatible `gbayes` exposing
+Start with the [pinned environment build recipe](environment/README.md), then
+activate it and run `environment/preflight.R` before any long benchmark.
+It provides a private R/OpenBLAS runtime and rebuilds the existing ecosystem
+packages from pinned clean source snapshots. Shared installations are unchanged.
+
+The analysis requires `rrBLUP`, a compatible `gbayes` exposing
 the documented prepared-design `bayes()` interface, `digest`, `reticulate`, and
-a Python environment containing NumPy. No script installs dependencies.
-See [methods and API provenance](docs/methods.md). The gbayes source inspected
-labels these adapters as pending runtime qualification; package version alone
-does not establish support.
+a Python environment containing NumPy. Analysis scripts install nothing;
+`environment/bootstrap.ps1` is the explicit isolated dependency-build entry point.
+See [methods and API provenance](docs/methods.md). The pinned gbayes 0.1.16 build passed the documented numerical example and both pilots; package version alone does not establish support.
 
 Run from the repository root. Set environment variables in R, PowerShell or
 your shell; these commands show PowerShell:
 
 ```powershell
+./environment/activate.ps1
 $env:GPCT_DATA_DIR = 'C:/data/gpct'
 $env:GPCT_OUTPUT_DIR = 'C:/results/gpct'
 # Acknowledge the upstream row-order convention; original sample IDs are absent.
@@ -38,6 +42,7 @@ $env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
 # If necessary, select an existing Python with NumPy:
 # $env:RETICULATE_PYTHON = 'C:/path/to/python.exe'
 Rscript --vanilla scripts/check_dependencies.R
+Rscript --vanilla environment/preflight.R
 Rscript --vanilla tests/check_protocol.R
 Rscript --vanilla scripts/prepare.R cattle
 Rscript --vanilla benchmarks/cattle_prediction/run.R

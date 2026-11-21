@@ -63,10 +63,13 @@ report_tables <- function(config, versions = NULL) {
   folds$status <- "planned"; folds$convergence <- "not run"
   calibration <- data.frame(dataset = character(), trait = character(), method = character(),
     bin = integer(), n = integer(), mean_prediction = double(), mean_observed = double())
-  metadata <- data.frame(dataset = config$dataset_id, trait = config$trait,
+  metadata <- data.frame(dataset = config$dataset_id, trait = config$trait, run_id = "not run",
     fold_seed = config$fold_seed, method_seed_start = config$method_seed,
     source_revision = d$source_version, prepared_input_md5 = NA_character_,
     validation = "single shared random five-fold run; training-only preparation",
+    blas_implementation = "not recorded", blas_runtime_threads = NA_integer_,
+    blas_binary_sha256 = NA_character_, cpu_model = "not recorded",
+    logical_processors = NA_integer_, installed_ram_gib = NA_real_,
     reporting_R = R.version.string)
   list(dataset_catalogue = catalogue, method_settings = settings, benchmark_results = summary,
        fold_results = folds, calibration_bins = calibration, run_metadata = metadata)
@@ -93,6 +96,7 @@ summarize_prediction_run <- function(run_dir) {
             identical(sort(unique(saved$fold)), 1:5), identical(attr(saved, "seed"), 4401L))
   versions <- read.csv(file.path(run_dir, "package_versions.csv"), stringsAsFactors = FALSE)
   tables <- report_tables(config, versions)
+  tables$run_metadata$run_id <- basename(run_dir)
   tables$fold_results$status <- "not recorded"
   tables$fold_results$convergence <- "unavailable"
   report_url <- Sys.getenv("GPCT_REPORT_URL", unset = "")
@@ -170,6 +174,9 @@ summarize_prediction_run <- function(run_dir) {
   if (file.exists(execution)) {
     record <- read.csv(execution, stringsAsFactors = FALSE)
     tables$benchmark_results$case_elapsed_seconds <- record$case_elapsed_seconds[1]
+    for (field in intersect(c("blas_implementation", "blas_runtime_threads", "blas_binary_sha256",
+                              "cpu_model", "logical_processors", "installed_ram_gib"), names(record)))
+      tables$run_metadata[[field]] <- record[[field]][1]
   }
   tables
 }
@@ -223,7 +230,14 @@ plot_prediction_report <- function(tables, directory) {
             if (!any(a$method == "rrblup" & valid)) small[] <- NA_real_
           }
           small[!folds$method %in% a$method[valid]] <- NA_real_
-          bounds <- range(c(if (kind == "performance") c(-1, 1) else c(-.1, .1), values, small), na.rm = TRUE)
+          measured <- c(values, small); measured <- measured[is.finite(measured)]
+          bounds <- if (length(measured)) range(c(0, measured)) else
+            if (kind == "performance") c(-1, 1) else c(-.1, .1)
+          if (length(measured)) {
+            padding <- max(.01, diff(bounds) * .08)
+            bounds <- bounds + c(-padding, padding)
+            if (kind == "performance") bounds <- pmax(-1, pmin(1, bounds))
+          }
           graphics::plot(NA, xlim = bounds, ylim = c(.5, nrow(a) + .5), yaxt = "n", ylab = "",
             xlab = if (kind == "performance") "Predictive ability (Pearson correlation)" else "Difference in predictive ability from rrBLUP",
             main = group, bty = "l")
@@ -240,8 +254,11 @@ plot_prediction_report <- function(tables, directory) {
             if (planned) "Template: no measured benchmark results" else "No complete defined scores available", col = "#586069")
         } else if (kind == "runtime") {
           use <- valid & is.finite(a$fit_seconds) & is.finite(a$predictive_ability)
+          ability_limits <- if (any(use)) range(a$predictive_ability[use]) else c(-1, 1)
+          if (any(use)) ability_limits <- pmax(-1, pmin(1, ability_limits +
+            c(-1, 1) * max(.02, diff(ability_limits) * .15)))
           graphics::plot(NA, xlim = c(0, if (any(use)) max(a$fit_seconds[use]) * 1.2 + .01 else 1),
-            ylim = c(-1, 1), xlab = "Fitting time (seconds; sum of five folds)",
+            ylim = ability_limits, xlab = "Fitting time (seconds; sum of five folds)",
             ylab = "Predictive ability (pooled OOF)", main = group, bty = "l")
           if (any(use)) graphics::points(a$fit_seconds[use], a$predictive_ability[use], pch = 19, cex = 1.2,
                                          col = report_colors[a$method[use]])
@@ -319,21 +336,22 @@ write_report_page <- function(tables, path) {
     "[Download summary CSV](benchmark_results.csv) · [Per-fold metrics](fold_results.csv) · [Fold means](fold_metric_means.csv)", "",
     "## Performance and computational cost", "",
     "Filled dots show pooled OOF scores; open dots show descriptive fold values. No confidence intervals are implied. Baseline changes use matched dataset/trait and folds. Raw RMSE is never combined across traits.", "",
-    '<figure class="report-figure"><img src="performance.svg" alt="Predictive ability by method, with pooled and fold values distinguished; blank until measured."></figure>', "",
+    '<figure class="report-figure"><img src="performance.svg" alt="Predictive ability by method, with pooled and fold values distinguished."></figure>', "",
     "[Full-size performance SVG](performance.svg)", "",
-    '<figure class="report-figure"><img src="improvement.svg" alt="Change in predictive ability from rrBLUP with a zero reference line; blank until measured."></figure>', "",
+    '<figure class="report-figure"><img src="improvement.svg" alt="Change in predictive ability from rrBLUP with a zero reference line."></figure>', "",
     "[Full-size baseline-improvement SVG](improvement.svg)", "",
-    '<figure class="report-figure"><img src="runtime.svg" alt="Pooled predictive ability versus fitting seconds, coloured by method; blank until performance and timings are measured."></figure>', "",
+    '<figure class="report-figure"><img src="runtime.svg" alt="Pooled predictive ability versus fitting seconds, coloured by method."></figure>', "",
     "[Full-size performance/runtime SVG](runtime.svg)", "",
-    "Fitting and prediction seconds are summed over five folds. Method elapsed includes loading, diagnostics and scoring but excludes shared input/fold preparation and CSV writes. Case elapsed includes all methods and shared work and is not a per-method cost. Peak RAM and actual thread counts are not measured by the pilot runner; they remain NA. gbayes requests one package worker; rrBLUP/BLAS thread control is not exposed.", "",
+    "Fitting and prediction seconds are summed over five folds. Method elapsed includes loading, diagnostics and scoring but excludes shared input/fold preparation and CSV writes. Case elapsed includes all methods and shared work and is not a per-method cost. Peak RAM and observed per-fit thread utilization remain unmeasured. gbayes requests one package worker. Run metadata records the loaded BLAS implementation, its runtime thread setting, binary checksum and hardware; a thread setting does not measure CPU utilization.", "",
     "## Calibration, convergence, warnings and failed fits", "",
     "Calibration uses pooled OOF quantile bins (up to ten, at least five individuals per published bin) and an identity line. Only aggregate bin means and counts leave the local run; review them before publication. These plots do not recalibrate predictions.", "",
-    '<figure class="report-figure"><img src="calibration.svg" alt="Binned mean observed phenotype versus mean prediction, with an identity line; blank until aggregate bins exist."></figure>', "",
+    '<figure class="report-figure"><img src="calibration.svg" alt="Binned mean observed phenotype versus mean prediction, with an identity line."></figure>', "",
     "[Full-size calibration SVG](calibration.svg)", "",
     "[Aggregate calibration CSV](calibration_bins.csv)", "",
     markdown_table(tables$fold_results[, c("method", "fold", "status", "convergence", "warning_count")]), "",
     "Failed or incomplete methods keep their fold statuses; pooled scores and comparison plots are withheld. Raw warning/error text and full diagnostic objects remain local because they can contain identifiers or paths. Unknown convergence and missing resource measurements are explicit. Completion does not certify scientific validity.", "",
-    "## Reproduce and inspect", "", "From the repository root, in an existing compatible R environment:", "", "```text",
+    "## Reproduce and inspect", "", "From the repository root, first build and activate the pinned environment described in the repository's environment/README.md:", "", "```text",
+    "Rscript --vanilla environment/preflight.R",
     "Rscript --vanilla scripts/check_dependencies.R", "Rscript --vanilla tests/check_protocol.R",
     "Rscript --vanilla tests/check_reporting.R")
   for (case in unique(sub("gpbench_", "", catalogue$dataset))) page <- c(page,

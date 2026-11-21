@@ -41,20 +41,36 @@ documentation and examples before calls were written:
 | gcorr 0.1.10 source | DESCRIPTION and `man/ldsc.Rd` | Future covariance/correlation and architecture cases |
 | gsuite 0.43.0 source | DESCRIPTION | Future mixed-model and resource preparation cases |
 
-These are inspected source versions, **not verified installed versions**.
-gbayes documentation explicitly marks prepared-design adapters as a pending
-source batch with runtime qualification deferred. They accept labelled, finite,
-centered dense X and have a default 2,048-feature limit. The pilot uses 512
+The [current public gbayes workflow](https://psoerensen.github.io/gtools/gsuite/docs/gbayes-workflow.html)
+documents the frozen 0.1.16 build and reports passing Gaussian/weighted elastic-net
+prepared-design examples. Some older local help/README text still labels that
+batch pending. These interfaces accept labelled, finite, centered dense X and
+have a default 2,048-feature limit. The pilot uses 512
 markers and never silently reduces a requested full-genome benchmark. Confirm
 local `help("prepared_design", package="gbayes")` and run the recipe before
 marking it runnable. A matching version number alone is insufficient.
 
-Public release URLs for these local development packages were not established.
-Use the existing source/help available to the owner, e.g.
+The [public source repository](https://psoerensen.github.io/gtools/gsuite/docs/source-package-repository.html)
+still separates public gbayes 0.1.1.1 from the development interfaces. The initial
+native libraries found on this laptop were the older public version, which
+does not export `bayes()`. A package's existence does not establish that it
+contains a particular documented development interface.
+
+Use the [checked-in environment recipe](https://github.com/psoerensen/gpct/tree/main/environment)
+to rebuild existing package code from pinned clean source commits into a private
+library and verify the fitting interfaces before a pilot. For package help, use
 `help("bayes", package="gbayes")`, `help("glma", package="glma")`,
 `help("ldsc", package="gcorr")`, and `help(package="gsuite")`.
-Add verified public package/documentation links when releases are available.
-No sibling checkout or shared installation was modified.
+Related public guides: [gscore scoring](https://psoerensen.github.io/gtools/gsuite/docs/summary-interfaces.html),
+[gmap mapping](https://psoerensen.github.io/gtools/gsuite/docs/gmap-workflow.html),
+and [glma association](https://psoerensen.github.io/gtools/gsuite/docs/glma-workflow.html).
+Their installed interfaces were also inspected: gscore applies fitted weights,
+gmap interprets regional evidence/posteriors, and glma performs association/LOCO
+scans. They do not supply a replacement dense Gaussian/elastic-net predictor
+in the older installed releases. The chosen gbayes prepared-X route fits this
+NPZ pilot without inventing genomic positions or allele labels.
+
+No sibling checkout or shared installation is modified by the gpct build.
 
 ## Future cases
 

@@ -1,11 +1,6 @@
 # Results publication policy
 
-No benchmark performance results are available. Both initial cases are planned.
-
-The [website results source](../docs/results.md) now contains standard dataset,
-method and result tables, four empty plot templates, and links to separate
-cattle/maize report pages. Generated blank CSV/SVG bundles live under
-`docs/assets/reports/templates/`; all measurement columns are unavailable.
+The cattle/mkg and maize/DTT 512-marker pilots completed on 2026-11-21. Reviewed aggregate tables and plots are published under `docs/assets/reports/20261121-openblas/` with [results](../docs/results.md) and detailed case pages. All three methods completed five folds in each case; no individual outputs are public. Blank templates remain separately labelled.
 
 After a real run, `Rscript --vanilla scripts/report_prediction.R RUN_DIRECTORY`
 generates pooled and per-fold aggregate CSVs, four static SVGs and `report.md`

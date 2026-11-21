@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1120" height="620" viewBox="0 0 1120 620" role="img" aria-labelledby="title description">
   <title id="title">gpct: from genomic data to reproducible comparisons</title>
-  <desc id="description">Cattle and maize genotypes and traits pass through identical saved five-fold partitions, training-only preparation, existing R package fitting and held-out evaluation. Individual records stay local. Only reviewed aggregate summaries are published. Both pilots are planned and no prediction results are available.</desc>
+  <desc id="description">Cattle and maize genotypes and traits pass through identical saved five-fold partitions, training-only preparation, existing R package fitting and held-out evaluation. Individual records stay local. Only reviewed aggregate summaries are published. Both 512-marker pilots completed on 2026-11-21; reviewed aggregate results are available.</desc>
   <defs>
     <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#697582"/></marker>
     <style>
@@ -76,5 +76,5 @@
   <text x="610" y="500" class="body">Public pages</text>
   <text x="610" y="527" class="small muted">Recipes + reviewed aggregate tables and figures</text>
   <rect x="24" y="558" width="1072" height="42" rx="5" fill="#f6f8fa"/>
-  <text x="40" y="585" class="small">Current status: both pilots are planned. No benchmark prediction results are available yet.</text>
+  <text x="40" y="585" class="small">Current status: both 512-marker pilots completed. Reviewed results and timings are available.</text>
 </svg>

@@ -4,15 +4,14 @@ title: Benchmark recipes
 ---
 # Benchmark recipes
 
-Both cases are **planned**, with recipe source prepared and execution in R
-pending. Neither has been validated by a successful package run.
+Both 512-marker cases **completed on 2026-11-21** using the pinned private R/OpenBLAS environment. All three methods completed five folds without warnings or failed fits. Both gbayes methods converged; rrBLUP exposes no convergence flag.
 
 | Case | Question | Eligibility | Scope |
 | --- | --- | --- | --- |
 | Cattle/mkg | Predict supplied mkg within cohort | 5,024 finite outcomes | 512-marker pilot |
 | Maize/DTT | Predict supplied DTT within panel | 1,456 finite outcomes; two excluded | 512-marker pilot |
 
-Detailed report templates: [cattle/mkg](reports/cattle.html) and
+Detailed measured reports: [cattle/mkg](reports/cattle.html) and
 [maize/DTT](reports/maize.html). Both follow the same sequence: scientific
 question, methods/validation, results table, performance/cost plots,
 calibration/diagnostics, and reproduction details. See the
@@ -24,14 +23,15 @@ family, herd, environment or temporal transfer.
 
 ## Reproduce locally
 
-Use an existing R installation and package environment. Preparation needs digest,
+Build and activate the [pinned environment](https://github.com/psoerensen/gpct/tree/main/environment) first. Preparation needs digest,
 reticulate and an existing Python with NumPy. Prediction needs rrBLUP and a
-compatible gbayes exposing the inspected prepared-design interface. Scripts
-report missing dependencies and install nothing. Read [interface limits](methods.html).
+compatible gbayes exposing the inspected prepared-design interface. Analysis scripts report missing dependencies and install nothing; the explicit environment bootstrap installs into an isolated private library. Read [interface limits](methods.html).
 
 From the repository root, in PowerShell:
 
 ```powershell
+./environment/activate.ps1
+Rscript --vanilla environment/preflight.R
 $env:GPCT_DATA_DIR = 'C:/data/gpct'
 $env:GPCT_OUTPUT_DIR = 'C:/results/gpct'
 $env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
