@@ -15,7 +15,8 @@ scientific structure while retaining distinct trait units and source limitations
 | Maize / DTT | 1,458 | 75,304 | Two mean-imputed DTT targets flagged; observed-only sensitivity score |
 
 These recipes benchmark genomic BLUP implemented in greml/gsolve, estimating
-variance components by REML before prediction. The gsolve fixed-variance
+variance components by REML, and gbayes Gaussian/normal-mixture VB with fixed
+training-only priors. All three use the same data and folds. The gsolve fixed-variance
 check is a separate numerical comparison, not another complete model fit.
 
 ## Reproduce locally
@@ -33,6 +34,7 @@ $env:GPCT_ACCEPT_POSITIONAL_IDS = 'yes'
 Rscript --vanilla environment/preflight.R
 Rscript --vanilla tests/check_protocol.R
 Rscript --vanilla tests/check_interfaces.R
+Rscript --vanilla tests/check_gbayes.R
 Rscript --vanilla tests/check_reporting.R
 Rscript --vanilla scripts/prepare.R cattle
 Rscript --vanilla benchmarks/cattle_prediction/run.R

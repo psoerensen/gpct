@@ -10,7 +10,7 @@ products, installed libraries, input data and individual results remain external
 - OpenBLAS 0.3.29 for R BLAS; archive/export hashes in runtime.csv.
 - CRAN Windows dependencies with exact URLs/hashes in cran-windows-4.4.csv.
 - Python 3.12 with NumPy 1.26.4, SciPy 1.13.1 and scikit-learn 1.6.1; exact wheels/hashes in requirements-windows-3.12.txt.
-- Private integration: gsuite 0.43.0, gsolve 0.28.0 and greml 0.92.0; source commits in sources.csv.
+- Private integration: gsuite 0.43.0, gsolve 0.28.0, greml 0.92.0 and the gbayes 0.1.16 R package; source commits in sources.csv. gbayes R bindings live in gsuite; its native core has its own repository.
 - Native build prerequisites used here: Intel MKL 2026.2.1, Intel OpenMP 2026.2.0, SuiteSparse 7.12.3 and Windows SDK x64 10.0.26100.7705. They are private build inputs, not redistributions by gpct.
 
 Install [R 4.4.3](https://cran.r-project.org/bin/windows/base/old/4.4.3/R-4.4.3-win.exe),
@@ -54,6 +54,7 @@ No source package or binary is uploaded to gtools by these scripts.
 Rscript --vanilla environment/preflight.R
 Rscript --vanilla tests/check_protocol.R
 Rscript --vanilla tests/check_interfaces.R
+Rscript --vanilla tests/check_gbayes.R
 Rscript --vanilla tests/check_reporting.R
 ```
 

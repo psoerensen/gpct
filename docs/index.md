@@ -31,7 +31,7 @@ documented approach to further animal, plant and human datasets.
 | Cattle prediction | GPBench Cattle | supplied mkg | Completed; [results](results.html) |
 | Maize prediction | GPBench Maize | supplied DTT | Completed; [results](results.html) |
 
-Both benchmarks use all supplied markers, the same saved GPBench ten-fold splits (seed 42), raw dosage coding and genomic BLUP through our greml/gsolve interfaces. REML estimates variance components before BLUP prediction. A separate fixed-variance check tests our solver. Mean-imputed maize targets are explicitly flagged.
+Both benchmarks use all supplied markers, the same saved GPBench ten-fold splits (seed 42) and raw dosage coordinates. Compare genomic BLUP through greml/gsolve with Gaussian VB and sparse normal-mixture VB through gbayes. REML estimates variance components; the gbayes models use declared training-only priors. Accuracy, calibration and preparation/fitting/prediction times are reported together. Mean-imputed maize targets are explicitly flagged.
 
 Read the [dataset catalogue](datasets.html), [reproduction commands](benchmarks.html), [interfaces](methods.html), [protocol](protocol.html) and [results and timings](results.html).
 

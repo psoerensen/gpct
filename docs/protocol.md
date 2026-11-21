@@ -4,7 +4,7 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
-<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="All cattle and maize markers enter the same GPBench ten-fold splits with seed 42. Our greml/gsolve model estimates variance components by REML, predicts held-out targets, and reports aggregate performance and costs. Imputed phenotype targets are flagged and private numerical implementations remain external."></a><figcaption>Matched full-marker validation, complete REML workflows and separate fixed-variance solver checks. GPBench phenotype imputation is explicitly flagged.</figcaption></figure>
+<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="All cattle and maize markers enter the same GPBench ten-fold splits with seed 42. Our greml/gsolve and gbayes models fit training data, predict held-out targets, and report aggregate performance and costs. Imputed phenotype targets are flagged and private numerical implementations remain external."></a><figcaption>Matched full-marker validation, REML and fixed-prior VB workflows, and separate fixed-variance solver checks. GPBench phenotype imputation is explicitly flagged.</figcaption></figure>
 
 [Open the full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}).
 
@@ -44,6 +44,15 @@ full marker count. Its genetic variance parameter equals p times marker-effect
 variance. The held-out BLUP uses the corresponding train/target cross-covariance.
 The existing private gsolve engine supplies numerical operations.
 
+gbayes Gaussian VB and sparse normal-mixture VB use the existing streamed
+normal-mixture interface on the same raw training markers and saved folds.
+Native projection handles an intercept without marker SD normalization. Working
+h2=0.5 fixes residual variance to half the training phenotype variance; the other
+half divided by the sum of training marker variances sets average effect variance.
+The mixture fixes nonzero probability at 0.1 and divides its nonzero variance by
+that probability. All calculations use training rows only. These fixed-prior
+variational fits are compared with REML as distinct models and fitting tasks.
+
 A separate fixed-variance gsolve check uses our greml variance estimates and
 recomputes the GLS intercept. Prediction differences and solve time are reported separately. It
 does not estimate variances and is not ranked as a complete competing REML fit.
@@ -68,6 +77,11 @@ Record fit, prediction, reusable kernel preparation, method elapsed and total ca
 time separately. Complete-workflow timing includes the greml/gsolve kernel build
 and fold block preparation once, plus all ten fits and predictions. Kernel preparation
 uses genotypes only.
+gbayes workflow timing includes training/target matrix extraction, training-prior
+calculation, native projection, fitting and prediction. The reviewed greml/gsolve
+measurements are retained alongside a new gbayes batch on the same hardware and
+optimized runtime. Input hashes, saved folds, outcomes and imputed-target flags
+must match before combining; run IDs distinguish the executions.
 Whole-case time includes input loading and saving. Reporting and fixed-variance
 solver checks run separately after the benchmark. Timings are one execution on the
 recorded hardware, not measurements of the authors' computing environment.

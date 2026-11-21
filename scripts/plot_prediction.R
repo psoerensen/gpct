@@ -36,7 +36,7 @@ plot_prediction_report <- function(tables, directory) {
             rows <- which(folds$method == a$method[i] & is.finite(small))
             if (length(rows)) graphics::points(small[rows], y[i] + seq(-.12, .12, length.out = length(rows)),
                                                pch = 1, cex = .75, col = report_colors[a$method[i]])
-            if (valid[i] && is.finite(values[i])) graphics::points(values[i], y[i], pch = 19,
+            if (valid[i] && is.finite(values[i])) graphics::points(values[i], y[i], pch = if(a$status[i]=='completed')19 else 2,
                                                                   cex = 1.2, col = report_colors[a$method[i]])
           }
           if (!any(is.finite(values))) graphics::text(mean(bounds), mean(y),
@@ -49,7 +49,7 @@ plot_prediction_report <- function(tables, directory) {
           graphics::plot(NA, xlim = c(0, if (any(use)) max(a$workflow_seconds[use]) * 1.2 + .01 else 1),
             ylim = ability_limits, xlab = "Workflow time (seconds; 10 folds plus preparation)",
             ylab = "Predictive ability (mean of folds)", main = group, bty = "l")
-          if (any(use)) graphics::points(a$workflow_seconds[use], a$predictive_ability[use], pch = 19, cex = 1.2,
+          if (any(use)) graphics::points(a$workflow_seconds[use], a$predictive_ability[use], pch = ifelse(a$status[use]=='completed',19,2), cex = 1.2,
                                          col = report_colors[a$method[use]])
           else graphics::text(.5, 0, if (planned) "Template: no measured benchmark results" else
             "Complete performance/timing pairs unavailable", col = "#586069")
@@ -74,6 +74,7 @@ plot_prediction_report <- function(tables, directory) {
       }
       graphics::mtext(titles[kind], outer = TRUE, side = 3, line = 1, font = 2, cex = 1.2)
       note <- if (kind %in% c("performance", "improvement"))
+        if(any(s$status=='provisional'))"Mean: filled circle (converged), triangle (provisional). Open: descriptive folds; no CIs." else
         "Filled: mean of 10 fold scores. Open: descriptive folds. No confidence intervals." else
         if (kind == "runtime") "Compare within dataset/trait. Missing timing and RAM remain explicit in CSV tables." else
           "Pooled OOF quantile bins; at least 5 samples/bin. Dashed line: identity. No individual predictions."

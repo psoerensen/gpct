@@ -1,0 +1,4 @@
+"dataset","trait","method","summary_type","n","predictive_ability","rmse","mae","mse","predictive_r_squared","calibration_intercept","calibration_slope"
+"gpbench_cattle","mkg","gblup_reml","mean_of_10_fold_metrics_observed_targets_only",5024,0.781031427497297,0.623534212747514,0.495839337781603,0.389120863929685,0.608146156125804,-0.00573302813902321,0.999961233507377
+"gpbench_cattle","mkg","gbayes_gaussian","mean_of_10_fold_metrics_observed_targets_only",5024,0.768637653243243,0.647754962710924,0.51645059817846,0.419796777702197,0.577359354677734,-0.0034850943198992,1.15595198400484
+"gpbench_cattle","mkg","gbayes_mixture","mean_of_10_fold_metrics_observed_targets_only",5024,0.77690521992619,0.64268603132046,0.511536012174979,0.413270520590714,0.58406681547301,-0.00236020917642804,1.20026757341898

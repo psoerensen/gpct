@@ -4,13 +4,26 @@ title: Verification record
 ---
 # Verification record
 
-Verified 2026-11-21. The current reports benchmark genomic BLUP implemented in
-our gsuite ecosystem, using all supplied cattle and maize markers and the pinned
+Verified 2026-11-21. The current reports benchmark genomic BLUP, Gaussian VB and
+sparse normal-mixture VB implemented in our gsuite ecosystem, using all supplied cattle and maize markers and the pinned
 GPBench ten-fold validation scheme. See [results and timings](results.html).
 
 ## Statistical execution
 
-- Both final cases completed all ten folds at score tolerance 1e-4, with converged REML fits, no failed fits and no warnings. An earlier cattle attempt at 1e-6 failed the likelihood-step acceptance check in fold nine after 202.22 seconds; its status and costs are disclosed separately. Predictions are compared against the nine successful stricter fits.
+The additional gbayes batch uses the installed 0.1.16 streamed interface and
+fixed training-only priors. Its 40 method–fold predictions are compared with the
+20 retained greml/gsolve fits. Combining checks require identical prepared-input
+MD5s, full saved fold/ID mappings, observed and imputed target values, imputation
+flags, training means, hardware and the loaded R/OpenBLAS binary hash. Execution
+run IDs and immutable recipe commits identify the separate batches. Per-fold
+convergence and sweep counts are reported; maximum-sweep results remain provisional.
+
+Gaussian VB was checked against a basic ridge linear-system identity on a small
+labelled design, including held-out prediction. The sparse mixture passed native
+finite-output and convergence checks. Reporting tests cover all three models,
+method-specific preparation/kernel cost accounting and provisional statuses.
+
+- Both retained genomic BLUP cases completed all ten folds at score tolerance 1e-4, with converged REML fits, no failed fits and no warnings. An earlier cattle attempt at 1e-6 failed the likelihood-step acceptance check in fold nine after 202.22 seconds; its status and costs are disclosed separately. Predictions are compared against the nine successful stricter fits.
 - Original source dimensions, raw dosage coding and all-marker coverage were checked against the inspected archive. Available and used markers are separate fields.
 - The actual scikit-learn 1.6.1 / NumPy 1.26.4 KFold partitions use ten folds, shuffle enabled and seed 42. Saved split hashes and row order were verified locally.
 - The source rule mean-imputes two missing maize DTT phenotypes before splitting. Imputed labels are flagged; observed-target-only scores remain separate.

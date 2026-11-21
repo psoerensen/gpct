@@ -26,6 +26,7 @@ summarize_prediction_run <- function(run_dir) {
   perf <- read.csv(file.path(run_dir,'performance.csv'))
   if(!'preparation_seconds'%in%names(perf))perf$preparation_seconds<-0
   perf$algorithm_iterations<-perf$prior_average_marker_variance<-perf$prior_inclusion_probability<-NA_real_
+  perf$native_source_read_seconds<-NA_real_;perf$native_product_backend<-'not recorded'
   for(i in which(grepl('^gbayes_',perf$method))) {
     path<-file.path(run_dir,paste0(perf$method[i],'-fold',perf$fold[i],'-diagnostics.rds'))
     if(file.exists(path)) {
@@ -33,6 +34,8 @@ summarize_prediction_run <- function(run_dir) {
       perf$algorithm_iterations[i]<-details$diagnostics$execution$iterations
       perf$prior_average_marker_variance[i]<-details$prior$average_marker_variance
       perf$prior_inclusion_probability[i]<-details$prior$inclusion_probability
+      perf$native_source_read_seconds[i]<-details$diagnostics$batchExecution$sourceReadSeconds
+      perf$native_product_backend[i]<-details$diagnostics$batchExecution$productBackend
     }
   }
   p <- read.csv(file.path(run_dir,'predictions.csv'))

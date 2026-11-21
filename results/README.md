@@ -2,7 +2,7 @@
 
 Only reviewed aggregate tables, plots and provenance summaries belong in the
 public website. Current full-marker benchmark assets live under
-`docs/assets/reports/20261121-gsuite-final/` after review and publication.
+`docs/assets/reports/20261121-gsuite-models/` after review and publication.
 
 Generate reports externally using scripts/report_prediction.R. Check every test
 fold, convergence, warnings, failed fits, common splits/outcomes, imputed-target

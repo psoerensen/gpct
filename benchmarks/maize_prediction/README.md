@@ -7,7 +7,7 @@ Use all source rows and markers, raw dosage coding and the exact scikit-learn
 metrics. [Protocol](../../docs/protocol.md) specifies phenotype imputation,
 R2, source-ID limitations and timing scope.
 
-Benchmark genomic BLUP implemented in greml/gsolve, with REML variance estimation.
+Benchmark genomic BLUP (greml/gsolve REML), Gaussian VB and sparse normal-mixture VB (gbayes). The gbayes streamed interface retains all raw markers, uses native intercept projection and fixed training-only priors: working h2=0.5 and mixture inclusion probability 0.1. No test-fold tuning is performed.
 A separate gsolve check uses our fitted variance estimates; its solve
 time excludes REML. Numerical implementations remain installed privately.
 No gsolve/greml implementation source or binaries are redistributed.
