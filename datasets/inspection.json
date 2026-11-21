@@ -1,0 +1,105 @@
+{
+  "inspected_date": "2026-11-21",
+  "numpy_version": "2.3.5",
+  "source_revision": "f0204d8372fb5ec8fa29eb3f00c9a9d0a7656517",
+  "archive_bytes": 303192374,
+  "archive_sha256": "fa02416336dd99d521a1533d2035b48fa02b723a7458236bd33b2c11b248ab67",
+  "datasets": {
+    "Cattle": {
+      "genotype": {
+        "member": "Benchmarkdata/Benchmarkdata/Cattle/genotype.npz",
+        "keys": [
+          "arr_0"
+        ],
+        "shape": [
+          5024,
+          42551
+        ],
+        "dtype": "int64",
+        "finite_entries": 213776224,
+        "total_entries": 213776224,
+        "minimum": 0.0,
+        "maximum": 2.0,
+        "observed_values": [
+          0,
+          1,
+          2
+        ]
+      },
+      "phenotype": {
+        "member": "Benchmarkdata/Benchmarkdata/Cattle/phenotype.npz",
+        "keys": [
+          "arr_0",
+          "arr_1"
+        ],
+        "shape": [
+          5024,
+          3
+        ],
+        "dtype": "float64",
+        "finite_entries": 15072,
+        "total_entries": 15072,
+        "minimum": -4.461627,
+        "maximum": 4.280901,
+        "trait_names": [
+          "mkg",
+          "fpro",
+          "scs"
+        ],
+        "finite_by_trait": {
+          "mkg": 5024,
+          "fpro": 5024,
+          "scs": 5024
+        }
+      }
+    },
+    "Maize": {
+      "genotype": {
+        "member": "Benchmarkdata/Benchmarkdata/Maize/genotype.npz",
+        "keys": [
+          "arr_0"
+        ],
+        "shape": [
+          1458,
+          75304
+        ],
+        "dtype": "int64",
+        "finite_entries": 109793232,
+        "total_entries": 109793232,
+        "minimum": 0.0,
+        "maximum": 2.0,
+        "observed_values": [
+          0,
+          1,
+          2
+        ]
+      },
+      "phenotype": {
+        "member": "Benchmarkdata/Benchmarkdata/Maize/phenotype.npz",
+        "keys": [
+          "arr_0",
+          "arr_1"
+        ],
+        "shape": [
+          1458,
+          3
+        ],
+        "dtype": "float64",
+        "finite_entries": 4367,
+        "total_entries": 4374,
+        "minimum": 40.9399066717198,
+        "maximum": 283.249139487361,
+        "trait_names": [
+          "DTT",
+          "PH",
+          "EW"
+        ],
+        "finite_by_trait": {
+          "DTT": 1456,
+          "PH": 1457,
+          "EW": 1454
+        }
+      }
+    }
+  }
+}

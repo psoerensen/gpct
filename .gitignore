@@ -1,0 +1,26 @@
+# Only documentation and small, explicitly selected summaries belong in git.
+data/
+local/
+cache/
+output/
+runs/
+_site/
+.Rproj.user/
+.Rhistory
+.RData
+.Renviron
+__pycache__/
+*.zip
+*.npz
+*.npy
+*.rds
+*.RDS
+*.rda
+*.bed
+*.bim
+*.fam
+*.ext
+*.log
+predictions*.csv
+folds*.csv
+sample_ids*.csv
