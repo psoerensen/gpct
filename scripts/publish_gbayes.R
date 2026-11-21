@@ -132,8 +132,19 @@ states<-data.frame(Method=benchmark_methods$label,Algorithm=benchmark_methods$al
   if(any(z$status=='partial'))return('First-fold checkpoint passed; full run pending')
   'Queued'
  },character(1)),check.names=FALSE)
+main_accuracy<-data.frame(Dataset=ifelse(s$dataset=='gpbench_cattle','[Cattle / mkg](reports/cattle.html)','[Maize / DTT](reports/maize.html)'),
+ Method=labels[s$method],Correlation=fmt(s$predictive_ability_mean),RMSE=fmt(s$rmse_mean),
+ `Pooled predictive R²`=fmt(s$predictive_r_squared_pooled),`Calibration slope`=fmt(s$calibration_slope_pooled),check.names=FALSE)
+main_cost<-data.frame(Dataset=ifelse(s$dataset=='gpbench_cattle','Cattle / mkg','Maize / DTT'),Method=labels[s$method],
+ `Fit seconds`=fmt(s$fit_seconds,1),`Predict seconds`=fmt(s$prediction_seconds,1),
+ `Fit + predict seconds`=fmt(s$fit_plus_prediction_seconds,1),`Process peak MiB`=fmt(s$process_peak_working_set_mib,0),check.names=FALSE)
 writeLines(c('---','layout: default','title: Results and timings','---','# Results and timings','',
  'Existing gbayes methods fitted directly from QC-selected Glist, with **one worker**. Results are added after a method finishes both datasets. The earlier experimental benchmark collection has been retired.','',
+ '## Predictive performance','',markdown_table(main_accuracy),'',
+ 'Correlation and RMSE are means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Compare methods within each dataset and trait.','',
+ '## Computational cost','',markdown_table(main_cost),'',
+ 'Times sum all ten folds. Fitting includes native genotype preparation; shared Glist preparation is reported separately in the detailed reports. Process peak RAM includes loading, preparation, output and prediction, rather than fitting alone.','',
+ '## Method progress','',
  markdown_table(states),'','[Cattle / mkg results](reports/cattle.html) · [Maize / DTT results](reports/maize.html)','',
  '[Combined summary CSV](assets/reports/gbayes-glist-1t/benchmark-results.csv) · [Fold metrics](assets/reports/gbayes-glist-1t/fold-results.csv) · [Method settings](assets/reports/gbayes-glist-1t/method-settings.csv) · [Run status and failure messages](assets/reports/gbayes-glist-1t/method-status.csv)','',
  'Compare methods within each dataset and trait. Native model scaling, fixed versus learned variances, iteration settings and diagnostics are documented in the [methods](methods.html) and [protocol](protocol.html). Individual out-of-fold predictions stay local.'),'docs/results.md')

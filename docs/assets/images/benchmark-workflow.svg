@@ -84,5 +84,5 @@
   <text x="610" y="500" class="body">Public pages</text>
   <text x="610" y="527" class="small muted">Recipes + reviewed aggregate tables and figures</text>
   <rect x="24" y="558" width="1072" height="42" rx="5" fill="#f6f8fa"/>
-  <text x="40" y="585" class="small">Full-marker benchmarks: matched ten-fold validation; REML and fixed-prior VB workflows; separate solver checks.</text>
+  <text x="40" y="585" class="small">Glist-only gbayes benchmarks: matched ten-fold validation, one worker, native fitting and reviewed summaries.</text>
 </svg>

@@ -4,9 +4,9 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
-<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. One worker; saved ten-fold splits with seed 42.</figcaption></figure>
+<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. One worker; saved ten-fold splits with seed 42.</figcaption></figure>
 
-[Open full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}).
+[Open full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}).
 
 ## Genotype preparation
 
