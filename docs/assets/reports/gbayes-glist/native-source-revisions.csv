@@ -1,0 +1,8 @@
+"package","component","revision"
+"gbase","installed native source manifest","not present in installed R package"
+"gbayes","gbayes","67e8bdf1b617272e65174399889926c92ca11706"
+"gbayes","gscore","dffc4390ac5cbe51e5dea776c4d02edeb5d007c8"
+"gbayes","local development SHA256 gbayes/src/mixture.cpp","570c5f1b3860cdd842bba5c4b004e2342f5d32eb9a9c0d9c9a9ac5d3d8a23a7f"
+"gbayes","local development SHA256 gbayes/include/gbayes/alphabet.hpp","dd4833c295e751ab7c3e55996fa8f0300eebd5beef7e4718b93e18751f320800"
+"gbayes","local development SHA256 gbayes/src/individual_bed.cpp","0a98930609ffc49e7992ac34506ac5ec305b613757cbb098c01288604dbc11fb"
+"gbayes","local development SHA256 gsuite/packages/gbayes/src/gbayes.cpp","864dd876af9086988f33bb5918c9214d3eafa4d37af53bc31a52379d2a0aad80"

@@ -5,14 +5,15 @@ title: Verification record
 # Verification record
 
 The active benchmark collection uses existing gbayes Glist interfaces with
-one native worker and one BLAS/OpenMP thread. Only completed ten-fold methods
+four concurrent MCMC chains and one BLAS thread; the fixed Gaussian PCG
+reference used one worker. Only completed ten-fold methods
 on both datasets are published as completed results.
 
 Input checks cover exact NPZ-to-BED dosage round trips, explicit synthetic
 BIM/FAM metadata, Glist validation, QC counts and source-order sample identity.
 Saved outer folds are checked against the pinned sklearn/NumPy splitter and
 checksum. Each fit must retain exactly the training sample IDs, requested
-method/algorithm and one actual native worker. Predictions must identify every
+method/algorithm and the recorded actual native worker count. Predictions must identify every
 held-out sample once. Deterministic fits must report native convergence.
 
 Reporting checks require ten unique folds, one out-of-fold prediction per

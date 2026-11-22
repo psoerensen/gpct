@@ -4,7 +4,7 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
-<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. One worker; saved ten-fold splits with seed 42.</figcaption></figure>
+<figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. Four concurrent MCMC chains; saved ten-fold splits with seed 42.</figcaption></figure>
 
 [Open full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}).
 
@@ -55,7 +55,7 @@ correlation, RMSE, predictive R² and calibration slope. Folds are descriptive
 partitions, not independent experimental replicates. No fold-derived confidence
 intervals are claimed. Publish only reviewed binned calibration summaries.
 
-Set native workers, OpenMP, OpenBLAS and MKL requests to one; disable diagnostic
+Use four concurrent MCMC chains, with OpenBLAS and MKL requests at one; disable diagnostic
 BLAS logging for timed runs. Record shared training-Glist preparation separately
 from each fit and held-out prediction. Native packed preparation inside a fit
 is included in its fitting time. Cost plots use the sum of fitting and prediction

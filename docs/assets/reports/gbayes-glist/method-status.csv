@@ -1,0 +1,13 @@
+"dataset","method","status","message"
+"cattle","marker_gaussian","completed",NA
+"maize","marker_gaussian","completed",NA
+"cattle","bayesN_mcmc","completed",NA
+"maize","bayesN_mcmc","completed",NA
+"cattle","bayesA_mcmc","completed",NA
+"maize","bayesA_mcmc","completed",NA
+"cattle","bayesB_mcmc","completed",NA
+"maize","bayesB_mcmc","completed",NA
+"cattle","bayesC_mcmc","completed",NA
+"maize","bayesC_mcmc","completed",NA
+"cattle","bayesR_mcmc","completed",NA
+"maize","bayesR_mcmc","completed",NA

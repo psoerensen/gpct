@@ -26,8 +26,9 @@ documented approach to further animal, plant and human datasets.
 
 ## Glist-based gbayes benchmarks
 
-The current collection uses existing gbayes C++ methods through Glist with
-**one worker**, starting with cattle mkg and maize DTT. The route is
+The current collection uses native gbayes C++ methods through Glist, starting
+with cattle mkg and maize DTT. Full MCMC runs use **four concurrent chains**
+and one BLAS thread; the fixed Gaussian PCG reference used one worker. The route is
 BED/BIM/FAM → MAF/missingness QC → Glist → identical training folds → native
 gbayes fitting → held-out prediction. HWE is reported without filtering.
 
