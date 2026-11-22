@@ -4,33 +4,10 @@ title: Cattle prediction
 ---
 # Cattle / mkg
 
-
 <!-- training-variance-comparison:start -->
 <style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
-
-## Current training-only comparison
-
-| Dataset | Method | PCC mean | RMSE mean | Pooled predictive R² | Calibration slope | Status |
-|---|---|---:|---:|---:|---:|---|
-| Cattle / mkg | Gaussian PCG | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
-| Cattle / mkg | D-weighted PCG | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
-| Cattle / mkg | Warm-start adaptive B | — | — | — | — | Pending: 1/10 folds |
-| Cattle / mkg | BayesA MCMC | — | — | — | — | Pending: 1/10 folds |
-
-| Dataset | Method | Threads | Variance setup s/fold | Fit + predict s/fold | Total s/fold | Peak process MiB |
-|---|---|---:|---:|---:|---:|---:|
-| Cattle | Gaussian PCG | 4 | 40.1 | 19.9 | 60.1 | 2364 |
-| Cattle | D-weighted PCG | 4 | 39.2 | 20.8 | 59.9 | 2364 |
-| Cattle | Warm-start adaptive B | 4 | — | — | — | 2364 |
-| Cattle | BayesA MCMC | 1 | included in MCMC | — | — | 1727 |
-
-PCC and RMSE are arithmetic means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Fold dots show descriptive variation, not independent experimental replicates or confidence intervals. A failed or missing fit suppresses its ten-fold accuracy aggregate. MCMC mixing warnings remain provisional.
-
-[Current plots, settings and downloadable summaries](training-variance.html).
-
-## Earlier configuration
+New training-variance fits are included below. All cost entries sum ten folds.
 <!-- training-variance-comparison:end -->
-
 
 Predict the supplied mkg phenotype within this GPBench cohort using existing gbayes methods. All fits and held-out predictions receive Glist.
 
@@ -40,25 +17,29 @@ Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent
 
 | Method | Correlation | RMSE | Pooled predictive R² | Calibration slope | Status |
 | --- | --- | --- | --- | --- | --- |
-| Gaussian PCG | 0.767 | 0.650 | 0.577 | 1.160 | Completed |
+| Gaussian PCG (fixed h²=0.5) | 0.767 | 0.650 | 0.577 | 1.160 | Completed |
 | BayesN / Bayesian ridge | 0.777 | 0.628 | 0.605 | 1.002 | Provisional (mixing) |
 | BayesA MCMC | 0.796 | 0.605 | 0.634 | 1.018 | Completed |
 | BayesB MCMC | 0.762 | 0.647 | 0.581 | 0.979 | Provisional (mixing) |
 | BayesC MCMC | 0.790 | 0.612 | 0.625 | 0.996 | Provisional (mixing) |
 | BayesR MCMC | 0.795 | 0.605 | 0.633 | 1.003 | Provisional (mixing) |
+| Gaussian PCG (training variance) | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
+| D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
 
 Correlation and RMSE in this table are means of ten fold metrics. Predictive R² and calibration slope are calculated from pooled out-of-fold predictions. Fold variation is descriptive; no independent-replicate confidence intervals are claimed.
 
 ## Computational cost
 
-| Method | Workers | Fit s | Predict s | Total process s | Process peak MiB |
-| --- | --- | --- | --- | --- | --- |
-| Gaussian PCG | 1 | 197.6 | 14.5 | not available | 1725 |
-| BayesN / Bayesian ridge | 4 | 2819.9 | 12.3 | 2844.5 | 1728 |
-| BayesA MCMC | 4 | 3134.6 | 13.4 | 3161.6 | 1727 |
-| BayesB MCMC | 4 | 2315.3 | 14.3 | 2343.3 | 1727 |
-| BayesC MCMC | 4 | 2081.3 | 13.0 | 2120.6 | 1726 |
-| BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 1732 |
+| Method | Workers | Fit s | Predict s | Total process s | Process peak MiB  Fit + predict s |
+| --- | --- | --- | --- | --- | ---  --- |
+| Gaussian PCG (fixed h²=0.5) | 1 | 197.6 | 14.5 | not available | 1725  212.1 |
+| BayesN / Bayesian ridge | 4 | 2819.9 | 12.3 | 2844.5 | 1728  2832.2 |
+| BayesA MCMC | 4 | 3134.6 | 13.4 | 3161.6 | 1727  3148.0 |
+| BayesB MCMC | 4 | 2315.3 | 14.3 | 2343.3 | 1727  2329.6 |
+| BayesC MCMC | 4 | 2081.3 | 13.0 | 2120.6 | 1726  2094.3 |
+| BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 1732  3351.8 |
+| Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 625.4 | 2364 | 600.7 |
+| D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 2364 | 599.1 |
 
 Shared training-Glist preparation across ten folds: 12.52 seconds. Fitting includes native genotype preparation; prediction is timed separately. Process peak RAM covers package loading, preparation, the folds executed in that process, saved outputs and prediction; it is not fit-only peak RAM. Cache state and resumed work may differ; see [process resource context](../assets/reports/gbayes-glist/process-resources.csv).
 

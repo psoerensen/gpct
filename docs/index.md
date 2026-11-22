@@ -1,20 +1,13 @@
 ---
 layout: default
-title: Reproducible genomic prediction
+title: Genomic prediction benchmarks
 ---
-<h1 class="page-heading">Reproducible genomic prediction and statistical genetics benchmarks</h1>
+<!-- report-version:591ec9ea5dd06f49 -->
+<h1 class="page-heading">Genomic prediction benchmarks</h1>
 
+**gpct** compares methods in the gsuite ecosystem: how accurately they predict, how long they take, and how much memory they use.
 
-
-<!-- training-variance-comparison:start -->
-<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
-
-**Current benchmark update:** [Training-only variance comparison](reports/training-variance.html) evaluates Gaussian PCG, D-weighted PCG, warm-start adaptive B and BayesA on the saved cattle/maize ten-fold splits. [Results and method explanations](results.html).
-<!-- training-variance-comparison:end -->
-
-**gpct** collects datasets, ordinary R analysis recipes, execution instructions
-and reviewed results for methods and models implemented in the gsuite ecosystem,
-covering genomic prediction and related statistical genetics.
+[View results and timings](results.html)
 
 <figure class="overview-figure">
   <a href="{{ '/assets/images/gpct-overview.svg' | relative_url }}?v={{ site.time | date: '%s' }}" aria-label="Open the full-size gpct overview SVG">
@@ -23,42 +16,12 @@ covering genomic prediction and related statistical genetics.
   <figcaption>The gpct benchmark collection connects documented datasets, shared validation, existing statistical methods, and reproducible comparisons. Miniature plots are schematic; future extensions are marked separately.</figcaption>
 </figure>
 
-[Open the full-size overview SVG]({{ '/assets/images/gpct-overview.svg' | relative_url }}?v={{ site.time | date: '%s' }}).
+[Open the full-size figure]({{ '/assets/images/gpct-overview.svg' | relative_url }}).
 
-## What gpct is for
+Current benchmarks cover cattle milk yield (**mkg**) and maize flowering time (**DTT**), using shared ten-fold validation and Glist.
 
-Use gpct to make prediction comparisons traceable: which dataset and trait were
-used, which samples were held out, how each method was fitted, and how its
-predictions performed. Start with cattle and maize, then extend the same
-documented approach to further animal, plant and human datasets.
+[Datasets](datasets.html) · [Methods](methods.html)
 
-## Glist-based gbayes benchmarks
+Recipes and recorded settings support reproducible comparisons.
 
-The current collection uses native gbayes C++ methods through Glist, starting
-with cattle mkg and maize DTT. Full MCMC runs use **four concurrent chains**
-and one BLAS thread; the fixed Gaussian PCG reference used one worker. The route is
-BED/BIM/FAM → MAF/missingness QC → Glist → identical training folds → native
-gbayes fitting → held-out prediction. HWE is reported without filtering.
-
-Cattle retains 42,373 of 42,551 available markers; maize retains all 75,304.
-Every method uses the same saved ten-fold splits, seed 42. Native method-specific
-coding and fitting are preserved. Results are added after a method completes
-both datasets. The previous experimental results have been retired.
-
-Read the [dataset catalogue](datasets.html), [Glist/QC record](genotype-preparation.html),
-[recipes](benchmarks.html), [methods](methods.html), [protocol](protocol.html)
-and [results and timings](results.html).
-
-## Contribute
-
-Add source provenance and rights to the registry, a small R config and recipe,
-and an explicit scientific question and validation design. Preserve sample
-identity, report failures, and distinguish planned, runnable and completed cases.
-Animal, plant and appropriately consented human datasets are welcome.
-
-The [repository](https://github.com/psoerensen/gpct) contains the benchmark
-recipes and documentation. See its `CONTRIBUTING.md` for the checklist.
-Only reviewed aggregate results and small supporting artifacts should be public.
-Individual genotypes, phenotypes, predictions and folds stay outside git.
-
-Local verification and limitations are recorded on the [verification page](verification.html).
+[Explore the repository or contribute](https://github.com/psoerensen/gpct).
