@@ -1,0 +1,25 @@
+component,value,sha256,kind
+libgreml.dll,,2e38a698209ef69929f42394f60f3402c2039e6ea0d20f0ab0b1fc3b7f20fb1a,executed native binary
+libgsolve.dll,,0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0,executed native binary
+libgbayes.dll,,e50e15c60a833d498adf98cd1dbd47fefed6b7ad08f7c5797f0fdb748a4f1557,executed native binary
+gbits.dll,,02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac,executed native binary
+gbits_gsolve_adapter.dll,,1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af,executed native binary
+Variance/PCG experimental adapter,source not distributed,21e7c4894529a167af5a578e44e636a8e8a7273e393776f2209141f477afb17b,private source identity
+BayesA MKL experimental adapter,source not distributed,8b6f92fd90a8daa56848a28131cf76d0881d1f3fbd6d089c08ccb5721c77bbbb,private source identity
+Ten-fold orchestration,source not distributed,aad40ad59588fbf61a8c10146a71b1b9c54ea501d5e53181b5088bc5e5fdd09d,private source identity
+GSUITE_QUALIFICATION_ONLY,true,,build manifest value
+GSUITE_NATIVE_PROFILE,suite-full,,build manifest value
+GSOLVE_VERSION,0.28.0,,build manifest value
+GSOLVE_ABI,4,,build manifest value
+GSOLVE_MKL_DENSE_KERNELS,ON,,build manifest value
+GREML_VERSION,0.92.0,,build manifest value
+GREML_ABI,49,,build manifest value
+GBITS_VERSION,0.21.0,,build manifest value
+GBITS_ABI,4,,build manifest value
+GMAT_VERSION,0.7.0,,build manifest value
+GMAT_ABI,0,,build manifest value
+GBAYES_VERSION,0.1.0,,build manifest value
+GBAYES_ABI,0,,build manifest value
+GSHARE_VERSION,0.1.0,,build manifest value
+GSHARE_ABI,0,,build manifest value
+Intel oneMKL,2026 Update 2 Product build 20260915,,runtime version

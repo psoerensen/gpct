@@ -4,6 +4,34 @@ title: Cattle prediction
 ---
 # Cattle / mkg
 
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+## Current training-only comparison
+
+| Dataset | Method | PCC mean | RMSE mean | Pooled predictive R² | Calibration slope | Status |
+|---|---|---:|---:|---:|---:|---|
+| Cattle / mkg | Gaussian PCG | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
+| Cattle / mkg | D-weighted PCG | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
+| Cattle / mkg | Warm-start adaptive B | — | — | — | — | Pending: 1/10 folds |
+| Cattle / mkg | BayesA MCMC | — | — | — | — | Pending: 1/10 folds |
+
+| Dataset | Method | Threads | Variance setup s/fold | Fit + predict s/fold | Total s/fold | Peak process MiB |
+|---|---|---:|---:|---:|---:|---:|
+| Cattle | Gaussian PCG | 4 | 40.1 | 19.9 | 60.1 | 2364 |
+| Cattle | D-weighted PCG | 4 | 39.2 | 20.8 | 59.9 | 2364 |
+| Cattle | Warm-start adaptive B | 4 | — | — | — | 2364 |
+| Cattle | BayesA MCMC | 1 | included in MCMC | — | — | 1727 |
+
+PCC and RMSE are arithmetic means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Fold dots show descriptive variation, not independent experimental replicates or confidence intervals. A failed or missing fit suppresses its ten-fold accuracy aggregate. MCMC mixing warnings remain provisional.
+
+[Current plots, settings and downloadable summaries](training-variance.html).
+
+## Earlier configuration
+<!-- training-variance-comparison:end -->
+
+
 Predict the supplied mkg phenotype within this GPBench cohort using existing gbayes methods. All fits and held-out predictions receive Glist.
 
 5024 individuals; 42551 available markers; 42373 QC-retained markers. Synthetic BIM/FAM annotations are bookkeeping, not biological maps.

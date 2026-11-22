@@ -4,6 +4,27 @@ title: Methods and settings
 ---
 # Methods and settings
 
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+## Current comparison
+
+| Method | What is fitted | Variance policy | Threads |
+|---|---|---|---:|
+| Gaussian PCG | Equal Gaussian shrinkage across standardized markers. | Uniform-kernel variance pair estimated from training phenotypes, then fixed. | 4 |
+| D-weighted PCG | Fixed allele-frequency weights: qⱼ = [2pⱼ(1−pⱼ)]^0.75. | Variance pair estimated using the matching D-weighted training kernel, then fixed. | 4 |
+| Warm-start adaptive B | Deterministic two-Gaussian conditional weight updates around PCG; previous solutions warm-start subsequent solves. | Initial uniform-kernel training variance pair stays fixed as weights adapt. Not BayesB MCMC. | 4 |
+| BayesA MCMC | All markers; sampled continuous marker-specific variances and posterior-mean effects. | Marker and residual variances learned by MCMC; two sequential chains, each 500 burn-in + 1,000 post-burn sweeps. | 1 |
+
+Fitting uses the existing gsuite native libraries greml, gsolve, gbits and gbayes, reached through experimental private adapters. Public downloads contain aggregate metrics, settings, diagnostics and binary identities; individual predictions, effects and implementation source remain private. This is bounded evidence for the tested builds and panels, not a released-interface or large-cohort qualification claim.
+
+[Current settings and validation protocol](reports/training-variance.html#methods-in-this-comparison).
+
+## Earlier method collection
+<!-- training-variance-comparison:end -->
+
+
 Every fit uses the existing `gbayes::bayes(data, Glist=training, ...)` interface
 and native C++ engine. Held-out predictions use `predict(fit,
 newdata=list(Glist=panel, ids=held_out_ids), type="phenotype")` with saved

@@ -4,6 +4,57 @@ title: Results and timings
 ---
 # Results and timings
 
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+<!-- report-version:80c9caf4f579f40b -->
+
+## Current training-only variance comparison
+
+| Dataset | Method | PCC mean | RMSE mean | Pooled predictive R² | Calibration slope | Status |
+|---|---|---:|---:|---:|---:|---|
+| Cattle / mkg | Gaussian PCG | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
+| Cattle / mkg | D-weighted PCG | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
+| Cattle / mkg | Warm-start adaptive B | — | — | — | — | Pending: 1/10 folds |
+| Cattle / mkg | BayesA MCMC | — | — | — | — | Pending: 1/10 folds |
+| Maize / DTT | Gaussian PCG | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
+| Maize / DTT | D-weighted PCG | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
+| Maize / DTT | Warm-start adaptive B | — | — | — | — | Pending: 1/10 folds |
+| Maize / DTT | BayesA MCMC | — | — | — | — | Pending: 0/10 folds |
+
+PCC and RMSE are arithmetic means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Fold dots show descriptive variation, not independent experimental replicates or confidence intervals. A failed or missing fit suppresses its ten-fold accuracy aggregate. MCMC mixing warnings remain provisional.
+
+| Dataset | Method | Threads | Variance setup s/fold | Fit + predict s/fold | Total s/fold | Peak process MiB |
+|---|---|---:|---:|---:|---:|---:|
+| Cattle | Gaussian PCG | 4 | 40.1 | 19.9 | 60.1 | 2364 |
+| Cattle | D-weighted PCG | 4 | 39.2 | 20.8 | 59.9 | 2364 |
+| Cattle | Warm-start adaptive B | 4 | — | — | — | 2364 |
+| Cattle | BayesA MCMC | 1 | included in MCMC | — | — | 1727 |
+| Maize | Gaussian PCG | 4 | 20.6 | 12.7 | 33.3 | 1231 |
+| Maize | D-weighted PCG | 4 | 18.4 | 11.7 | 30.1 | 1232 |
+| Maize | Warm-start adaptive B | 4 | — | — | — | 1231 |
+| Maize | BayesA MCMC | 1 | included in MCMC | — | — | — |
+
+Times are mean seconds per fold, including genotype/cache preparation, variance estimation, fitting and prediction; startup and saving are excluded. Gaussian and B share one actual uniform-kernel variance estimate per fold, but each standalone total includes that setup. BayesA learns variances during sampling. All fits run sequentially on the same machine; PCG requests four MKL product threads and BayesA one worker. Some validated first-fold measurements are reused from earlier serial runs. Peak RAM covers complete R processes.
+
+## What the methods do
+
+| Method | What is fitted | Variance policy | Threads |
+|---|---|---|---:|
+| Gaussian PCG | Equal Gaussian shrinkage across standardized markers. | Uniform-kernel variance pair estimated from training phenotypes, then fixed. | 4 |
+| D-weighted PCG | Fixed allele-frequency weights: qⱼ = [2pⱼ(1−pⱼ)]^0.75. | Variance pair estimated using the matching D-weighted training kernel, then fixed. | 4 |
+| Warm-start adaptive B | Deterministic two-Gaussian conditional weight updates around PCG; previous solutions warm-start subsequent solves. | Initial uniform-kernel training variance pair stays fixed as weights adapt. Not BayesB MCMC. | 4 |
+| BayesA MCMC | All markers; sampled continuous marker-specific variances and posterior-mean effects. | Marker and residual variances learned by MCMC; two sequential chains, each 500 burn-in + 1,000 post-burn sweeps. | 1 |
+
+[Detailed comparison, plots, protocol and downloads](reports/training-variance.html).
+
+## Earlier benchmark configuration
+
+The tables below retain the earlier fixed-Gaussian / four-chain configuration. Its preprocessing, chain count and timing scope differ from the current comparison; do not combine its rows with the new table.
+<!-- training-variance-comparison:end -->
+
+
 Native gbayes methods fitted directly from QC-selected Glist. MCMC runs use four concurrent chains and one BLAS thread; the fixed Gaussian PCG reference used one worker. Results are added after a method finishes both datasets.
 
 ## Predictive performance

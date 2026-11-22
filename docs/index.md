@@ -4,6 +4,14 @@ title: Reproducible genomic prediction
 ---
 <h1 class="page-heading">Reproducible genomic prediction and statistical genetics benchmarks</h1>
 
+
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+**Current benchmark update:** [Training-only variance comparison](reports/training-variance.html) evaluates Gaussian PCG, D-weighted PCG, warm-start adaptive B and BayesA on the saved cattle/maize ten-fold splits. [Results and method explanations](results.html).
+<!-- training-variance-comparison:end -->
+
 **gpct** collects datasets, ordinary R analysis recipes, execution instructions
 and reviewed results for methods and models implemented in the gsuite ecosystem,
 covering genomic prediction and related statistical genetics.

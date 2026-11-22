@@ -4,6 +4,22 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+## Current training-only comparison
+
+Saved ten-fold CV uses seed 42. Cohort-level genotype-only QC defines the marker panel (MAF ≥1%, marker missingness ≤5%; HWE reported without filtering). Each training fold then gets its own Glist, genotype scaling and phenotype mean. Missing training phenotypes use the training-only observed mean. Maize has two missing phenotypes; their held-out occurrences in folds 2 and 7 are excluded from scoring (1,456 observed targets overall). All 5,024 cattle targets are observed. Held-out outcomes cannot enter variance estimation or phenotype preprocessing; this distinguishes the configuration from older full-panel-imputation results.
+
+PCG uses four native MKL product threads; BayesA uses one worker and two sequential chains. Only completed ten-fold aggregates are published; failed folds and mixing diagnostics remain explicit.
+
+[Full current protocol, settings and source-availability limits](reports/training-variance.html).
+
+## Earlier configuration
+<!-- training-variance-comparison:end -->
+
+
 <figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. Four concurrent MCMC chains; saved ten-fold splits with seed 42.</figcaption></figure>
 
 [Open full-size workflow SVG]({{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}).

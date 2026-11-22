@@ -4,6 +4,34 @@ title: Maize prediction
 ---
 # Maize / DTT
 
+
+<!-- training-variance-comparison:start -->
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+
+## Current training-only comparison
+
+| Dataset | Method | PCC mean | RMSE mean | Pooled predictive R² | Calibration slope | Status |
+|---|---|---:|---:|---:|---:|---|
+| Maize / DTT | Gaussian PCG | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
+| Maize / DTT | D-weighted PCG | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
+| Maize / DTT | Warm-start adaptive B | — | — | — | — | Pending: 1/10 folds |
+| Maize / DTT | BayesA MCMC | — | — | — | — | Pending: 0/10 folds |
+
+| Dataset | Method | Threads | Variance setup s/fold | Fit + predict s/fold | Total s/fold | Peak process MiB |
+|---|---|---:|---:|---:|---:|---:|
+| Maize | Gaussian PCG | 4 | 20.6 | 12.7 | 33.3 | 1231 |
+| Maize | D-weighted PCG | 4 | 18.4 | 11.7 | 30.1 | 1232 |
+| Maize | Warm-start adaptive B | 4 | — | — | — | 1231 |
+| Maize | BayesA MCMC | 1 | included in MCMC | — | — | — |
+
+PCC and RMSE are arithmetic means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Fold dots show descriptive variation, not independent experimental replicates or confidence intervals. A failed or missing fit suppresses its ten-fold accuracy aggregate. MCMC mixing warnings remain provisional.
+
+[Current plots, settings and downloadable summaries](training-variance.html).
+
+## Earlier configuration
+<!-- training-variance-comparison:end -->
+
+
 Predict the supplied DTT phenotype within this GPBench cohort using existing gbayes methods. All fits and held-out predictions receive Glist.
 
 1458 individuals; 75304 available markers; 75304 QC-retained markers. Synthetic BIM/FAM annotations are bookkeeping, not biological maps.

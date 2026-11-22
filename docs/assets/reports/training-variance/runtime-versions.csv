@@ -1,0 +1,4 @@
+"component","value","kind"
+"R","R version 4.4.3 (2025-02-28 ucrt)","orchestration"
+"gbase","0.1.14","Glist preparation"
+"Rcpp","1.1.1","native adapter"
