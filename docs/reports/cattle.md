@@ -5,7 +5,7 @@ title: Cattle prediction
 # Cattle / mkg
 
 <!-- training-variance-comparison:start -->
-<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}.markdown-body a[href*="/combined-"][href*=".svg"]{display:block;max-width:100%;overflow-x:auto}.markdown-body img[src*="/combined-"]{width:100%;min-width:800px;max-width:none;height:auto}</style>
 New training-variance fits are included below. All cost entries sum ten folds.
 <!-- training-variance-comparison:end -->
 
@@ -25,6 +25,7 @@ Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent
 | BayesR MCMC | 0.795 | 0.605 | 0.633 | 1.003 | Provisional (mixing) |
 | Gaussian PCG (training variance) | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
 | D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
+| BayesA MCMC (2 chains, 1 worker) | 0.7958 | 0.6048 | 0.6337 | 1.0178 | Provisional: mixing warnings in 1/10 folds |
 
 Correlation and RMSE in this table are means of ten fold metrics. Predictive R² and calibration slope are calculated from pooled out-of-fold predictions. Fold variation is descriptive; no independent-replicate confidence intervals are claimed.
 
@@ -40,26 +41,27 @@ Correlation and RMSE in this table are means of ten fold metrics. Predictive R²
 | BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 1732  3351.8 |
 | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 625.4 | 2364 | 600.7 |
 | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 2364 | 599.1 |
+| BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 4325.1 | 1727 | 4311.7 |
 
 Shared training-Glist preparation across ten folds: 12.52 seconds. Fitting includes native genotype preparation; prediction is timed separately. Process peak RAM covers package loading, preparation, the folds executed in that process, saved outputs and prediction; it is not fit-only peak RAM. Cache state and resumed work may differ; see [process resource context](../assets/reports/gbayes-glist/process-resources.csv).
 
-[Summary CSV](../assets/reports/gbayes-glist/cattle/benchmark-results.csv) · [Fold metrics](../assets/reports/gbayes-glist/cattle/fold-results.csv) · [Aggregate calibration](../assets/reports/gbayes-glist/cattle/calibration-summary.csv)
+[Summary CSV](../assets/reports/training-variance/cattle/combined-summary.csv) · [Fold metrics](../assets/reports/training-variance/cattle/combined-fold-results.csv) · [Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.csv)
 
 ## Predictive performance
 
-[![Predictive performance](../assets/reports/gbayes-glist/cattle/performance.svg?v=20261122T070620)](../assets/reports/gbayes-glist/cattle/performance.svg?v=20261122T070620)
+[![Predictive performance](../assets/reports/training-variance/cattle/combined-performance.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/cattle/combined-performance.svg?v=de437bdc3276a77f)
 
 ## Improvement over Gaussian
 
-[![Difference from Gaussian PCG](../assets/reports/gbayes-glist/cattle/improvement.svg?v=20261122T070620)](../assets/reports/gbayes-glist/cattle/improvement.svg?v=20261122T070620)
+[![Difference from Gaussian PCG](../assets/reports/training-variance/cattle/combined-improvement.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/cattle/combined-improvement.svg?v=de437bdc3276a77f)
 
 ## Performance and cost
 
-[![Performance versus runtime](../assets/reports/gbayes-glist/cattle/runtime.svg?v=20261122T070620)](../assets/reports/gbayes-glist/cattle/runtime.svg?v=20261122T070620)
+[![Performance versus runtime](../assets/reports/training-variance/cattle/combined-runtime.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/cattle/combined-runtime.svg?v=de437bdc3276a77f)
 
 ## Calibration
 
-[![Aggregate calibration](../assets/reports/gbayes-glist/cattle/calibration.svg?v=20261122T070620)](../assets/reports/gbayes-glist/cattle/calibration.svg?v=20261122T070620)
+[![Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/cattle/combined-calibration.svg?v=de437bdc3276a77f)
 
 Mean-imputed evaluation targets: 0 . Observed-target-only pooled correlations are provided in the summary CSV. No individual prediction plots or records are published.
 

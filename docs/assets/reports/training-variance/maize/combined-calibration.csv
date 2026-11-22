@@ -1,0 +1,91 @@
+"dataset","method","label","bin","n","mean_prediction","mean_observed"
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",1,146,65.331940399895,64.714957323844
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",2,146,66.325366152141,65.9288473534732
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",3,146,66.9428978953031,66.5094825776706
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",4,145,67.398893685412,67.6028168408035
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",5,146,67.7990189370601,67.8343387827701
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",6,146,68.2352185708658,68.3778862492398
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",7,145,68.6035254345007,68.8858799750035
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",8,146,69.0164508675883,69.0879345722079
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",9,146,69.4978671706094,69.4680882135386
+"maize","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",10,146,70.3873537012325,71.0384694843939
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",1,146,64.7055755464451,64.5588956124115
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",2,146,66.0270247035572,65.9927203706691
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",3,146,66.7471613945441,66.4495424538768
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",4,145,67.2996173244729,67.6160353622881
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",5,146,67.7947164880126,67.6662860885013
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",6,146,68.2804352227563,68.7063727367596
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",7,145,68.7627071806219,68.6667805729139
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",8,146,69.2494696172075,68.9152391750573
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",9,146,69.8133633818705,69.8137048445125
+"maize","old_bayesN_mcmc","BayesN / Bayesian ridge",10,146,70.9531851397906,71.0617140129373
+"maize","old_bayesA_mcmc","BayesA MCMC",1,146,64.6549812860529,64.5190412542479
+"maize","old_bayesA_mcmc","BayesA MCMC",2,146,66.0233230673717,66.0306862386032
+"maize","old_bayesA_mcmc","BayesA MCMC",3,146,66.7016539141749,66.5627940306868
+"maize","old_bayesA_mcmc","BayesA MCMC",4,145,67.2887128822974,67.5897630820239
+"maize","old_bayesA_mcmc","BayesA MCMC",5,146,67.7943443316459,67.5058920518881
+"maize","old_bayesA_mcmc","BayesA MCMC",6,146,68.2892277386146,68.7079307367662
+"maize","old_bayesA_mcmc","BayesA MCMC",7,145,68.7505771522372,68.5302344682735
+"maize","old_bayesA_mcmc","BayesA MCMC",8,146,69.2519121994599,69.0689122470818
+"maize","old_bayesA_mcmc","BayesA MCMC",9,146,69.8488301588637,69.9172678694616
+"maize","old_bayesA_mcmc","BayesA MCMC",10,146,70.987312450213,71.0136540564774
+"maize","old_bayesB_mcmc","BayesB MCMC",1,146,64.5740131767312,64.8560745770766
+"maize","old_bayesB_mcmc","BayesB MCMC",2,146,65.9533880441832,66.1613915309628
+"maize","old_bayesB_mcmc","BayesB MCMC",3,146,66.6833570833925,66.5918456950684
+"maize","old_bayesB_mcmc","BayesB MCMC",4,145,67.2940563680679,67.2916487192433
+"maize","old_bayesB_mcmc","BayesB MCMC",5,146,67.8108272900195,67.6645886899399
+"maize","old_bayesB_mcmc","BayesB MCMC",6,146,68.2994801107393,68.3633329396202
+"maize","old_bayesB_mcmc","BayesB MCMC",7,145,68.7135039465119,68.810829049593
+"maize","old_bayesB_mcmc","BayesB MCMC",8,146,69.2184388297347,69.1011319073687
+"maize","old_bayesB_mcmc","BayesB MCMC",9,146,69.8604056729299,69.9064246168608
+"maize","old_bayesB_mcmc","BayesB MCMC",10,146,71.1371090431125,70.6987883112733
+"maize","old_bayesC_mcmc","BayesC MCMC",1,146,64.5364095299042,64.6387836777137
+"maize","old_bayesC_mcmc","BayesC MCMC",2,146,65.9748851058226,66.0603462880918
+"maize","old_bayesC_mcmc","BayesC MCMC",3,146,66.7028598021152,66.7242190113137
+"maize","old_bayesC_mcmc","BayesC MCMC",4,145,67.3227267342994,67.3930703293881
+"maize","old_bayesC_mcmc","BayesC MCMC",5,146,67.8435924038857,67.4671100845666
+"maize","old_bayesC_mcmc","BayesC MCMC",6,146,68.3023981608848,68.5458058379561
+"maize","old_bayesC_mcmc","BayesC MCMC",7,145,68.7475458117343,68.6564798090213
+"maize","old_bayesC_mcmc","BayesC MCMC",8,146,69.2586185218139,69.2973040688648
+"maize","old_bayesC_mcmc","BayesC MCMC",9,146,69.9426860006115,69.7463618070532
+"maize","old_bayesC_mcmc","BayesC MCMC",10,146,71.1361766024705,70.916212605021
+"maize","old_bayesR_mcmc","BayesR MCMC",1,146,64.6142130007028,64.5861217154382
+"maize","old_bayesR_mcmc","BayesR MCMC",2,146,66.0123300979392,66.0399260333557
+"maize","old_bayesR_mcmc","BayesR MCMC",3,146,66.7055347162181,66.5191739058988
+"maize","old_bayesR_mcmc","BayesR MCMC",4,145,67.320492577663,67.5328547507635
+"maize","old_bayesR_mcmc","BayesR MCMC",5,146,67.8101716673441,67.5370505349222
+"maize","old_bayesR_mcmc","BayesR MCMC",6,146,68.2840863498192,68.7125453466727
+"maize","old_bayesR_mcmc","BayesR MCMC",7,145,68.7410039124235,68.5919743684083
+"maize","old_bayesR_mcmc","BayesR MCMC",8,146,69.267061031762,69.1419152330638
+"maize","old_bayesR_mcmc","BayesR MCMC",9,146,69.9033173553727,69.7565664634827
+"maize","old_bayesR_mcmc","BayesR MCMC",10,146,71.0183855683158,71.0280807764417
+"maize","new_Gaussian","Gaussian PCG (training variance)",1,145,64.6118010856165,64.5607616803358
+"maize","new_Gaussian","Gaussian PCG (training variance)",2,146,65.9749015453368,66.0020380763534
+"maize","new_Gaussian","Gaussian PCG (training variance)",3,145,66.7004764906564,66.5046907007172
+"maize","new_Gaussian","Gaussian PCG (training variance)",4,146,67.2928577425156,67.5215720735165
+"maize","new_Gaussian","Gaussian PCG (training variance)",5,146,67.788284550263,67.8124330780549
+"maize","new_Gaussian","Gaussian PCG (training variance)",6,145,68.2916965345754,68.5839030154416
+"maize","new_Gaussian","Gaussian PCG (training variance)",7,146,68.7828060205315,68.66378780854
+"maize","new_Gaussian","Gaussian PCG (training variance)",8,145,69.2774545804245,68.8751936682877
+"maize","new_Gaussian","Gaussian PCG (training variance)",9,146,69.8559842017629,69.9222099066512
+"maize","new_Gaussian","Gaussian PCG (training variance)",10,146,71.0350159043028,70.9757204992133
+"maize","new_D","D-weighted PCG (training variance)",1,145,64.5595140175612,64.5560982403904
+"maize","new_D","D-weighted PCG (training variance)",2,146,65.9674615178009,65.9999767801637
+"maize","new_D","D-weighted PCG (training variance)",3,145,66.6899174567661,66.335041260072
+"maize","new_D","D-weighted PCG (training variance)",4,146,67.2673796774768,67.7404653257306
+"maize","new_D","D-weighted PCG (training variance)",5,146,67.7939505097625,67.5717631827075
+"maize","new_D","D-weighted PCG (training variance)",6,145,68.2979290986174,68.6640534550367
+"maize","new_D","D-weighted PCG (training variance)",7,146,68.771749719803,68.5801319783096
+"maize","new_D","D-weighted PCG (training variance)",8,145,69.2871482391912,69.0957325590657
+"maize","new_D","D-weighted PCG (training variance)",9,146,69.8767686200892,69.8180478107487
+"maize","new_D","D-weighted PCG (training variance)",10,146,71.0644107161618,71.0618655070086
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",1,145,64.6327239672675,64.479863596213
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",2,146,66.0077333481272,66.1146703457354
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",3,145,66.6930032273597,66.4726433868519
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",4,146,67.2844388347418,67.6414787640534
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",5,146,67.7845089245286,67.4048487795791
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",6,145,68.2817935521863,68.6621960262002
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",7,146,68.7446271805017,68.7592127132311
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",8,145,69.2471626232809,68.9541278537492
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",9,146,69.8338573708619,69.8425235126088
+"maize","new_BayesA","BayesA MCMC (2 chains, 1 worker)",10,146,70.9904212568961,71.0910488288774

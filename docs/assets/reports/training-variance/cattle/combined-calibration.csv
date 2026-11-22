@@ -1,0 +1,91 @@
+"dataset","method","label","bin","n","mean_prediction","mean_observed"
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",1,503,-1.1710222222861,-1.36263072365805
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",2,502,-0.687098689808941,-0.803137615537849
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",3,502,-0.446281784976669,-0.492989661354582
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",4,503,-0.252391575839985,-0.329005528827038
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",5,502,-0.0771011243668166,-0.0289149860557769
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",6,502,0.103405633463241,0.0426507091633466
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",7,503,0.265891053286211,0.318013001988072
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",8,502,0.447832341834967,0.519023533864542
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",9,502,0.704267764665357,0.800625908366534
+"cattle","old_marker_gaussian","Gaussian PCG (fixed h2=0.5)",10,503,1.13950225209253,1.33643940755467
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",1,503,-1.37560864040583,-1.38015348310139
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",2,502,-0.804303167292693,-0.793391637450199
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",3,502,-0.513769438710811,-0.561816914342629
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",4,503,-0.28845692555195,-0.29176
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",5,502,-0.0887003214048946,-0.0746704342629482
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",6,502,0.111687747389621,0.113275631474104
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",7,503,0.313042952906446,0.287541083499006
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",8,502,0.532525803488002,0.533470161354582
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",9,502,0.827740033866498,0.813085492031873
+"cattle","old_bayesN_mcmc","BayesN / Bayesian ridge",10,503,1.34198401445961,1.3544796222664
+"cattle","old_bayesA_mcmc","BayesA MCMC",1,503,-1.39673758250324,-1.4143313499006
+"cattle","old_bayesA_mcmc","BayesA MCMC",2,502,-0.814055619817052,-0.840606374501992
+"cattle","old_bayesA_mcmc","BayesA MCMC",3,502,-0.520808364152514,-0.560494272908367
+"cattle","old_bayesA_mcmc","BayesA MCMC",4,503,-0.286810800611847,-0.264653186878728
+"cattle","old_bayesA_mcmc","BayesA MCMC",5,502,-0.0833439019117536,-0.0769617609561753
+"cattle","old_bayesA_mcmc","BayesA MCMC",6,502,0.115279316598364,0.0933707390438247
+"cattle","old_bayesA_mcmc","BayesA MCMC",7,503,0.322557828608668,0.299650516898608
+"cattle","old_bayesA_mcmc","BayesA MCMC",8,502,0.545724492631816,0.557802505976096
+"cattle","old_bayesA_mcmc","BayesA MCMC",9,502,0.824653641014422,0.834992962151394
+"cattle","old_bayesA_mcmc","BayesA MCMC",10,503,1.34134459358969,1.37124630616302
+"cattle","old_bayesB_mcmc","BayesB MCMC",1,503,-1.39153122264272,-1.35084663220676
+"cattle","old_bayesB_mcmc","BayesB MCMC",2,502,-0.825441423678613,-0.7887655
+"cattle","old_bayesB_mcmc","BayesB MCMC",3,502,-0.517657890541772,-0.540912304780876
+"cattle","old_bayesB_mcmc","BayesB MCMC",4,503,-0.282273009650899,-0.255475049701789
+"cattle","old_bayesB_mcmc","BayesB MCMC",5,502,-0.0792080831501649,-0.105184410358566
+"cattle","old_bayesB_mcmc","BayesB MCMC",6,502,0.11382933968275,0.073760828685259
+"cattle","old_bayesB_mcmc","BayesB MCMC",7,503,0.31968311822919,0.333400787276342
+"cattle","old_bayesB_mcmc","BayesB MCMC",8,502,0.546472834087208,0.514922085657371
+"cattle","old_bayesB_mcmc","BayesB MCMC",9,502,0.816178684713221,0.809943428286853
+"cattle","old_bayesB_mcmc","BayesB MCMC",10,503,1.33378379855158,1.30908470178926
+"cattle","old_bayesC_mcmc","BayesC MCMC",1,503,-1.41354204610723,-1.40613857256461
+"cattle","old_bayesC_mcmc","BayesC MCMC",2,502,-0.831189165306191,-0.821570834661355
+"cattle","old_bayesC_mcmc","BayesC MCMC",3,502,-0.532409336285075,-0.536897788844621
+"cattle","old_bayesC_mcmc","BayesC MCMC",4,503,-0.289983720536522,-0.279827168986084
+"cattle","old_bayesC_mcmc","BayesC MCMC",5,502,-0.0885465942968747,-0.108680424302789
+"cattle","old_bayesC_mcmc","BayesC MCMC",6,502,0.116980178547514,0.117445388446215
+"cattle","old_bayesC_mcmc","BayesC MCMC",7,503,0.32975139255652,0.3105174055666
+"cattle","old_bayesC_mcmc","BayesC MCMC",8,502,0.554335429048859,0.524578013944223
+"cattle","old_bayesC_mcmc","BayesC MCMC",9,502,0.831154992276672,0.846226141434263
+"cattle","old_bayesC_mcmc","BayesC MCMC",10,503,1.36137069352825,1.35438976341948
+"cattle","old_bayesR_mcmc","BayesR MCMC",1,503,-1.41441625031235,-1.41641982703777
+"cattle","old_bayesR_mcmc","BayesR MCMC",2,502,-0.828080408000975,-0.825045109561753
+"cattle","old_bayesR_mcmc","BayesR MCMC",3,502,-0.531007239545823,-0.551977802788845
+"cattle","old_bayesR_mcmc","BayesR MCMC",4,503,-0.291239970159792,-0.280412819085487
+"cattle","old_bayesR_mcmc","BayesR MCMC",5,502,-0.0883326729868536,-0.10418465936255
+"cattle","old_bayesR_mcmc","BayesR MCMC",6,502,0.117774275016168,0.138325173306773
+"cattle","old_bayesR_mcmc","BayesR MCMC",7,503,0.329891347096151,0.287342763419483
+"cattle","old_bayesR_mcmc","BayesR MCMC",8,502,0.550481413159373,0.54490825498008
+"cattle","old_bayesR_mcmc","BayesR MCMC",9,502,0.834192158119594,0.845760416334661
+"cattle","old_bayesR_mcmc","BayesR MCMC",10,503,1.36363118647151,1.36179858648111
+"cattle","new_Gaussian","Gaussian PCG (training variance)",1,502,-1.37586392587574,-1.38142246015936
+"cattle","new_Gaussian","Gaussian PCG (training variance)",2,502,-0.804773234522348,-0.797729047808765
+"cattle","new_Gaussian","Gaussian PCG (training variance)",3,503,-0.513562034034691,-0.558195632206759
+"cattle","new_Gaussian","Gaussian PCG (training variance)",4,502,-0.288568372394146,-0.295471486055777
+"cattle","new_Gaussian","Gaussian PCG (training variance)",5,503,-0.0887096298854869,-0.0722035586481113
+"cattle","new_Gaussian","Gaussian PCG (training variance)",6,502,0.111787815164227,0.105699916334661
+"cattle","new_Gaussian","Gaussian PCG (training variance)",7,502,0.312577049457934,0.298486364541833
+"cattle","new_Gaussian","Gaussian PCG (training variance)",8,503,0.532215391290842,0.529500618290258
+"cattle","new_Gaussian","Gaussian PCG (training variance)",9,502,0.827540438634523,0.811579665338645
+"cattle","new_Gaussian","Gaussian PCG (training variance)",10,503,1.34189949181472,1.35725289662028
+"cattle","new_D","D-weighted PCG (training variance)",1,502,-1.38087299183186,-1.39221163944223
+"cattle","new_D","D-weighted PCG (training variance)",2,502,-0.808335389422182,-0.797139129482072
+"cattle","new_D","D-weighted PCG (training variance)",3,503,-0.516051189686388,-0.54883158250497
+"cattle","new_D","D-weighted PCG (training variance)",4,502,-0.293418718520888,-0.294900211155379
+"cattle","new_D","D-weighted PCG (training variance)",5,503,-0.0912112111289682,-0.0730556719681908
+"cattle","new_D","D-weighted PCG (training variance)",6,502,0.110599071569088,0.0779771394422311
+"cattle","new_D","D-weighted PCG (training variance)",7,502,0.316243456199246,0.294835115537849
+"cattle","new_D","D-weighted PCG (training variance)",8,503,0.535525868483019,0.552954137176938
+"cattle","new_D","D-weighted PCG (training variance)",9,502,0.831973472289093,0.831102663346614
+"cattle","new_D","D-weighted PCG (training variance)",10,503,1.34794153002954,1.34672375347913
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",1,502,-1.39713736511512,-1.41436439442231
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",2,502,-0.815918993327444,-0.843276503984064
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",3,503,-0.521248789177678,-0.564975433399602
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",4,502,-0.285527091834703,-0.257378673306773
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",5,503,-0.084010971787868,-0.0692443598409543
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",6,502,0.114490083248165,0.0836527171314741
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",7,502,0.322102520890666,0.298952073705179
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",8,503,0.546119342751119,0.557112524850895
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",9,502,0.825018547273253,0.830655555776892
+"cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",10,503,1.34190194812622,1.37627847713718

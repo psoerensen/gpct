@@ -5,7 +5,7 @@ title: Maize prediction
 # Maize / DTT
 
 <!-- training-variance-comparison:start -->
-<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
+<style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}.markdown-body a[href*="/combined-"][href*=".svg"]{display:block;max-width:100%;overflow-x:auto}.markdown-body img[src*="/combined-"]{width:100%;min-width:800px;max-width:none;height:auto}</style>
 New training-variance fits are included below. All cost entries sum ten folds.
 <!-- training-variance-comparison:end -->
 
@@ -25,6 +25,7 @@ Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent
 | BayesR MCMC | 0.645 | 2.191 | 0.411 | 0.998 | Provisional (mixing) |
 | Gaussian PCG (training variance) | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
 | D-weighted PCG (training variance) | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
+| BayesA MCMC (2 chains, 1 worker) | 0.6492 | 2.1829 | 0.4162 | 1.0135 | Provisional: mixing warnings in 9/10 folds |
 
 Correlation and RMSE in this table are means of ten fold metrics. Predictive R² and calibration slope are calculated from pooled out-of-fold predictions. Fold variation is descriptive; no independent-replicate confidence intervals are claimed.
 
@@ -40,28 +41,29 @@ Correlation and RMSE in this table are means of ten fold metrics. Predictive R²
 | BayesR MCMC | 4 | 2899.1 | 8.0 | 2926.1 | 1070  2907.1 |
 | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 366.6 | 1231 | 333.2 |
 | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 335.0 | 1232 | 300.7 |
+| BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 2730.9 | 1005 | 2714.3 |
 
 Shared training-Glist preparation across ten folds: 10.04 seconds. Fitting includes native genotype preparation; prediction is timed separately. Process peak RAM covers package loading, preparation, the folds executed in that process, saved outputs and prediction; it is not fit-only peak RAM. Cache state and resumed work may differ; see [process resource context](../assets/reports/gbayes-glist/process-resources.csv).
 
-[Summary CSV](../assets/reports/gbayes-glist/maize/benchmark-results.csv) · [Fold metrics](../assets/reports/gbayes-glist/maize/fold-results.csv) · [Aggregate calibration](../assets/reports/gbayes-glist/maize/calibration-summary.csv)
+[Summary CSV](../assets/reports/training-variance/maize/combined-summary.csv) · [Fold metrics](../assets/reports/training-variance/maize/combined-fold-results.csv) · [Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.csv)
 
 ## Predictive performance
 
-[![Predictive performance](../assets/reports/gbayes-glist/maize/performance.svg?v=20261122T070620)](../assets/reports/gbayes-glist/maize/performance.svg?v=20261122T070620)
+[![Predictive performance](../assets/reports/training-variance/maize/combined-performance.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-performance.svg?v=de437bdc3276a77f)
 
 ## Improvement over Gaussian
 
-[![Difference from Gaussian PCG](../assets/reports/gbayes-glist/maize/improvement.svg?v=20261122T070620)](../assets/reports/gbayes-glist/maize/improvement.svg?v=20261122T070620)
+[![Difference from Gaussian PCG](../assets/reports/training-variance/maize/combined-improvement.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-improvement.svg?v=de437bdc3276a77f)
 
 ## Performance and cost
 
-[![Performance versus runtime](../assets/reports/gbayes-glist/maize/runtime.svg?v=20261122T070620)](../assets/reports/gbayes-glist/maize/runtime.svg?v=20261122T070620)
+[![Performance versus runtime](../assets/reports/training-variance/maize/combined-runtime.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-runtime.svg?v=de437bdc3276a77f)
 
 ## Calibration
 
-[![Aggregate calibration](../assets/reports/gbayes-glist/maize/calibration.svg?v=20261122T070620)](../assets/reports/gbayes-glist/maize/calibration.svg?v=20261122T070620)
+[![Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-calibration.svg?v=de437bdc3276a77f)
 
-Mean-imputed evaluation targets: 2 . Observed-target-only pooled correlations are provided in the summary CSV. No individual prediction plots or records are published.
+Original collection: two imputed test outcomes. New training-variance fits score observed outcomes only. Individual predictions stay local.
 
 ## Diagnostics and reproduction
 
