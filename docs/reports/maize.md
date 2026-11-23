@@ -26,6 +26,7 @@ Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent
 | Gaussian PCG (training variance) | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
 | D-weighted PCG (training variance) | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
 | BayesA MCMC (2 chains, 1 worker) | 0.6492 | 2.1829 | 0.4162 | 1.0135 | Provisional: mixing warnings in 9/10 folds |
+| GLMA Gaussian / infinitesimal | 0.6181 | 2.2758 | 0.3648 | 1.2090 | Completed |
 
 Correlation and RMSE in this table are means of ten fold metrics. Predictive R² and calibration slope are calculated from pooled out-of-fold predictions. Fold variation is descriptive; no independent-replicate confidence intervals are claimed.
 
@@ -42,26 +43,27 @@ Correlation and RMSE in this table are means of ten fold metrics. Predictive R²
 | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 366.6 | 1231 | 333.2 |
 | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 335.0 | 1232 | 300.7 |
 | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 2730.9 | 1005 | 2714.3 |
+| GLMA Gaussian / infinitesimal | 4 MKL threads | not separated | not separated | 138.0 | 1089 | 124.4 |
 
 Shared training-Glist preparation across ten folds: 10.04 seconds. Fitting includes native genotype preparation; prediction is timed separately. Process peak RAM covers package loading, preparation, the folds executed in that process, saved outputs and prediction; it is not fit-only peak RAM. Cache state and resumed work may differ; see [process resource context](../assets/reports/gbayes-glist/process-resources.csv).
 
-[Summary CSV](../assets/reports/training-variance/maize/combined-summary.csv) · [Fold metrics](../assets/reports/training-variance/maize/combined-fold-results.csv) · [Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.csv)
+[Summary CSV](../assets/reports/training-variance/maize/combined-summary.csv?v=ed93c843218e7eb7) · [Fold metrics](../assets/reports/training-variance/maize/combined-fold-results.csv?v=ed93c843218e7eb7) · [Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.csv?v=ed93c843218e7eb7)
 
 ## Predictive performance
 
-[![Predictive performance](../assets/reports/training-variance/maize/combined-performance.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-performance.svg?v=de437bdc3276a77f)
+[![Predictive performance](../assets/reports/training-variance/maize/combined-performance.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/maize/combined-performance.svg?v=ed93c843218e7eb7)
 
 ## Improvement over Gaussian
 
-[![Difference from Gaussian PCG](../assets/reports/training-variance/maize/combined-improvement.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-improvement.svg?v=de437bdc3276a77f)
+[![Difference from Gaussian PCG](../assets/reports/training-variance/maize/combined-improvement.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/maize/combined-improvement.svg?v=ed93c843218e7eb7)
 
 ## Performance and cost
 
-[![Performance versus runtime](../assets/reports/training-variance/maize/combined-runtime.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-runtime.svg?v=de437bdc3276a77f)
+[![Performance versus runtime](../assets/reports/training-variance/maize/combined-runtime.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/maize/combined-runtime.svg?v=ed93c843218e7eb7)
 
 ## Calibration
 
-[![Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.svg?v=de437bdc3276a77f)](../assets/reports/training-variance/maize/combined-calibration.svg?v=de437bdc3276a77f)
+[![Aggregate calibration](../assets/reports/training-variance/maize/combined-calibration.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/maize/combined-calibration.svg?v=ed93c843218e7eb7)
 
 Original collection: two imputed test outcomes. New training-variance fits score observed outcomes only. Individual predictions stay local.
 

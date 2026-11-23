@@ -2,7 +2,7 @@
 layout: default
 title: Genomic prediction benchmarks
 ---
-<!-- report-version:de437bdc3276a77f -->
+<!-- report-version:ed93c843218e7eb7 -->
 <h1 class="page-heading">Genomic prediction benchmarks</h1>
 
 **gpct** compares methods in the gsuite ecosystem: how accurately they predict, how long they take, and how much memory they use.

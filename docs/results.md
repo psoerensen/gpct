@@ -6,7 +6,7 @@ title: Results and timings
 
 <!-- training-variance-comparison:start -->
 <style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}.markdown-body a[href*="/combined-"][href*=".svg"]{display:block;max-width:100%;overflow-x:auto}.markdown-body img[src*="/combined-"]{width:100%;min-width:800px;max-width:none;height:auto}</style>
-<!-- report-version:de437bdc3276a77f -->
+<!-- report-version:ed93c843218e7eb7 -->
 <!-- training-variance-comparison:end -->
 
 Genomic prediction benchmarks using QC-selected Glist and the same saved ten-fold splits.
@@ -24,6 +24,7 @@ Genomic prediction benchmarks using QC-selected Glist and the same saved ten-fol
 | [Cattle / mkg](reports/cattle.html) | Gaussian PCG (training variance) | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
 | [Cattle / mkg](reports/cattle.html) | D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
 | [Cattle / mkg](reports/cattle.html) | BayesA MCMC (2 chains, 1 worker) | 0.7958 | 0.6048 | 0.6337 | 1.0178 | Provisional: mixing warnings in 1/10 folds |
+| [Cattle / mkg](reports/cattle.html) | GLMA Gaussian / infinitesimal | 0.7744 | 0.6362 | 0.5949 | 1.0954 | Completed |
 | [Maize / DTT](reports/maize.html) | Gaussian PCG (fixed h²=0.5) | 0.621 | 2.265 | 0.370 | 1.201 | Completed |
 | [Maize / DTT](reports/maize.html) | BayesN / Bayesian ridge | 0.642 | 2.197 | 0.408 | 1.017 | Provisional (mixing) |
 | [Maize / DTT](reports/maize.html) | BayesA MCMC | 0.648 | 2.184 | 0.415 | 1.012 | Provisional (mixing) |
@@ -33,6 +34,7 @@ Genomic prediction benchmarks using QC-selected Glist and the same saved ten-fol
 | [Maize / DTT](reports/maize.html) | Gaussian PCG (training variance) | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
 | [Maize / DTT](reports/maize.html) | D-weighted PCG (training variance) | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
 | [Maize / DTT](reports/maize.html) | BayesA MCMC (2 chains, 1 worker) | 0.6492 | 2.1829 | 0.4162 | 1.0135 | Provisional: mixing warnings in 9/10 folds |
+| [Maize / DTT](reports/maize.html) | GLMA Gaussian / infinitesimal | 0.6181 | 2.2758 | 0.3648 | 1.2090 | Completed |
 
 Correlation and RMSE are means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Compare methods within each dataset and trait. MCMC rows are provisional when retained parameter R-hat exceeds 1.05 or bulk ESS is below 100; completing iterations does not establish convergence.
 
@@ -49,6 +51,7 @@ Correlation and RMSE are means of ten held-out folds. Predictive R² and calibra
 | Cattle / mkg | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 625.4 | 600.7 | 2364 |
 | Cattle / mkg | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 599.1 | 2364 |
 | Cattle / mkg | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 4325.1 | 4311.7 | 1727 |
+| Cattle / mkg | GLMA Gaussian / infinitesimal | 4 MKL threads | not separated | not separated | 285.5 | 275.6 | 1776 |
 | Maize / DTT | Gaussian PCG (fixed h²=0.5) | 1 | 100.1 | 12.7 | not available | 112.9 | 270 |
 | Maize / DTT | BayesN / Bayesian ridge | 4 | 1433.1 | 7.7 | 1456.7 | 1440.8 | 1063 |
 | Maize / DTT | BayesA MCMC | 4 | 1767.9 | 8.9 | 1795.1 | 1776.8 | 1063 |
@@ -58,6 +61,7 @@ Correlation and RMSE are means of ten held-out folds. Predictive R² and calibra
 | Maize / DTT | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 366.6 | 333.2 | 1231 |
 | Maize / DTT | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 335.0 | 300.7 | 1232 |
 | Maize / DTT | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 2730.9 | 2714.3 | 1005 |
+| Maize / DTT | GLMA Gaussian / infinitesimal | 4 MKL threads | not separated | not separated | 138.0 | 124.4 | 1089 |
 
 Times sum all ten folds; divide by ten for seconds per fold. “Not separated” means only the combined fitting/prediction stage was timed. Peak RAM is the maximum across recorded processes.
 

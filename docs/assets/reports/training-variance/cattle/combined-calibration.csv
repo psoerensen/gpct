@@ -89,3 +89,13 @@
 "cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",8,503,0.546119342751119,0.557112524850895
 "cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",9,502,0.825018547273253,0.830655555776892
 "cattle","new_BayesA","BayesA MCMC (2 chains, 1 worker)",10,503,1.34190194812622,1.37627847713718
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",1,502,-1.25197252137379,-1.37686460358566
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",2,502,-0.734926932458852,-0.802432824701195
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",3,503,-0.474774244131646,-0.534168858846918
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",4,502,-0.268521259645273,-0.320756998007968
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",5,503,-0.0840729532516861,-0.0340315566600398
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",6,502,0.109459362905233,0.048593312749004
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",7,502,0.283683349940143,0.335045394422311
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",8,503,0.482434596089864,0.512830009940358
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",9,502,0.753140173833548,0.823797051792829
+"cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",10,503,1.21826487628008,1.34541922862823
