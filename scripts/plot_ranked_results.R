@@ -38,8 +38,8 @@ plot_ranked_results <- function(input, output = input) {
       limits <- range(values) + c(-.12, .42) * spread
       if (metric != 'PCC_mean') limits[1] <- max(0, limits[1])
       plot(NA, xlim = limits, ylim = c(.4, n + .6), yaxt = 'n', ylab = '',
-           xlab = if (metric == 'PCC_mean') 'Mean held-out PCC' else 'Peak process RAM (MiB)',
-           main = if (metric == 'PCC_mean') 'A   PCC: highest first' else 'B   Memory: lowest first',
+           xlab = if (metric == 'PCC_mean') 'Mean held-out correlation' else 'Peak process RAM (MiB)',
+           main = if (metric == 'PCC_mean') 'A   Correlation: highest first' else 'B   Memory: lowest first',
            bty = 'n', cex.main = 1.05)
       y <- rev(seq_len(n))
       abline(h = y, col = '#edf1f5', lwd = 1)
