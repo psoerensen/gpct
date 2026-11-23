@@ -4,6 +4,7 @@ param(
   [string]$RHome = '',
   [string]$RtoolsHome = 'C:/rtools44',
   [string]$SourceRoot = '',
+  [string]$SourceManifest = '',
   [string]$Python = '',
   [string]$EnvRoot = "$env:USERPROFILE/gpct-environments/windows-r443-openblas",
   [string]$DownloadCache = '',
@@ -108,7 +109,9 @@ foreach ($item in $cran) {
 }
 Checked $rs @('--vanilla',(Join-Path $PSScriptRoot 'install_dependencies.R'),$library,$DownloadCache,
   (Join-Path $PSScriptRoot 'cran-windows-4.4.csv')) $repo
-$sourcePins=Import-Csv (Join-Path $PSScriptRoot 'sources.csv')
+if(-not $SourceManifest){$SourceManifest=Join-Path $PSScriptRoot 'gbayes-sources.csv'}
+$SourceManifest=(Resolve-Path -LiteralPath $SourceManifest).Path
+$sourcePins=Import-Csv -LiteralPath $SourceManifest
 $snapshots=Join-Path $EnvRoot 'sources'
 New-Item -ItemType Directory -Force -Path $snapshots | Out-Null
 foreach ($item in $sourcePins) {
@@ -153,7 +156,7 @@ foreach ($package in @('gbase','gbayes','gcorr','glma','gmap','gscore','gsea')) 
   Checked $rs @('--vanilla',$builder,('--only='+$package),'--skip-check','--local-only',('--library='+$library)) $repo (Join-Path $logs ($package+'-build.log'))
 }
 Checked $rs @('--vanilla',(Join-Path $PSScriptRoot 'smoke_test.R')) $repo (Join-Path $logs 'smoke-test.log')
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'sources.csv') -Destination (Join-Path $EnvRoot 'sources.lock.csv') -Force
+Copy-Item -LiteralPath $SourceManifest -Destination (Join-Path $EnvRoot 'sources.lock.csv') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'runtime.csv') -Destination (Join-Path $EnvRoot 'runtime.lock.csv') -Force
 Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'cran-windows-4.4.csv') -Destination (Join-Path $EnvRoot 'cran.lock.csv') -Force
 $manifest=@(

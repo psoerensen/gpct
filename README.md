@@ -5,8 +5,9 @@ QC-selected **Glist** resources. Current datasets are GPBench cattle (`mkg`)
 and maize (`DTT`), evaluated with saved ten-fold splits and seed 42.
 
 The route is **BED/BIM/FAM → QC → Glist → training selection → gbayes C++ fit
-→ held-out prediction**. Every run uses one native worker and one BLAS/OpenMP
-thread. Native method-specific fitting, variance procedures and coding are
+→ held-out prediction**. The fixed Gaussian reference uses one worker. The MCMC collection runs four
+chains with one BLAS thread per chain. The separate RHE + BLUP evaluation
+uses up to four native threads per fit. Native method-specific fitting, variance procedures and coding are
 preserved. The earlier experimental result collection has been removed; no
 compatibility layer or old result routes are maintained.
 

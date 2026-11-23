@@ -1,15 +1,15 @@
-# Existing gbayes methods only; every method receives Glist directly.
+# Native gbayes methods only; every method receives Glist directly.
 benchmark_methods <- data.frame(
- id=c('marker_gaussian','elastic_net','laplace_gaussian','bayesC_vb','bayesC_mcmc','bayesR_mcmc'),
- label=c('Gaussian PCG','Elastic net','Laplace–Gaussian VB','BayesC VB','BayesC MCMC','BayesR MCMC'),
- method=c('marker_gaussian','elastic_net','laplace_gaussian','bayesC','bayesC','bayesR'),
- algorithm=c('pcg','coordinate_descent','vbayes','vbayes','mcmc','mcmc'),
+ id=c('marker_gaussian','bayesN_mcmc','bayesA_mcmc','bayesB_mcmc','bayesC_mcmc','bayesR_mcmc'),
+ label=c('Gaussian PCG','BayesN / Bayesian ridge','BayesA MCMC','BayesB MCMC','BayesC MCMC','BayesR MCMC'),
+ method=c('marker_gaussian','bayesN','bayesA','bayesB','bayesC','bayesR'),
+ algorithm=c('pcg',rep('mcmc',5)),
  settings=c('Fixed equal marker variances and residual variance; working h2=0.5; tolerance 1e-8; 1000 iteration cap; no REML',
- 'Fixed candidate: alpha=0.5; lambda=0.01*training phenotype SD; native tolerance; 1000 sweep cap; no tuning',
- 'Fixed average marker and residual variances; working h2=0.5; Laplace probability=0.1; Gaussian variance fraction=0.3; 1000 sweep cap',
- 'Fixed active probability=0.1, slab and residual variances; working h2=0.5; native tolerance; 1000 sweep cap',
- 'Two sequential chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2',
- 'Two sequential chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2'),stringsAsFactors=FALSE)
+ 'All markers Gaussian; learned shared marker and residual variances; proper inverse-chi-square priors df=4',
+ 'All markers; learned marker-specific and residual variances; fixed common inverse-chi-square hyperprior df=4',
+ 'Spike and marker-specific variances; learned active probability, marker and residual variances; fixed variance hyperprior df=4',
+ 'Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2',
+ 'Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2'),stringsAsFactors=FALSE)
 
 gbayes_arguments <- function(id,Glist,y,trait,fold) {
  spec<-benchmark_methods[match(id,benchmark_methods$id),]
@@ -20,11 +20,14 @@ gbayes_arguments <- function(id,Glist,y,trait,fold) {
  total_feature_variance<-sum((n1+4*n2-n*(2*af)^2)/(n-1)/(2*af*(1-af)))
  stopifnot(all(af>0 & af<1),is.finite(total_feature_variance),total_feature_variance>0)
  vb<-.5*v/total_feature_variance;ve<-.5*v
- args<-list(Glist=Glist,trait=trait,method=spec$method,algorithm=spec$algorithm,ncores=1L,nit=1000L)
+ workers<-as.integer(Sys.getenv('GPCT_WORKERS','1'))
+ draws<-as.integer(Sys.getenv('GPCT_MCMC_NIT','1000'))
+ burnin<-as.integer(Sys.getenv('GPCT_MCMC_BURNIN','500'))
+ chains<-as.integer(Sys.getenv('GPCT_MCMC_CHAINS','2'))
+ stopifnot(workers%in%c(1L,4L),chains>=workers,draws>0,burnin>=0)
+ args<-list(Glist=Glist,trait=trait,method=spec$method,algorithm=spec$algorithm,ncores=workers,nit=if(spec$algorithm=='mcmc')draws else 1000L)
  if(id=='marker_gaussian')args<-c(args,list(ve=ve,prior=list(markerVariance=setNames(rep(vb,p),unlist(Glist$rsids,use.names=FALSE)))))
- if(id=='elastic_net')args<-c(args,list(control=list(lambda=.01*sd(y),alpha=.5)))
- if(id=='laplace_gaussian')args<-c(args,list(vb=vb,ve=ve,prior=list(laplaceProbability=.1,normalVarianceFraction=.3)))
- if(id=='bayesC_vb')args<-c(args,list(vb=vb/.1,ve=ve,pi=.1))
- if(id%in%c('bayesC_mcmc','bayesR_mcmc'))args<-c(args,list(nburn=500L,nthin=1L,nchains=2L,seed=42000L+fold*2L))
+ if(spec$algorithm=='mcmc')args<-c(args,list(updateB=TRUE,updateE=TRUE,
+  nburn=burnin,nthin=1L,nchains=chains,seed=42000L+fold*2L))
  args
 }

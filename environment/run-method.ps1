@@ -1,7 +1,13 @@
-param([Parameter(Mandatory=$true)][ValidateSet('marker_gaussian','elastic_net','laplace_gaussian','bayesC_vb','bayesC_mcmc','bayesR_mcmc')][string]$Method,
+param([Parameter(Mandatory=$true)][ValidateSet('marker_gaussian','bayesA_mcmc','bayesB_mcmc','bayesN_mcmc','bayesC_mcmc','bayesR_mcmc')][string]$Method,
  [string]$EnvRoot="$env:USERPROFILE/gpct-environments/windows-r443-openblas")
 $ErrorActionPreference='Stop'
+if($Method -ne 'marker_gaussian') {
+ & "$PSScriptRoot/run-glist-benchmark-plan.ps1" -EnvRoot $EnvRoot -Methods @($Method)
+ exit
+}
 & (Join-Path $PSScriptRoot 'activate.ps1') -EnvRoot $EnvRoot -BlasThreads 1
+$env:GPCT_WORKERS='1'
+$env:GPCT_MCMC_CHAINS='2'
 $env:GPCT_DATA_DIR="$env:USERPROFILE/gpct-data"
 $env:GPCT_OUTPUT_DIR="$env:USERPROFILE/gpct-results"
 $env:GPCT_RUN_ID='20261121-gbayes-glist-1t'
@@ -19,7 +25,7 @@ foreach($case in @('maize','cattle')) {
  $err="$EnvRoot/logs/gbayes-1t-$Method-$case-$stamp.stderr.log"
  Write-Output "Running $Method / $case with one worker; log: $log"
  $process=Start-Process -FilePath "$EnvRoot/R/bin/x64/Rscript.exe" `
-  -ArgumentList @('--vanilla','scripts/run_gbayes.R',$Method,$case) `
+  -ArgumentList @('--vanilla','-e','"source(''scripts/run_gbayes.R'')"',$Method,$case) `
   -WorkingDirectory (Split-Path $PSScriptRoot -Parent) -WindowStyle Hidden `
   -RedirectStandardOutput $log -RedirectStandardError $err -PassThru
  $peakBytes=0L
