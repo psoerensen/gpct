@@ -11,6 +11,16 @@ title: Results and timings
 
 Genomic prediction benchmarks using QC-selected Glist and the same saved ten-fold splits.
 
+<!-- ranked-overview:start -->
+<style>.ranked-figure{margin:1.5rem 0}.ranked-plots{max-width:100%;overflow-x:auto}.ranked-plots img{display:block;width:100%;min-width:960px;max-width:none;height:auto}</style>
+
+<figure class="ranked-figure"><div class="ranked-plots"><a href="assets/reports/training-variance/cattle/ranked-overview.svg?v=08cf0e2fffb3"><img src="assets/reports/training-variance/cattle/ranked-overview.svg?v=08cf0e2fffb3" alt="Cattle / mkg: methods ranked by mean held-out PCC, highest first, and recorded peak process RAM, lowest first."></a></div><figcaption>Cattle / mkg · <a href="assets/reports/training-variance/cattle/ranked-overview.svg?v=08cf0e2fffb3">Open full-size figure</a></figcaption></figure>
+
+<figure class="ranked-figure"><div class="ranked-plots"><a href="assets/reports/training-variance/maize/ranked-overview.svg?v=08cf0e2fffb3"><img src="assets/reports/training-variance/maize/ranked-overview.svg?v=08cf0e2fffb3" alt="Maize / DTT: methods ranked by mean held-out PCC, highest first, and recorded peak process RAM, lowest first."></a></div><figcaption>Maize / DTT · <a href="assets/reports/training-variance/maize/ranked-overview.svg?v=08cf0e2fffb3">Open full-size figure</a></figcaption></figure>
+
+Dots show ten-fold mean PCC, without confidence intervals. * marks provisional MCMC diagnostics. Memory is recorded peak process RAM; worker and chain configurations differ. On narrow screens, scroll the figures horizontally.
+<!-- ranked-overview:end -->
+
 ## Predictive performance
 
 | Dataset | Method | Correlation | RMSE | Pooled predictive R² | Calibration slope | Status |
