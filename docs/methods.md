@@ -20,6 +20,6 @@ All methods use QC-selected Glist inputs and the same saved cross-validation fol
 | BayesC | gbayes MCMC | Spike at zero plus a shared active-marker variance | Learns active probability and variances | 4 concurrent chains |
 | BayesR | gbayes MCMC | Several marker-variance classes | Learns variance scale and mixture weights | 4 concurrent chains |
 | GLMA Gaussian / infinitesimal | glma full-marker fit; gsolve PCG final solve | Existing empirical marker scaling | Existing training RHE and Monte Carlo grid workflow | 4 requested MKL threads |
-| GLMA prior-selected | glma/gbayes variational full-marker fit | Existing frequency weighting and ridge/elastic prior selection within training data | Existing training RHE and Monte Carlo grid workflow | 4 product threads; parallel candidate models; evaluation scheduled |
+| GLMA prior-selected | glma/gbayes variational full-marker fit | Existing frequency weighting and ridge/elastic prior selection within training data | Existing training RHE and Monte Carlo grid workflow | 4 product threads; parallel candidate models |
 
 MCMC uses one BLAS thread per chain. Threads within one fit and independent chains are different forms of parallelism. Completed accuracy and timing measurements appear on the Results page.

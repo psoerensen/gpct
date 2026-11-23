@@ -27,6 +27,7 @@ Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent
 | D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
 | BayesA MCMC (2 chains, 1 worker) | 0.7958 | 0.6048 | 0.6337 | 1.0178 | Provisional: mixing warnings in 1/10 folds |
 | GLMA Gaussian / infinitesimal | 0.7744 | 0.6362 | 0.5949 | 1.0954 | Completed |
+| GLMA prior-selected | 0.7700 | 0.6404 | 0.5895 | 1.0781 | Completed |
 
 Correlation and RMSE in this table are means of ten fold metrics. Predictive R² and calibration slope are calculated from pooled out-of-fold predictions. Fold variation is descriptive; no independent-replicate confidence intervals are claimed.
 
@@ -44,26 +45,27 @@ Correlation and RMSE in this table are means of ten fold metrics. Predictive R²
 | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 2364 | 599.1 |
 | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 4325.1 | 1727 | 4311.7 |
 | GLMA Gaussian / infinitesimal | 4 MKL threads | not separated | not separated | 285.5 | 1776 | 275.6 |
+| GLMA prior-selected | 4 MKL threads | not separated | not separated | 311.7 | 1861 | 301.8 |
 
 Shared training-Glist preparation across ten folds: 12.52 seconds. Fitting includes native genotype preparation; prediction is timed separately. Process peak RAM covers package loading, preparation, the folds executed in that process, saved outputs and prediction; it is not fit-only peak RAM. Cache state and resumed work may differ; see [process resource context](../assets/reports/gbayes-glist/process-resources.csv).
 
-[Summary CSV](../assets/reports/training-variance/cattle/combined-summary.csv?v=ed93c843218e7eb7) · [Fold metrics](../assets/reports/training-variance/cattle/combined-fold-results.csv?v=ed93c843218e7eb7) · [Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.csv?v=ed93c843218e7eb7)
+[Summary CSV](../assets/reports/training-variance/cattle/combined-summary.csv?v=802595498d46594d) · [Fold metrics](../assets/reports/training-variance/cattle/combined-fold-results.csv?v=802595498d46594d) · [Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.csv?v=802595498d46594d)
 
 ## Predictive performance
 
-[![Predictive performance](../assets/reports/training-variance/cattle/combined-performance.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/cattle/combined-performance.svg?v=ed93c843218e7eb7)
+[![Predictive performance](../assets/reports/training-variance/cattle/combined-performance.svg?v=802595498d46594d)](../assets/reports/training-variance/cattle/combined-performance.svg?v=802595498d46594d)
 
 ## Improvement over Gaussian
 
-[![Difference from Gaussian PCG](../assets/reports/training-variance/cattle/combined-improvement.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/cattle/combined-improvement.svg?v=ed93c843218e7eb7)
+[![Difference from Gaussian PCG](../assets/reports/training-variance/cattle/combined-improvement.svg?v=802595498d46594d)](../assets/reports/training-variance/cattle/combined-improvement.svg?v=802595498d46594d)
 
 ## Performance and cost
 
-[![Performance versus runtime](../assets/reports/training-variance/cattle/combined-runtime.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/cattle/combined-runtime.svg?v=ed93c843218e7eb7)
+[![Performance versus runtime](../assets/reports/training-variance/cattle/combined-runtime.svg?v=802595498d46594d)](../assets/reports/training-variance/cattle/combined-runtime.svg?v=802595498d46594d)
 
 ## Calibration
 
-[![Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.svg?v=ed93c843218e7eb7)](../assets/reports/training-variance/cattle/combined-calibration.svg?v=ed93c843218e7eb7)
+[![Aggregate calibration](../assets/reports/training-variance/cattle/combined-calibration.svg?v=802595498d46594d)](../assets/reports/training-variance/cattle/combined-calibration.svg?v=802595498d46594d)
 
 Mean-imputed evaluation targets: 0 . Observed-target-only pooled correlations are provided in the summary CSV. No individual prediction plots or records are published.
 

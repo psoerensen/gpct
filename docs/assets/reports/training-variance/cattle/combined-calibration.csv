@@ -99,3 +99,13 @@
 "cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",8,503,0.482434596089864,0.512830009940358
 "cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",9,502,0.753140173833548,0.823797051792829
 "cattle","new_GLMA_Gaussian","GLMA Gaussian / infinitesimal",10,503,1.21826487628008,1.34541922862823
+"cattle","new_GLMA_prior","GLMA prior-selected",1,502,-1.27559941734611,-1.39018109561753
+"cattle","new_GLMA_prior","GLMA prior-selected",2,502,-0.762697935062419,-0.809974386454183
+"cattle","new_GLMA_prior","GLMA prior-selected",3,503,-0.480716336912409,-0.482065435387674
+"cattle","new_GLMA_prior","GLMA prior-selected",4,502,-0.261724486828424,-0.303379412350598
+"cattle","new_GLMA_prior","GLMA prior-selected",5,503,-0.075219566241136,-0.0498314572564612
+"cattle","new_GLMA_prior","GLMA prior-selected",6,502,0.105855218714692,0.0752573266932271
+"cattle","new_GLMA_prior","GLMA prior-selected",7,502,0.298563737624217,0.281683173306773
+"cattle","new_GLMA_prior","GLMA prior-selected",8,503,0.502232886084797,0.551903731610338
+"cattle","new_GLMA_prior","GLMA prior-selected",9,502,0.757284750416779,0.803727615537849
+"cattle","new_GLMA_prior","GLMA prior-selected",10,503,1.21263944601926,1.32019019880716
