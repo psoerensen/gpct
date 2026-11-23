@@ -6,3 +6,7 @@
 "gbayes","local development SHA256 gbayes/include/gbayes/alphabet.hpp","dd4833c295e751ab7c3e55996fa8f0300eebd5beef7e4718b93e18751f320800"
 "gbayes","local development SHA256 gbayes/src/individual_bed.cpp","0a98930609ffc49e7992ac34506ac5ec305b613757cbb098c01288604dbc11fb"
 "gbayes","local development SHA256 gsuite/packages/gbayes/src/gbayes.cpp","864dd876af9086988f33bb5918c9214d3eafa4d37af53bc31a52379d2a0aad80"
+"gbits","RHE native prefix source pin","fadd3cc3810394151f5ea19f908ab1c77f835345"
+"gsolve","RHE native prefix source pin","dd405973d6aece137fb9d82367502f78c8feef2d"
+"greml","RHE native prefix source pin","c84f83409e7a08eeada20e854c6ff6c81c8ed25f"
+"RHE Glist adapter","private adapter source SHA256; implementation not published","4ca5c5c6be9c2822afc872b6ddfbf84c8e26a5aedf4291b07264bf72a1026fea"

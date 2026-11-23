@@ -4,7 +4,6 @@ title: Evaluation protocol
 ---
 # Evaluation protocol
 
-
 <!-- training-variance-comparison:start -->
 <style>.markdown-body{min-width:0}.markdown-body table{display:block;max-width:100%;overflow-x:auto}</style>
 
@@ -18,7 +17,6 @@ PCG uses four native MKL product threads; BayesA uses one worker and two sequent
 
 ## Earlier configuration
 <!-- training-variance-comparison:end -->
-
 
 <figure class="workflow-figure"><a href="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}"><img src="{{ '/assets/images/benchmark-workflow.svg' | relative_url }}?v={{ site.time | date: '%s' }}" width="1120" height="620" alt="GPBench arrays are converted to PLINK BED/BIM/FAM, filtered by MAF and missingness, and prepared as Glist. Identical ten-fold splits select training samples for existing gbayes C++ methods, followed by held-out prediction and aggregate evaluation."></a><figcaption>BED/BIM/FAM → QC → Glist → training-fold selection → gbayes C++ fitting → held-out prediction. Four concurrent MCMC chains; saved ten-fold splits with seed 42.</figcaption></figure>
 
@@ -44,12 +42,13 @@ Keep all individuals and the saved scikit-learn 1.6.1/NumPy 1.26.4
 `KFold(n_splits=10, shuffle=True, random_state=42)` partitions. Each method uses
 the identical outer folds. For each fold, prepare a training-selected Glist
 from the QC triplet. Exclude any training-monomorphic markers explicitly and
-report actual markers used. Native gbayes training coding and phenotype
-centering are preserved. Test outcomes never enter fitting or parameter choice.
+report actual markers used. Native training coding and phenotype handling
+are preserved. Test outcomes never enter fitting or parameter choice.
 
-Every method receives Glist directly. No GLMA, greml/gsolve reference fit,
-external fitter, matrix-input adapter or summary-statistic substitution is
-part of this collection. Settings are frozen in the [method registry](methods.html).
+Every method begins with Glist. The gbayes collection uses its public Glist
+interface; ordinary RHE + BLUP uses a private Glist adapter to existing
+greml/gsolve/gbits routines. Fitting and genotype products stay in C++.
+Settings are recorded in the [method registry](methods.html).
 This first collection uses declared fixed configurations and native learning,
 without outer-test tuning or an extra hyperparameter search.
 
@@ -72,9 +71,12 @@ partitions, not independent experimental replicates. No fold-derived confidence
 intervals are claimed. Publish only reviewed binned calibration summaries.
 
 Use four concurrent MCMC chains, with OpenBLAS and MKL requests at one; disable diagnostic
-BLAS logging for timed runs. Record shared training-Glist preparation separately
+BLAS logging for timed runs. RHE + BLUP uses one fit with an operation-local
+MKL thread cap of four; its R/OpenBLAS control remains one. Record shared training-Glist preparation separately
 from each fit and held-out prediction. Native packed preparation inside a fit
 is included in its fitting time. Cost plots use the sum of fitting and prediction
 over ten folds. Whole-process peak RAM includes loading, preparation, saved
 outputs and prediction; it is not fit-only peak RAM. Show failures, warnings,
-unavailable measurements and MCMC mixing limitations explicitly.
+unavailable measurements and MCMC mixing limitations explicitly. A failed fold
+suppresses the method's aggregate accuracy, rather than publishing an average
+of only successful folds. Cost tables retain the failed fitting attempts.

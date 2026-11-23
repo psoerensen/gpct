@@ -119,6 +119,56 @@
 "cattle","bayesR_mcmc",9,"gbayes","0.1.16","3c926587f77cd2ea4f4ebcdf7cef9427afa1131bc9afc2f0dbdb350909bafb70",TRUE
 "cattle","bayesR_mcmc",10,"gbase","0.1.14","0643a4258eb91ca9b965f98d4988880aad2da616b24f8c20f15cc38a1a4c663d",TRUE
 "cattle","bayesR_mcmc",10,"gbayes","0.1.16","3c926587f77cd2ea4f4ebcdf7cef9427afa1131bc9afc2f0dbdb350909bafb70",TRUE
+"cattle","rhe_blup",1,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",1,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",1,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",1,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",1,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",2,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",2,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",2,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",2,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",2,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",3,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",3,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",3,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",3,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",3,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",4,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",4,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",4,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",4,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",4,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",5,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",5,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",5,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",5,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",5,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",6,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",6,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",6,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",6,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",6,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",7,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",7,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",7,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",7,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",7,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",8,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",8,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",8,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",8,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",8,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",9,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",9,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",9,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",9,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",9,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"cattle","rhe_blup",10,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"cattle","rhe_blup",10,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"cattle","rhe_blup",10,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"cattle","rhe_blup",10,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"cattle","rhe_blup",10,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
 "maize","marker_gaussian",1,"gbase",NA,NA,FALSE
 "maize","marker_gaussian",1,"gbayes",NA,NA,FALSE
 "maize","marker_gaussian",2,"gbase",NA,NA,FALSE
@@ -239,3 +289,53 @@
 "maize","bayesR_mcmc",9,"gbayes","0.1.16","3c926587f77cd2ea4f4ebcdf7cef9427afa1131bc9afc2f0dbdb350909bafb70",TRUE
 "maize","bayesR_mcmc",10,"gbase","0.1.14","0643a4258eb91ca9b965f98d4988880aad2da616b24f8c20f15cc38a1a4c663d",TRUE
 "maize","bayesR_mcmc",10,"gbayes","0.1.16","3c926587f77cd2ea4f4ebcdf7cef9427afa1131bc9afc2f0dbdb350909bafb70",TRUE
+"maize","rhe_blup",1,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",1,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",1,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",1,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",1,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",2,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",2,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",2,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",2,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",2,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",3,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",3,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",3,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",3,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",3,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",4,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",4,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",4,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",4,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",4,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",5,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",5,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",5,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",5,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",5,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",6,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",6,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",6,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",6,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",6,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",7,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",7,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",7,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",7,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",7,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",8,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",8,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",8,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",8,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",8,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",9,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",9,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",9,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",9,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",9,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE
+"maize","rhe_blup",10,"libgreml_core.dll","native development build","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51",TRUE
+"maize","rhe_blup",10,"libgsolve_core.dll","native development build","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9",TRUE
+"maize","rhe_blup",10,"libgsolve.dll","native development build","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0",TRUE
+"maize","rhe_blup",10,"gbits_gsolve_adapter.dll","native development build","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af",TRUE
+"maize","rhe_blup",10,"gbits.dll","native development build","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac",TRUE

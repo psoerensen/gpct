@@ -1,0 +1,2 @@
+"dataset","fold","probes","one_thread_fit_seconds","four_thread_fit_seconds","fitting_speedup","maximum_prediction_difference","native_libraries_match","cache_bytes","scope"
+"gpbench_maize",1,128,8.9644157,4.498942,1.99256085097341,2.37710935380164e-08,TRUE,790390784,"Same saved maize fold, ordinary RHE controls and native libraries; separate from MCMC chain probes"

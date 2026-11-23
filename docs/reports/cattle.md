@@ -9,7 +9,7 @@ title: Cattle prediction
 New training-variance fits are included below. All cost entries sum ten folds.
 <!-- training-variance-comparison:end -->
 
-Predict the supplied mkg phenotype within this GPBench cohort using existing gbayes methods. All fits and held-out predictions receive Glist.
+Predict the supplied mkg phenotype within this GPBench cohort using native gsuite methods. All fits and held-out predictions receive Glist.
 
 5024 individuals; 42551 available markers; 42373 QC-retained markers. Synthetic BIM/FAM annotations are bookkeeping, not biological maps.
 
@@ -23,6 +23,7 @@ The MCMC collection uses four concurrent chains with one BLAS thread; the fixed 
 | BayesB MCMC | 0.762 | 0.647 | 0.581 | 0.979 | Provisional (mixing) |
 | BayesC MCMC | 0.790 | 0.612 | 0.625 | 0.996 | Provisional (mixing) |
 | BayesR MCMC | 0.795 | 0.605 | 0.633 | 1.003 | Provisional (mixing) |
+| RHE + BLUP | not available | not available | not available | not available | Failed: 0/10 folds accepted |
 | Gaussian PCG (training variance) | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
 | D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
 | BayesA MCMC (2 chains, 1 worker) | 0.7958 | 0.6048 | 0.6337 | 1.0178 | Provisional: mixing warnings in 1/10 folds |
@@ -33,14 +34,15 @@ Correlation and RMSE in this table are means of ten fold metrics. Predictive R²
 
 ## Computational cost
 
-| Method | Workers | Fit s | Predict s | Total process s | Process peak MiB  Fit + predict s |
-| --- | --- | --- | --- | --- | ---  --- |
-| Gaussian PCG (fixed h²=0.5) | 1 | 197.6 | 14.5 | not available | 1725  212.1 |
-| BayesN / Bayesian ridge | 4 | 2819.9 | 12.3 | 2844.5 | 1728  2832.2 |
-| BayesA MCMC | 4 | 3134.6 | 13.4 | 3161.6 | 1727  3148.0 |
-| BayesB MCMC | 4 | 2315.3 | 14.3 | 2343.3 | 1727  2329.6 |
-| BayesC MCMC | 4 | 2081.3 | 13.0 | 2120.6 | 1726  2094.3 |
-| BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 1732  3351.8 |
+| Method | Workers | Fit s | Predict s | Total process s | Process peak MiB | Fit + predict s |
+| --- | --- | --- | --- | --- | --- | --- |
+| Gaussian PCG (fixed h²=0.5) | 1 | 197.6 | 14.5 | not available | 1725 | 212.1 |
+| BayesN / Bayesian ridge | 4 | 2819.9 | 12.3 | 2844.5 | 1728 | 2832.2 |
+| BayesA MCMC | 4 | 3134.6 | 13.4 | 3161.6 | 1727 | 3148.0 |
+| BayesB MCMC | 4 | 2315.3 | 14.3 | 2343.3 | 1727 | 2329.6 |
+| BayesC MCMC | 4 | 2081.3 | 13.0 | 2120.6 | 1726 | 2094.3 |
+| BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 1732 | 3351.8 |
+| RHE + BLUP | 4 | 913.9 | not available | 915.4 | 1705 | not available |
 | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 625.4 | 2364 | 600.7 |
 | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 2364 | 599.1 |
 | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 4325.1 | 1727 | 4311.7 |
@@ -72,6 +74,8 @@ Mean-imputed evaluation targets: 0 . Observed-target-only pooled correlations ar
 ## Diagnostics and reproduction
 
 R fitting warnings: 0 . Separately, 39 MCMC fold fits have diagnostic flags. MCMC scores remain provisional if any fold has retained-parameter R-hat above 1.05, bulk ESS below 100, or unavailable diagnostics. Per-fold maxima/minima and status are in the downloadable metrics; these checks do not establish all-marker convergence. Native diagnostics and saved fits remain local.
+
+RHE + BLUP uses up to four native MKL threads for one fit, rather than four chains. Any failed fold suppresses its ten-fold accuracy and calibration summaries. Timings retain failed fitting attempts. See the [RHE evaluation and variance diagnostics](rhe-blup.html).
 
 Reproduction entry point for the retained local development checkout: this requires the identified unreleased native build and local benchmark controller. These implementation changes are not released by this aggregate website update.
 

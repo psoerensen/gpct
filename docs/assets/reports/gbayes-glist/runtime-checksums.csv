@@ -5,3 +5,8 @@
 "gbayes","0.1.16","gbayes.dll","3c926587f77cd2ea4f4ebcdf7cef9427afa1131bc9afc2f0dbdb350909bafb70"
 "gbayes","0.1.16","gbayes.rdb","c91a4cf917955b550a564b269202c08363bd6401f7e06c338263f406ad6baa7e"
 "gbayes","0.1.16","gbayes.rdx","1bd7b10b13728ec432a08ad23e4e3c899916f7fe4fadeaa22257c567798abf33"
+"RHE native libraries","local native build; source pins recorded separately","libgreml_core.dll","5b2b92477eadcfbff4c086ddd713029d6547ee21532d8b588549e7820545ad51"
+"RHE native libraries","local native build; source pins recorded separately","libgsolve_core.dll","44da27b9231823224d6e4ea8778643138f2171cb895d6e4848764713fdb330d9"
+"RHE native libraries","local native build; source pins recorded separately","libgsolve.dll","0b1a9388d54c34a89820a7b7f13ee44cfb2bd6d74b9b7b113175b459d00787b0"
+"RHE native libraries","local native build; source pins recorded separately","gbits_gsolve_adapter.dll","1faf6c34272466462fc699eaf07ae633e4a6e51039d6509ee28d526fe681c1af"
+"RHE native libraries","local native build; source pins recorded separately","gbits.dll","02ddb52f68da47f6b93b2564c1b448b871814064d82b691e4168c322b626ccac"

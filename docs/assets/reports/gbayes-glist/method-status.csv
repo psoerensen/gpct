@@ -11,3 +11,5 @@
 "maize","bayesC_mcmc","completed",NA
 "cattle","bayesR_mcmc","completed",NA
 "maize","bayesR_mcmc","completed",NA
+"cattle","rhe_blup","completed_with_failures","block PCG reached the maximum iteration count | block PCG detected non-positive curvature"
+"maize","rhe_blup","completed",""

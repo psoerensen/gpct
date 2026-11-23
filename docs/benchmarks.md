@@ -4,10 +4,11 @@ title: Benchmark recipes
 ---
 # Benchmark recipes
 
-The current collection evaluates existing gbayes prediction methods from
+The current collection evaluates native gsuite prediction methods from
 QC-selected Glist. Full MCMC runs use four concurrent chains and one BLAS thread.
-Each method completes cattle and maize
-before its aggregate results are added to the website.
+Ordinary RHE + BLUP instead uses one fit with up to four native MKL threads.
+Each method is evaluated on cattle and maize. Failed fits remain visible;
+aggregate accuracy requires all ten held-out folds to be accepted.
 
 | Dataset | Trait | Individuals | Available markers | QC-retained markers | Report |
 | --- | --- | ---: | ---: | ---: | --- |
@@ -28,6 +29,8 @@ those implementation changes.
 ./environment/run-glist-benchmark-plan.ps1
 ```
 
-The runner calls gbayes fitting and native held-out prediction directly with
-Glist. Individual data, fits and diagnostics stay in external directories.
-Only reviewed summaries and static SVG plots enter the site.
+The command above runs the gbayes collection. The retained private RHE recipe
+uses the same Glist inputs and splits with existing greml/gsolve/gbits routines;
+see its [evaluation and variance diagnostics](reports/rhe-blup.html).
+Individual data, fits and diagnostics stay in external directories. Only
+reviewed summaries and static SVG plots enter the site.

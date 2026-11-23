@@ -31,6 +31,7 @@ Dots show the ten-fold mean Pearson correlation between predictions and observed
 | [Cattle / mkg](reports/cattle.html) | BayesB MCMC | 0.762 | 0.647 | 0.581 | 0.979 | Provisional (mixing) |
 | [Cattle / mkg](reports/cattle.html) | BayesC MCMC | 0.790 | 0.612 | 0.625 | 0.996 | Provisional (mixing) |
 | [Cattle / mkg](reports/cattle.html) | BayesR MCMC | 0.795 | 0.605 | 0.633 | 1.003 | Provisional (mixing) |
+| [Cattle / mkg](reports/cattle.html) | RHE + BLUP | not available | not available | not available | not available | Failed: 0/10 folds accepted |
 | [Cattle / mkg](reports/cattle.html) | Gaussian PCG (training variance) | 0.7772 | 0.6283 | 0.6048 | 1.0019 | Completed |
 | [Cattle / mkg](reports/cattle.html) | D-weighted PCG (training variance) | 0.7808 | 0.6238 | 0.6104 | 1.0024 | Completed |
 | [Cattle / mkg](reports/cattle.html) | BayesA MCMC (2 chains, 1 worker) | 0.7958 | 0.6048 | 0.6337 | 1.0178 | Provisional: mixing warnings in 1/10 folds |
@@ -42,13 +43,14 @@ Dots show the ten-fold mean Pearson correlation between predictions and observed
 | [Maize / DTT](reports/maize.html) | BayesB MCMC | 0.605 | 2.286 | 0.360 | 0.923 | Provisional (mixing) |
 | [Maize / DTT](reports/maize.html) | BayesC MCMC | 0.631 | 2.226 | 0.393 | 0.954 | Provisional (mixing) |
 | [Maize / DTT](reports/maize.html) | BayesR MCMC | 0.645 | 2.191 | 0.411 | 0.998 | Provisional (mixing) |
+| [Maize / DTT](reports/maize.html) | RHE + BLUP | 0.619 | 2.272 | 0.367 | 1.216 | Completed |
 | [Maize / DTT](reports/maize.html) | Gaussian PCG (training variance) | 0.6423 | 2.1986 | 0.4076 | 0.9915 | Completed |
 | [Maize / DTT](reports/maize.html) | D-weighted PCG (training variance) | 0.6507 | 2.1789 | 0.4183 | 0.9939 | Completed |
 | [Maize / DTT](reports/maize.html) | BayesA MCMC (2 chains, 1 worker) | 0.6492 | 2.1829 | 0.4162 | 1.0135 | Provisional: mixing warnings in 9/10 folds |
 | [Maize / DTT](reports/maize.html) | GLMA Gaussian / infinitesimal | 0.6181 | 2.2758 | 0.3648 | 1.2090 | Completed |
 | [Maize / DTT](reports/maize.html) | GLMA prior-selected | 0.5995 | 2.3029 | 0.3498 | 1.1631 | Completed |
 
-Correlation and RMSE are means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Compare methods within each dataset and trait. MCMC rows are provisional when retained parameter R-hat exceeds 1.05 or bulk ESS is below 100; completing iterations does not establish convergence.
+Correlation and RMSE are means of ten held-out folds. Predictive R² and calibration slope use pooled out-of-fold predictions. Compare methods within each dataset and trait. MCMC rows are provisional when retained parameter R-hat exceeds 1.05 or bulk ESS is below 100; completing iterations does not establish convergence. Failed RHE fits remain visible; a missing fold suppresses the aggregate accuracy rather than averaging only successful fits.
 
 ## Computational cost
 
@@ -60,6 +62,7 @@ Correlation and RMSE are means of ten held-out folds. Predictive R² and calibra
 | Cattle / mkg | BayesB MCMC | 4 | 2315.3 | 14.3 | 2343.3 | 2329.6 | 1727 |
 | Cattle / mkg | BayesC MCMC | 4 | 2081.3 | 13.0 | 2120.6 | 2094.3 | 1726 |
 | Cattle / mkg | BayesR MCMC | 4 | 3340.9 | 10.9 | 3364.8 | 3351.8 | 1732 |
+| Cattle / mkg | RHE + BLUP | 4 | 913.9 | not available | 915.4 | not available | 1705 |
 | Cattle / mkg | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 625.4 | 600.7 | 2364 |
 | Cattle / mkg | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 621.3 | 599.1 | 2364 |
 | Cattle / mkg | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 4325.1 | 4311.7 | 1727 |
@@ -71,6 +74,7 @@ Correlation and RMSE are means of ten held-out folds. Predictive R² and calibra
 | Maize / DTT | BayesB MCMC | 4 | 1454.8 | 8.6 | 1482.3 | 1463.4 | 1063 |
 | Maize / DTT | BayesC MCMC | 4 | 1305.0 | 8.9 | 1343.9 | 1313.9 | 1062 |
 | Maize / DTT | BayesR MCMC | 4 | 2899.1 | 8.0 | 2926.1 | 2907.1 | 1070 |
+| Maize / DTT | RHE + BLUP | 4 | 45.7 | 15.7 | 63.0 | 61.4 | 1010 |
 | Maize / DTT | Gaussian PCG (training variance) | 4 MKL threads | not separated | not separated | 366.6 | 333.2 | 1231 |
 | Maize / DTT | D-weighted PCG (training variance) | 4 MKL threads | not separated | not separated | 335.0 | 300.7 | 1232 |
 | Maize / DTT | BayesA MCMC (2 chains, 1 worker) | 1 worker / 2 chains | not separated | not separated | 2730.9 | 2714.3 | 1005 |

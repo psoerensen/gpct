@@ -1,7 +1,8 @@
-"method_id","label","method","algorithm","settings","full_cv_workers","full_cv_chains","burnin_per_chain","postburn_per_chain","blas_threads"
-"marker_gaussian","Gaussian PCG","marker_gaussian","pcg","Fixed equal marker variances and residual variance; working h2=0.5; tolerance 1e-8; 1000 iteration cap; no REML",1,NA,NA,NA,1
-"bayesN_mcmc","BayesN / Bayesian ridge","bayesN","mcmc","All markers Gaussian; learned shared marker and residual variances; proper inverse-chi-square priors df=4",4,4,500,1000,1
-"bayesA_mcmc","BayesA MCMC","bayesA","mcmc","All markers; learned marker-specific and residual variances; fixed common inverse-chi-square hyperprior df=4",4,4,500,1000,1
-"bayesB_mcmc","BayesB MCMC","bayesB","mcmc","Spike and marker-specific variances; learned active probability, marker and residual variances; fixed variance hyperprior df=4",4,4,500,1000,1
-"bayesC_mcmc","BayesC MCMC","bayesC","mcmc","Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2",4,4,500,1000,1
-"bayesR_mcmc","BayesR MCMC","bayesR","mcmc","Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2",4,4,500,1000,1
+"method_id","label","method","algorithm","settings","full_cv_workers","full_cv_chains","burnin_per_chain","postburn_per_chain","blas_threads","software"
+"marker_gaussian","Gaussian PCG","marker_gaussian","pcg","Fixed equal marker variances and residual variance; working h2=0.5; tolerance 1e-8; 1000 iteration cap; no REML",1,NA,NA,NA,1,"gbayes"
+"bayesN_mcmc","BayesN / Bayesian ridge","bayesN","mcmc","All markers Gaussian; learned shared marker and residual variances; proper inverse-chi-square priors df=4",4,4,500,1000,1,"gbayes"
+"bayesA_mcmc","BayesA MCMC","bayesA","mcmc","All markers; learned marker-specific and residual variances; fixed common inverse-chi-square hyperprior df=4",4,4,500,1000,1,"gbayes"
+"bayesB_mcmc","BayesB MCMC","bayesB","mcmc","Spike and marker-specific variances; learned active probability, marker and residual variances; fixed variance hyperprior df=4",4,4,500,1000,1,"gbayes"
+"bayesC_mcmc","BayesC MCMC","bayesC","mcmc","Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2",4,4,500,1000,1,"gbayes"
+"bayesR_mcmc","BayesR MCMC","bayesR","mcmc","Full CV: four concurrent chains; 500 burn-in plus 1000 post-burn transitions each; thin=1; native variance/probability learning; first seed=42000+fold*2",4,4,500,1000,1,"gbayes"
+"rhe_blup","RHE + BLUP","rhe_blup","rhe_blup","Ordinary native greml RHE: 128 probes, batches of 8, seed 62000+fold; native BLUP block PCG tolerance 1e-10, cap 1000; final residual gate 1e-8; native PSD/residual-floor policy unchanged; Glist training-AF HWE coding; K=ZZt/markers; RAM-budgeted oneMKL products",4,NA,NA,NA,4,"greml + gsolve + gbits; private Glist adapter"
