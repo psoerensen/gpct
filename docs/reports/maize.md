@@ -13,7 +13,7 @@ Predict the supplied DTT phenotype within this GPBench cohort using existing gba
 
 1458 individuals; 75304 available markers; 75304 QC-retained markers. Synthetic BIM/FAM annotations are bookkeeping, not biological maps.
 
-Saved GPBench ten-fold splits, seed 42. The MCMC collection uses four concurrent chains with one BLAS thread; the fixed Gaussian PCG reference used one worker. Actual workers are reported per method. Native model coding is preserved. See the [protocol](../protocol.html) and [settings](../methods.html).
+The MCMC collection uses four concurrent chains with one BLAS thread; the fixed Gaussian PCG reference used one worker. Actual workers are reported per method. Native model coding is preserved. See the [protocol](../protocol.html) and [settings](../methods.html).
 
 | Method | Correlation | RMSE | Pooled predictive R² | Calibration slope | Status |
 | --- | --- | --- | --- | --- | --- |
